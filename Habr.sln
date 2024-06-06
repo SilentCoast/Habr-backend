@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.ConsoleApp", "Habr.ConsoleApp\Habr.ConsoleApp.csproj", "{8DCF5E9C-CEF7-44AE-A957-7FEAB1AD7033}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.DataAccess", "Habr.DataAccess\Habr.DataAccess.csproj", "{FFF2EEE2-81E1-4F0F-B117-15EAE9023AD7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E5C9BDC-1572-4204-944D-60F405CA177A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DCF5E9C-CEF7-44AE-A957-7FEAB1AD7033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DCF5E9C-CEF7-44AE-A957-7FEAB1AD7033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DCF5E9C-CEF7-44AE-A957-7FEAB1AD7033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DCF5E9C-CEF7-44AE-A957-7FEAB1AD7033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF2EEE2-81E1-4F0F-B117-15EAE9023AD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF2EEE2-81E1-4F0F-B117-15EAE9023AD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF2EEE2-81E1-4F0F-B117-15EAE9023AD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF2EEE2-81E1-4F0F-B117-15EAE9023AD7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {35D3717E-7BC6-496D-A18A-43FCF51158DF}
+	EndGlobalSection
+EndGlobal
