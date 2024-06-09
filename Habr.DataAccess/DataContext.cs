@@ -6,6 +6,7 @@ namespace Habr.DataAccess
 {
     public class DataContext : DbContext
     {
+<<<<<<< HEAD
         public static readonly ILoggerFactory ConsoleLoggerFactory =
             LoggerFactory.Create(builder =>
             {
@@ -13,7 +14,11 @@ namespace Habr.DataAccess
                 builder.SetMinimumLevel(LogLevel.Information);
             });
 
+=======
+        public DbSet<User> Users { get; set; }
+>>>>>>> NB2024-45; User, Post, Comment relationships configured;
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options)
         : base(options)

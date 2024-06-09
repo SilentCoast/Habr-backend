@@ -23,6 +23,12 @@ namespace Habr.DataAccess.EntityConfigurations
             builder.Property(p => p.Created)
                 .IsRequired()
                 .HasColumnType("datetime");
+
+            builder.HasMany(p => p.Comments)
+                .WithOne(p => p.Post)
+                .HasForeignKey(p => p.PostId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
