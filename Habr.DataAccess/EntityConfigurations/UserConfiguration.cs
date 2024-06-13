@@ -18,6 +18,10 @@ namespace Habr.DataAccess.EntityConfigurations
             builder.Property(p => p.Email)
                 .HasMaxLength(100);
 
+            builder.Property(p => p.Created)
+                .IsRequired()
+                .HasColumnType("datetime");
+
             builder.HasMany(p => p.Posts)
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId)
