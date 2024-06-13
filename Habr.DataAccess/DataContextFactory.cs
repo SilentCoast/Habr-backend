@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 namespace Habr.DataAccess
 {
     /// <summary>
-    /// Used so Update-Database and such commands work properly
+    /// Used for design-time calls in Package Manager Console
     /// </summary>
     public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
     {
