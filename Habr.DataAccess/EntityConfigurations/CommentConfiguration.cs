@@ -14,6 +14,10 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Text)
                 .HasMaxLength(10000);
+
+            builder.Property(p => p.Created)
+                .IsRequired()
+                .HasColumnType("datetime");
         }
     }
 }
