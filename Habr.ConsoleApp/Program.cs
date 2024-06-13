@@ -25,7 +25,7 @@ namespace Habr.ConsoleApp
             // Ensure database is created
             if (context != null)
             {
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
                 Console.WriteLine("Database created.");
             }
             else
