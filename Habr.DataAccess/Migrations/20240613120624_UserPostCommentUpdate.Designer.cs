@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240609062132_UserPostCommentUpdate")]
+    [Migration("20240613120624_UserPostCommentUpdate")]
     partial class UserPostCommentUpdate
     {
         /// <inheritdoc />
@@ -32,6 +32,9 @@ namespace Habr.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
@@ -91,6 +94,9 @@ namespace Habr.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Email")
                         .IsRequired()

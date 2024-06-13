@@ -30,6 +30,9 @@ namespace Habr.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
@@ -88,6 +91,9 @@ namespace Habr.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Email")
                         .IsRequired()
