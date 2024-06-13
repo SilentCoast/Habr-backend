@@ -13,12 +13,15 @@ namespace Habr.DataAccess.EntityConfigurations
                 .ValueGeneratedOnAdd();
 
             builder.Property(p => p.Title)
+                .IsRequired()
                 .HasMaxLength(200);
 
             builder.Property(p => p.Text)
+                .IsRequired()
                 .HasMaxLength(1000);
 
             builder.Property(p => p.Created)
+                .IsRequired()
                 .HasColumnType("datetime");
         }
     }
