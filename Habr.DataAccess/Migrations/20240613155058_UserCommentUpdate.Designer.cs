@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240613120624_UserPostCommentUpdate")]
-    partial class UserPostCommentUpdate
+    [Migration("20240613155058_UserCommentUpdate")]
+    partial class UserCommentUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
