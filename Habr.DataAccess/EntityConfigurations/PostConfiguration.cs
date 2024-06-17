@@ -21,8 +21,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .HasMaxLength(1000);
 
             builder.Property(p => p.Created)
-                .IsRequired()
-                .HasColumnType("datetime");
+                .IsRequired();
 
             builder.HasMany(p => p.Comments)
                 .WithOne(p => p.Post)

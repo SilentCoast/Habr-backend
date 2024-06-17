@@ -13,11 +13,19 @@ namespace Habr.DataAccess.EntityConfigurations
                 .ValueGeneratedOnAdd();
 
             builder.Property(p => p.Text)
-                .HasMaxLength(10000);
+                .IsRequired()
+                .HasMaxLength(1000);
 
             builder.Property(p => p.Created)
-                .IsRequired()
-                .HasColumnType("datetime");
+                .IsRequired();
+
+            builder.Property(p => p.IsDeleted)
+                .HasDefaultValue(false);
+
+            builder.HasMany(p => p.Replies)
+                .WithOne(p => p.ParentComment)
+                .HasForeignKey(p => p.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
