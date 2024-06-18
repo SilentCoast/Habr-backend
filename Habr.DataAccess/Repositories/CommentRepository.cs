@@ -13,7 +13,7 @@ namespace Habr.DataAccess.Repositories
         public async Task AddCommentAsync(Comment comment)
         {
             comment.Created = DateTime.UtcNow;
-            await _context.AddAsync(comment);
+            _context.Add(comment);
             await _context.SaveChangesAsync();
         }
 

@@ -14,7 +14,7 @@ namespace Habr.DataAccess.Repositories
         public async Task AddUserAsync(User user)
         {
             user.Created = DateTime.UtcNow;
-            await _context.Users.AddAsync(user);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
 
