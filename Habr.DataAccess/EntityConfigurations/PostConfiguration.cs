@@ -20,7 +20,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(1000);
 
-            builder.Property(p => p.Created)
+            builder.Property(p => p.CreatedDate)
                 .IsRequired();
 
             builder.HasMany(p => p.Comments)

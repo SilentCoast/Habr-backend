@@ -37,14 +37,14 @@ namespace Habr.DataAccess.Repositories
 
         public async Task AddPostAsync(Post post)
         {
-            post.Created = DateTime.UtcNow;
+            post.CreatedDate = DateTime.UtcNow;
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdatePostAsync(Post post)
         {
-            post.Modified = DateTime.UtcNow;
+            post.ModifiedDate = DateTime.UtcNow;
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
         }

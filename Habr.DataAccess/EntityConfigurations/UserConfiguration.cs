@@ -31,7 +31,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(24);
 
-            builder.Property(p => p.Created)
+            builder.Property(p => p.CreatedDate)
                 .IsRequired();
 
             builder.HasMany(p => p.Posts)

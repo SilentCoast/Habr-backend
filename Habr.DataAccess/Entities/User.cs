@@ -7,7 +7,7 @@
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Salt { get; set; }
-        public DateTime Created { get; set; }
+        public DateTime CreatedDate { get; set; }
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
