@@ -46,7 +46,7 @@ namespace Habr.Services
             _logger.LogInformation($"User {name} added");
         }
 
-        public async Task<(bool, User?)> ValidateUserAsync(string email, string password)
+        public async Task LogIn(string email, string password)
         {
             User user = await _userRepository.GetUserByEmailAsync(email);
 
@@ -55,11 +55,11 @@ namespace Habr.Services
                 string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
                 if (hashedPassword == user.PasswordHash)
                 {
-                    return (true, user);
+                    return;
                 }
             }
 
-            return (false, null);
+            throw new UnauthorizedAccessException("Wrong Credentials");
         }
     }
 }

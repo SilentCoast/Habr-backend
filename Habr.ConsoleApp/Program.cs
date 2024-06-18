@@ -68,17 +68,19 @@ namespace Habr.ConsoleApp
             await userService.CreateUserAsync(name, email, password);
 
             //Login
-            (bool isValidUser, User user) = await userService.ValidateUserAsync(email, password);
-
-            if (isValidUser)
+            try
             {
-                logger.LogInformation("Login successful!");
+                await userService.LogIn(email, password);
             }
-            else
+            catch(UnauthorizedAccessException)
             {
                 logger.LogInformation("Wrong email or password");
                 return;
             }
+
+            logger.LogInformation("Login successful!");
+
+            User user = context.Users.Single(p => p.Email == email);
 
             //add post
             await postService.AddPostAsync("New Post Title", "New Post Text", user.Id);

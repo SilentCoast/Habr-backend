@@ -9,6 +9,7 @@ namespace Habr.Services
         /// <returns>If valid credentials provided: (true, <see cref="User"/> object corresponding to credentials)
         /// <para>Otherwise: (false, null)</para>
         /// </returns>
-        Task<(bool, User?)> ValidateUserAsync(string email, string password);
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        Task LogIn(string email, string password);
     }
 }
