@@ -8,6 +8,7 @@
         public DateTime Created { get; set; }
         public DateTime? Modified { get; set; }
         public bool IsPublished { get; set; }
+        public DateTime? PublishedDate { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
