@@ -11,6 +11,18 @@ namespace Habr.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "Created",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Created",
+                table: "Posts");
+
+            migrationBuilder.DropColumn(
+                name: "Created",
+                table: "Comments");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
                 table: "Users",
@@ -21,13 +33,12 @@ namespace Habr.DataAccess.Migrations
                 oldType: "nvarchar(100)",
                 oldMaxLength: 100);
 
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Created",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedDate",
                 table: "Users",
                 type: "datetime2",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<string>(
                 name: "PasswordHash",
@@ -45,13 +56,12 @@ namespace Habr.DataAccess.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Created",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedDate",
                 table: "Posts",
                 type: "datetime2",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsPublished",
@@ -61,7 +71,13 @@ namespace Habr.DataAccess.Migrations
                 defaultValue: false);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "Modified",
+                name: "ModifiedDate",
+                table: "Posts",
+                type: "datetime2",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "PublishedDate",
                 table: "Posts",
                 type: "datetime2",
                 nullable: true);
@@ -86,13 +102,12 @@ namespace Habr.DataAccess.Migrations
                 oldType: "nvarchar(max)",
                 oldMaxLength: 10000);
 
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Created",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedDate",
                 table: "Comments",
                 type: "datetime2",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
@@ -102,7 +117,7 @@ namespace Habr.DataAccess.Migrations
                 defaultValue: false);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "Modified",
+                name: "ModifiedDate",
                 table: "Comments",
                 type: "datetime2",
                 nullable: true);
@@ -149,6 +164,10 @@ namespace Habr.DataAccess.Migrations
                 table: "Comments");
 
             migrationBuilder.DropColumn(
+                name: "CreatedDate",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
                 name: "PasswordHash",
                 table: "Users");
 
@@ -157,19 +176,31 @@ namespace Habr.DataAccess.Migrations
                 table: "Users");
 
             migrationBuilder.DropColumn(
+                name: "CreatedDate",
+                table: "Posts");
+
+            migrationBuilder.DropColumn(
                 name: "IsPublished",
                 table: "Posts");
 
             migrationBuilder.DropColumn(
-                name: "Modified",
+                name: "ModifiedDate",
                 table: "Posts");
+
+            migrationBuilder.DropColumn(
+                name: "PublishedDate",
+                table: "Posts");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedDate",
+                table: "Comments");
 
             migrationBuilder.DropColumn(
                 name: "IsDeleted",
                 table: "Comments");
 
             migrationBuilder.DropColumn(
-                name: "Modified",
+                name: "ModifiedDate",
                 table: "Comments");
 
             migrationBuilder.DropColumn(
@@ -186,21 +217,19 @@ namespace Habr.DataAccess.Migrations
                 oldType: "nvarchar(254)",
                 oldMaxLength: 254);
 
-            migrationBuilder.AlterColumn<DateTime>(
+            migrationBuilder.AddColumn<DateTime>(
                 name: "Created",
                 table: "Users",
                 type: "datetime",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
-            migrationBuilder.AlterColumn<DateTime>(
+            migrationBuilder.AddColumn<DateTime>(
                 name: "Created",
                 table: "Posts",
                 type: "datetime",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserId",
@@ -220,13 +249,12 @@ namespace Habr.DataAccess.Migrations
                 oldType: "nvarchar(1000)",
                 oldMaxLength: 1000);
 
-            migrationBuilder.AlterColumn<DateTime>(
+            migrationBuilder.AddColumn<DateTime>(
                 name: "Created",
                 table: "Comments",
                 type: "datetime",
                 nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
     }
 }
