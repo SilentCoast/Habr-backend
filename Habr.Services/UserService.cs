@@ -19,30 +19,24 @@ namespace Habr.Services
 
         public async Task CreateUserAsync(string name, string email, string password)
         {
-            try
+            string salt = _passwordHasher.GenerateSalt();
+            string hashedPassword = _passwordHasher.HashPassword(password, salt);
+
+            if (await _userRepository.GetUserByEmailAsync(email) != null)
             {
-                string salt = _passwordHasher.GenerateSalt();
-                string hashedPassword = _passwordHasher.HashPassword(password, salt);
-
-                if (await _userRepository.GetUserByEmailAsync(email) != null)
-                {
-                    throw new Exception("User with that email already exists");
-                }
-
-                User user = new User
-                {
-                    Name = name,
-                    Email = email,
-                    PasswordHash = hashedPassword,
-                    Salt = salt
-                };
-
-                await _userRepository.AddUserAsync(user);
+                throw new Exception("User with that email already exists");
             }
-            catch (Exception ex)
+
+            User user = new User
             {
-                _logger.LogError(ex, ex.Message);
-            }
+                Name = name,
+                Email = email,
+                PasswordHash = hashedPassword,
+                Salt = salt
+            };
+
+            await _userRepository.AddUserAsync(user);
+
             _logger.LogInformation($"User {name} added");
         }
 

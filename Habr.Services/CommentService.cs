@@ -26,14 +26,7 @@ namespace Habr.Services
                 UserId = userId
             };
 
-            try
-            {
-                await _commentRepository.AddCommentAsync(comment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            await _commentRepository.AddCommentAsync(comment);
         }
 
         public async Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId)
@@ -46,80 +39,52 @@ namespace Habr.Services
                 ParentCommentId = parentCommentId
             };
 
-            try
-            {
-                await _commentRepository.AddCommentAsync(comment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            await _commentRepository.AddCommentAsync(comment);
         }
 
         public async Task ModifyCommentAsync(string newText, int commentId, int currentUserId)
         {
             Comment comment = await _context.Comments.FindAsync(commentId);
-            if (comment == null)
-            {
-                _logger.LogError($"Comment with Id: {commentId} not found");
-                return;
-            }
+            
+            EnsureCommentExists(comment, commentId);
 
-            if (!CheckAccess(comment.UserId, currentUserId))
-            {
-                return;
-            }
+            CheckAccess(comment.UserId, currentUserId);
 
             comment.Text = newText;
-
-            try
-            {
-                await _commentRepository.UpdateCommentAsync(comment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            
+            await _commentRepository.UpdateCommentAsync(comment);
         }
 
         public async Task DeleteCommentAsync(int commentId, int currentUserId)
         {
             Comment comment = await _context.Comments.FindAsync(commentId);
-            if (comment == null)
-            {
-                _logger.LogError($"Comment with Id: {commentId} not found");
-                return;
-            }
 
-            if (!CheckAccess(comment.UserId, currentUserId))
-            {
-                return;
-            }
+            EnsureCommentExists(comment, commentId);
+
+            CheckAccess(comment.UserId, currentUserId);
 
             comment.IsDeleted = true;
             comment.Text = "Comment deleted";
 
-            try
-            {
-                await _commentRepository.UpdateCommentAsync(comment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            await _commentRepository.UpdateCommentAsync(comment);
         }
 
         /// <summary>
         /// Checks if User sending the requst owns the comment.
         /// </summary>
-        private bool CheckAccess(int userId, int commentUserId)
+        private void CheckAccess(int userId, int commentUserId)
         {
             if (userId != commentUserId)
             {
-                _logger.LogError($"Access denied. User can only modify their own comments");
-                return false;
+                throw new UnauthorizedAccessException($"Access denied. User can only modify their own comments");
             }
-            return true;
+        }
+        private void EnsureCommentExists(Comment comment, int commentId)
+        {
+            if (comment == null)
+            {
+                throw new ArgumentException($"Post with id:{commentId} not found");
+            }
         }
     }
 }

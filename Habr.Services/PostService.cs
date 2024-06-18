@@ -27,31 +27,17 @@ namespace Habr.Services
         public async Task AddPostAsync(string title, string text, int createdByUserId)
         {
             Post post = new Post { Title = title, Text = text, UserId = createdByUserId };
-
-            try
-            {
-                await _postRepository.AddPostAsync(post);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+                
+            await _postRepository.AddPostAsync(post);
         }
 
         public async Task UpdatePostAsync(int postId, int currentUserId, string? newTitle = null, string? text = null)
         {
             Post post = await GetPostAsync(p => p.Id == postId);
 
-            if (post == null)
-            {
-                _logger.LogError($"Post with id:{postId} not found");
-                return;
-            }
+            EnsurePostExists(post, postId);
 
-            if (!CheckAccess(currentUserId, post.UserId))
-            {
-                return;
-            }
+            CheckAccess(currentUserId, post.UserId);
 
             if (newTitle != null)
             {
@@ -63,52 +49,37 @@ namespace Habr.Services
                 post.Text = text;
             }
 
-            try
-            {
-                await _postRepository.UpdatePostAsync(post);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            await _postRepository.UpdatePostAsync(post);
         }
 
         public async Task DeletePostAsync(int postId, int currentUserId)
         {
             Post post = await GetPostAsync(p => p.Id == postId);
 
-            if (post == null)
-            {
-                _logger.LogError($"Post with id:{postId} not found");
-                return;
-            }
+            EnsurePostExists(post, postId);
 
-            if (!CheckAccess(currentUserId, post.UserId))
-            {
-                return;
-            }
+            CheckAccess(currentUserId, post.UserId);
 
-            try
-            {
-                await _postRepository.DeletePostAsync(post);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            await _postRepository.DeletePostAsync(post);
         }
 
         /// <summary>
         /// Checks if User sending the requst owns the post.
         /// </summary>
-        private bool CheckAccess(int userId, int postUserId)
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        private void CheckAccess(int userId, int postUserId)
         {
             if (userId != postUserId)
             {
-                _logger.LogError($"Access denied. User can only modify their own posts");
-                return false;
+                throw new UnauthorizedAccessException($"Access denied. User can only modify their own posts");
             }
-            return true;
+        }
+        private void EnsurePostExists(Post post, int postId)
+        {
+            if (post == null)
+            {
+                throw new ArgumentException($"Post with id:{postId} not found");
+            }
         }
     }
 }
