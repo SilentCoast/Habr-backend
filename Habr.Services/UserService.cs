@@ -1,20 +1,18 @@
-﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Repositories;
-using Microsoft.Extensions.Logging;
+﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Habr.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly DataContext _context;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, ILogger<UserService> logger)
+        public UserService(DataContext context, IPasswordHasher passwordHasher)
         {
-            _userRepository = userRepository;
+            _context = context;
             _passwordHasher = passwordHasher;
-            _logger = logger;
         }
 
         public async Task CreateUserAsync(string name, string email, string password)
@@ -22,7 +20,7 @@ namespace Habr.Services
             string salt = _passwordHasher.GenerateSalt();
             string hashedPassword = _passwordHasher.HashPassword(password, salt);
 
-            if (await _userRepository.GetUserByEmailAsync(email) != null)
+            if (await _context.Users.SingleOrDefaultAsync(u => u.Email == email) != null)
             {
                 throw new Exception("User with that email already exists");
             }
@@ -32,17 +30,17 @@ namespace Habr.Services
                 Name = name,
                 Email = email,
                 PasswordHash = hashedPassword,
-                Salt = salt
+                Salt = salt,
+                CreatedDate = DateTime.UtcNow
             };
 
-            await _userRepository.AddUserAsync(user);
-
-            _logger.LogInformation($"User {name} added");
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task LogIn(string email, string password)
         {
-            User user = await _userRepository.GetUserByEmailAsync(email);
+            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
             if (user != null)
             {

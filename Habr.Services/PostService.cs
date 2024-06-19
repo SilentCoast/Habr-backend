@@ -1,41 +1,43 @@
-﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Repositories;
+﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace Habr.Services
 {
     public class PostService : IPostService
     {
-        private readonly IPostRepository _postRepository;
-        private readonly ILogger<PostService> _logger;
-        public PostService(IPostRepository postRepository, ILogger<PostService> logger)
+        private readonly DataContext _context;
+        public PostService(DataContext context)
         {
-            _postRepository = postRepository;
-            _logger = logger;
+            _context = context;
         }
-        public async Task<Post?> GetPostAsync(Expression<Func<Post, bool>>? filter = null, bool includeUser = false, bool includeComments = false)
+        public async Task<IEnumerable<Post>> GetPostsAsync()
         {
-            return await _postRepository.GetPostsQueryable(filter, includeUser, includeComments).FirstOrDefaultAsync();
+            return await _context.Posts.AsNoTracking().ToListAsync();
         }
-        public async Task<IEnumerable<Post>> GetPostsAsync(Expression<Func<Post, bool>>? filter = null, bool includeUser = false, bool includeComments = false)
+        public async Task<IEnumerable<Post>> GetPostsAsync(Expression<Func<Post, bool>> filter)
         {
-            return await _postRepository.GetPostsQueryable(filter, includeUser, includeComments).ToListAsync();
+            return await _context.Posts.Where(filter).AsNoTracking().ToListAsync();
         }
 
         public async Task AddPostAsync(string title, string text, int createdByUserId)
         {
-            Post post = new Post { Title = title, Text = text, UserId = createdByUserId };
-                
-            await _postRepository.AddPostAsync(post);
+            Post post = new Post
+            {
+                Title = title,
+                Text = text,
+                UserId = createdByUserId,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            _context.Posts.Add(post);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdatePostAsync(int postId, int currentUserId, string? newTitle = null, string? text = null)
         {
-            Post post = await GetPostAsync(p => p.Id == postId);
-
-            EnsurePostExists(post, postId);
+            Post post = await _context.Posts.SingleAsync(p => p.Id == postId);
 
             CheckAccess(currentUserId, post.UserId);
 
@@ -49,18 +51,22 @@ namespace Habr.Services
                 post.Text = text;
             }
 
-            await _postRepository.UpdatePostAsync(post);
+            post.ModifiedDate = DateTime.UtcNow;
+
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeletePostAsync(int postId, int currentUserId)
         {
-            Post post = await GetPostAsync(p => p.Id == postId);
-
-            EnsurePostExists(post, postId);
+            Post post = await _context.Posts.SingleAsync(p => p.Id == postId);
 
             CheckAccess(currentUserId, post.UserId);
 
-            await _postRepository.DeletePostAsync(post);
+            post.ModifiedDate = DateTime.UtcNow;
+
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -72,13 +78,6 @@ namespace Habr.Services
             if (userId != postUserId)
             {
                 throw new UnauthorizedAccessException($"Access denied. User can only modify their own posts");
-            }
-        }
-        private void EnsurePostExists(Post post, int postId)
-        {
-            if (post == null)
-            {
-                throw new ArgumentException($"Post with id:{postId} not found");
             }
         }
     }

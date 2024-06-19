@@ -1,6 +1,5 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
-using Habr.DataAccess.Repositories;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,11 +21,8 @@ namespace Habr.ConsoleApp
             var serviceProvider = new ServiceCollection()
                 .AddDbContext<DataContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("HabrDBConnection")))
-                .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IUserService, UserService>()
-                .AddScoped<IPostRepository, PostRepository>()
                 .AddScoped<IPostService, PostService>()
-                .AddScoped<ICommentRepository, CommentRepository>()
                 .AddScoped<ICommentService, CommentService>()
                 .AddSingleton<IPasswordHasher, PasswordHasher>()
                 .AddLogging(builder =>
@@ -139,7 +135,7 @@ namespace Habr.ConsoleApp
             Post post = null;
             try
             {
-                post = await postService.GetPostAsync(includeComments: true);
+                post = await context.Posts.Include(p => p.Comments).FirstAsync();
             }
             catch (Exception ex)
             {

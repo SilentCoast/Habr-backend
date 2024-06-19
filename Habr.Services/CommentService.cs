@@ -1,21 +1,16 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
-using Habr.DataAccess.Repositories;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Habr.Services
 {
     public class CommentService : ICommentService
     {
         private readonly DataContext _context;
-        private readonly ICommentRepository _commentRepository;
-        private readonly ILogger<CommentService> _logger;
 
-        public CommentService(DataContext context, ICommentRepository commentRepository, ILogger<CommentService> logger)
+        public CommentService(DataContext context)
         {
             _context = context;
-            _commentRepository = commentRepository;
-            _logger = logger;
         }
         public async Task AddCommentAsync(string text, int postId, int userId)
         {
@@ -23,10 +18,12 @@ namespace Habr.Services
             {
                 Text = text,
                 PostId = postId,
-                UserId = userId
+                UserId = userId,
+                CreatedDate = DateTime.UtcNow
             };
 
-            await _commentRepository.AddCommentAsync(comment);
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId)
@@ -36,37 +33,40 @@ namespace Habr.Services
                 Text = text,
                 PostId = postId,
                 UserId = userId,
-                ParentCommentId = parentCommentId
+                ParentCommentId = parentCommentId,
+                CreatedDate = DateTime.UtcNow
             };
 
-            await _commentRepository.AddCommentAsync(comment);
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ModifyCommentAsync(string newText, int commentId, int currentUserId)
         {
-            Comment comment = await _context.Comments.FindAsync(commentId);
+            Comment comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
             
-            EnsureCommentExists(comment, commentId);
-
             CheckAccess(comment.UserId, currentUserId);
 
             comment.Text = newText;
-            
-            await _commentRepository.UpdateCommentAsync(comment);
+
+            comment.ModifiedDate = DateTime.UtcNow;
+
+            _context.Comments.Update(comment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteCommentAsync(int commentId, int currentUserId)
         {
-            Comment comment = await _context.Comments.FindAsync(commentId);
-
-            EnsureCommentExists(comment, commentId);
+            Comment comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
 
             CheckAccess(comment.UserId, currentUserId);
 
             comment.IsDeleted = true;
             comment.Text = "Comment deleted";
+            comment.ModifiedDate = DateTime.UtcNow;
 
-            await _commentRepository.UpdateCommentAsync(comment);
+            _context.Comments.Update(comment);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -77,13 +77,6 @@ namespace Habr.Services
             if (userId != commentUserId)
             {
                 throw new UnauthorizedAccessException($"Access denied. User can only modify their own comments");
-            }
-        }
-        private void EnsureCommentExists(Comment comment, int commentId)
-        {
-            if (comment == null)
-            {
-                throw new ArgumentException($"Post with id:{commentId} not found");
             }
         }
     }
