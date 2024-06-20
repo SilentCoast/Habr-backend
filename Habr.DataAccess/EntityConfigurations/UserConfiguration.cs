@@ -13,14 +13,26 @@ namespace Habr.DataAccess.EntityConfigurations
                 .ValueGeneratedOnAdd();
 
             builder.Property(p => p.Name)
+                .IsRequired()
                 .HasMaxLength(100);
 
             builder.Property(p => p.Email)
-                .HasMaxLength(100);
-
-            builder.Property(p => p.Created)
                 .IsRequired()
-                .HasColumnType("datetime");
+                .HasMaxLength(254);
+
+            builder.HasIndex(p => p.Email)
+                .IsUnique();
+
+            builder.Property(p => p.PasswordHash)
+                .IsRequired()
+                .HasMaxLength(64);
+
+            builder.Property(p => p.Salt)
+                .IsRequired()
+                .HasMaxLength(24);
+
+            builder.Property(p => p.CreatedDate)
+                .IsRequired();
 
             builder.HasMany(p => p.Posts)
                 .WithOne(p => p.User)
@@ -31,8 +43,7 @@ namespace Habr.DataAccess.EntityConfigurations
             builder.HasMany(p => p.Comments)
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId)
-                //Should probably be .SetNull but SqlServer does not allows multiple cascade pathways,
-                //and now after User is deleted this comments will have non-existent UserIds
+                .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

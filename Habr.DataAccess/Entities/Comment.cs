@@ -4,13 +4,15 @@
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public DateTime Created {  get; set; }
-        /// <summary>
-        /// Nullable so when User is deleted, comments are still visible, but with remark 'user deleted'
-        /// </summary>
-        public int? UserId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public int UserId { get; set; }
         public User User { get; set; }
         public int PostId { get; set; }
         public Post Post { get; set; }
+        public bool IsDeleted { get; set; }
+        public int? ParentCommentId { get; set; }
+        public Comment? ParentComment { get; set; }
+        public ICollection<Comment> Replies { get; set; } = new List<Comment>();
     }
 }
