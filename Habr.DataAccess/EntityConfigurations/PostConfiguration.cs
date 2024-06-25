@@ -18,7 +18,7 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Text)
                 .IsRequired()
-                .HasMaxLength(1000);
+                .HasMaxLength(2000);
 
             builder.Property(p => p.CreatedDate)
                 .IsRequired();

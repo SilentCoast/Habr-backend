@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Habr.Services
 {
@@ -17,13 +18,19 @@ namespace Habr.Services
 
         public async Task CreateUserAsync(string name, string email, string password)
         {
-            string salt = _passwordHasher.GenerateSalt();
-            string hashedPassword = _passwordHasher.HashPassword(password, salt);
+            if (!IsValidEmail(email))
+            {
+                throw new ArgumentException("Invalid email format.");
+            }
 
             if (await _context.Users.SingleOrDefaultAsync(u => u.Email == email) != null)
             {
-                throw new Exception("User with that email already exists");
+                throw new ArgumentException("email is already taken");
             }
+
+            string salt = _passwordHasher.GenerateSalt();
+            string hashedPassword = _passwordHasher.HashPassword(password, salt);
+
 
             User user = new User
             {
@@ -38,20 +45,32 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task LogIn(string email, string password)
+        /// <summary>
+        /// TODO: clarification for mentor:
+        /// Now returning user.Id since it acts as a token
+        /// </summary>
+        public async Task<int> LogIn(string email, string password)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            //TODO: clarification for mentor:
+            // Here throwing two different exceptions with distinct messages, since blueprint was specified in the Jira.
+            // Should these blueprints be followed precisely?
+            // Otherwise, I would have just thrown the same exception with the message "Wrong credentials."
 
-            if (user != null)
+            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
+
+            string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
+            if (hashedPassword != user.PasswordHash)
             {
-                string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
-                if (hashedPassword == user.PasswordHash)
-                {
-                    return;
-                }
+                throw new UnauthorizedAccessException("Wrong credentials");
             }
 
-            throw new UnauthorizedAccessException("Wrong Credentials");
+            return user.Id;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
+            return emailRegex.IsMatch(email);
         }
     }
 }
