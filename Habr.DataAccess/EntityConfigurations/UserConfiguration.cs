@@ -18,7 +18,7 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Email)
                 .IsRequired()
-                .HasMaxLength(254);
+                .HasMaxLength(200);
 
             builder.HasIndex(p => p.Email)
                 .IsUnique();
