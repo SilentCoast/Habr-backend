@@ -110,7 +110,7 @@ namespace Habr.Services
 
             CheckAccess(userId, post.UserId);
 
-            if (post.Comments.Any())
+            if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
                 throw new InvalidOperationException("Cannot draft post containing comments");
             }
