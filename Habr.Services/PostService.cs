@@ -37,10 +37,10 @@ namespace Habr.Services
                 .OrderByDescending(p => p.PublishDate)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync()
+        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId)
         {
             return await _context.Posts
-                .Where(p => p.IsPublished == false)
+                .Where(p => p.IsPublished == false && p.Id == userId)
                 .Select(p => new DraftedPostDTO
                 {
                     PostId = p.Id,

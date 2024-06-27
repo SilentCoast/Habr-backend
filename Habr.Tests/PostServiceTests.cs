@@ -82,7 +82,8 @@ namespace Habr.Tests
         public async Task GetDraftedPostsAsync_ShouldReturnDraftedPosts()
         {
             await SeedPostRangeAsync();
-            var result = await _postService.GetDraftedPostsAsync();
+
+            var result = await _postService.GetDraftedPostsAsync(1);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
