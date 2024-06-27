@@ -97,7 +97,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ReturnPostToDraftAsync(int postId, int userId)
+        public async Task UnpublishPostAsync(int postId, int userId)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)

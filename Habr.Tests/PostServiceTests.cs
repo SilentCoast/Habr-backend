@@ -151,7 +151,7 @@ namespace Habr.Tests
         public async Task ReturnPostToDraft_Success()
         {
             await _postService.AddPostAsync("Sample Post", "Sample post text", 1, true);
-            await _postService.ReturnPostToDraftAsync(1, 1);
+            await _postService.UnpublishPostAsync(1, 1);
 
             var post = await _context.Posts
                 .Where(p => p.Id == 1)
@@ -170,7 +170,7 @@ namespace Habr.Tests
         {
             int postId = 99;
             var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(() =>
-                _postService.ReturnPostToDraftAsync(postId, 1));
+                _postService.UnpublishPostAsync(postId, 1));
 
             Assert.AreEqual($"Post with ID {postId} not found", exception.Message);
         }
@@ -180,7 +180,7 @@ namespace Habr.Tests
         {
             await _postService.AddPostAsync("test", "test", 1);
             var exception = await Assert.ThrowsExceptionAsync<UnauthorizedAccessException>(() =>
-                _postService.ReturnPostToDraftAsync(1, 2));
+                _postService.UnpublishPostAsync(1, 2));
         }
 
         [TestMethod]
@@ -191,7 +191,7 @@ namespace Habr.Tests
             await _context.SaveChangesAsync();
 
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
-                _postService.ReturnPostToDraftAsync(1, 1));
+                _postService.UnpublishPostAsync(1, 1));
         }
 
         [TestMethod]

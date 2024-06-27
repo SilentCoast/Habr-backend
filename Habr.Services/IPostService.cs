@@ -12,7 +12,7 @@ namespace Habr.Services
         Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId);
         Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false);
         Task PublishPostAsync(int postId, int userId);
-        Task ReturnPostToDraftAsync(int postId, int userId);
+        Task UnpublishPostAsync(int postId, int userId);
         Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null);
         Task DeletePostAsync(int postId, int userId);
     }
