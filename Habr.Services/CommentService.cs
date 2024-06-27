@@ -16,6 +16,8 @@ namespace Habr.Services
 
         public async Task AddCommentAsync(string text, int postId, int userId)
         {
+            _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
+
             CheckTextConstraints(text);
 
             Comment comment = new Comment()
@@ -32,6 +34,10 @@ namespace Habr.Services
 
         public async Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId)
         {
+            _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
+
+            _ = await _context.Comments.FindAsync(parentCommentId) ?? throw new ArgumentException("Parent comment not found");
+
             CheckTextConstraints(text);
 
             Comment comment = new Comment()
@@ -51,7 +57,12 @@ namespace Habr.Services
         {
             CheckTextConstraints(newText);
 
-            Comment comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
+            Comment? comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId);
+
+            if (comment == null)
+            {
+                throw new ArgumentException("Comment not found");
+            }
 
             CheckAccess(comment.UserId, userId);
 
