@@ -45,17 +45,8 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// TODO: clarification for mentor:
-        /// Now returning user.Id since it acts as a token
-        /// </summary>
         public async Task<int> LogIn(string email, string password)
         {
-            //TODO: clarification for mentor:
-            // Here throwing two different exceptions with distinct messages, since blueprint was specified in the Jira.
-            // Should these blueprints be followed precisely?
-            // Otherwise, I would have just thrown the same exception with the message "Wrong credentials."
-
             User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
 
             string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
