@@ -132,7 +132,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? text = null)
+        public async Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null)
         {
             Post post = await GetPostByIdAsync(postId);
 

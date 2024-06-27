@@ -13,7 +13,7 @@ namespace Habr.Services
         Task AddPostAsync(string title, string text, int userId, bool publishNow = false);
         Task PublishPostAsync(int postId, int userId);
         Task ReturnPostToDraftAsync(int postId, int userId);
-        Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? text = null);
+        Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null);
         Task DeletePostAsync(int postId, int userId);
     }
 }
