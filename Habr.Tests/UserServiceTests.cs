@@ -111,5 +111,19 @@ namespace Habr.Tests
 
             await _userService.LogIn(email, "wrong password");
         }
+
+        [TestMethod]
+        public async Task ConfirmEmailAsync_ShouldSetIsEmailConfirmed()
+        {
+            string email = "email@mail.com";
+
+            await _userService.CreateUserAsync("that guy", email, "password");
+
+            var user = _context.Users.First();
+
+            await _userService.ConfirmEmailAsync(email, user.Id);
+
+            Assert.IsTrue(user.IsEmailConfirmed);
+        }
     }
 }

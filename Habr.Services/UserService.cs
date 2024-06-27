@@ -1,5 +1,6 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
+using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -31,7 +32,6 @@ namespace Habr.Services
             string salt = _passwordHasher.GenerateSalt();
             string hashedPassword = _passwordHasher.HashPassword(password, salt);
 
-
             User user = new User
             {
                 Name = name,
@@ -44,7 +44,7 @@ namespace Habr.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
-
+        
         public async Task<int> LogIn(string email, string password)
         {
             User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
@@ -56,6 +56,23 @@ namespace Habr.Services
             }
 
             return user.Id;
+        }
+
+        public async Task ConfirmEmailAsync(string email, int userId)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId);
+            if (user == null)
+            {
+                throw new ArgumentException("User doesn't exist");
+            }
+
+            //add actual confirmation mechanism
+            if (email is not string)
+            {
+                throw new EmailConfirmationException();
+            }
+
+            user.IsEmailConfirmed = true;
         }
 
         private bool IsValidEmail(string email)
