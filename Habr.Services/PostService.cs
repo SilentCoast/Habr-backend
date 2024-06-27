@@ -51,7 +51,7 @@ namespace Habr.Services
                 .ToListAsync();
         }
 
-        public async Task AddPostAsync(string title, string text, int userId, bool publishNow = false)
+        public async Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false)
         {
             if (string.IsNullOrEmpty(title))
             {
@@ -74,7 +74,7 @@ namespace Habr.Services
                 CreatedDate = DateTime.UtcNow
             };
 
-            if (publishNow)
+            if (isPublishedNow)
             {
                 post.IsPublished = true;
                 post.PublishedDate = DateTime.UtcNow;

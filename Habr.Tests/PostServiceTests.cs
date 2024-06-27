@@ -139,7 +139,7 @@ namespace Habr.Tests
             var text = "Sample Text";
             var createdByUserId = 1;
 
-            await _postService.AddPostAsync(title, text, createdByUserId, publishNow: true);
+            await _postService.AddPostAsync(title, text, createdByUserId, isPublishedNow: true);
 
             var post = _context.Posts.FirstOrDefault();
             Assert.IsNotNull(post);
@@ -220,7 +220,7 @@ namespace Habr.Tests
             int postId = 1;
             int userId = 1;
 
-            await _postService.AddPostAsync("test","test",userId,publishNow: true);
+            await _postService.AddPostAsync("test","test",userId,isPublishedNow: true);
 
             string newTitle = "Updated Title";
             string newText = "Updated Text";
