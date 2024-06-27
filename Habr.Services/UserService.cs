@@ -23,7 +23,7 @@ namespace Habr.Services
                 throw new ArgumentException("Invalid email format.");
             }
 
-            if (await _context.Users.SingleOrDefaultAsync(u => u.Email == email) != null)
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
                 throw new ArgumentException("email is already taken");
             }
