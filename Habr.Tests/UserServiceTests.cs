@@ -1,8 +1,6 @@
 using Habr.DataAccess;
-using Habr.DataAccess.Entities;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
