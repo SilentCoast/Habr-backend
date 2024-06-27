@@ -37,8 +37,8 @@ namespace Habr.Tests
             var userService = _serviceProvider.GetRequiredService<IUserService>();
             var postService = _serviceProvider.GetRequiredService<IPostService>();
 
-            await userService.CreateUserAsync("John Doe", "john.doe@example.com", "password");
-            await userService.CreateUserAsync("Second John Doe", "johnsecond.doe@example.com", "passwordsecure");
+            await userService.CreateUserAsync("john.doe@example.com", "password");
+            await userService.CreateUserAsync("johnsecond.doe@example.com", "passwordsecure");
 
             await postService.AddPostAsync("post 1", "post 1 text", 1);
         }

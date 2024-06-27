@@ -49,7 +49,7 @@ namespace Habr.Tests
             string email = "testuser@example.com";
             string password = "Password123!";
 
-            await _userService.CreateUserAsync(name, email, password);
+            await _userService.CreateUserAsync(email, password, name);
 
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
             Assert.IsNotNull(user, "User should be created and found in the database.");
@@ -67,7 +67,7 @@ namespace Habr.Tests
             string email = "invalid-email";
             string password = "Password123!";
 
-            await _userService.CreateUserAsync(name, email, password);
+            await _userService.CreateUserAsync(email, password,name);
         }
 
         [TestMethod]
@@ -78,9 +78,9 @@ namespace Habr.Tests
             string email = "existinguser@example.com";
             string password = "Password123!";
 
-            await _userService.CreateUserAsync(name, email, password);
+            await _userService.CreateUserAsync(email, password, name);
 
-            await _userService.CreateUserAsync(name, email, password);
+            await _userService.CreateUserAsync(email, password, name);
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace Habr.Tests
             string email = "testuser@example.com";
             string password = "Password123!";
 
-            await _userService.CreateUserAsync(name,email, password);
+            await _userService.CreateUserAsync(email, password, name);
 
             var user = _context.Users.First();
 
@@ -107,7 +107,7 @@ namespace Habr.Tests
             string email = "testuser@example.com";
             string password = "Password123!";
 
-            await _userService.CreateUserAsync(name, email, password);
+            await _userService.CreateUserAsync(email, password, name);
 
             await _userService.LogIn(email, "wrong password");
         }
@@ -117,7 +117,7 @@ namespace Habr.Tests
         {
             string email = "email@mail.com";
 
-            await _userService.CreateUserAsync("that guy", email, "password");
+            await _userService.CreateUserAsync(email, "password");
 
             var user = _context.Users.First();
 

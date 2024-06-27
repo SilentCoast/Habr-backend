@@ -17,7 +17,7 @@ namespace Habr.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task CreateUserAsync(string name, string email, string password)
+        public async Task CreateUserAsync(string email, string password, string? name = null)
         {
             if (!IsValidEmail(email))
             {
@@ -31,6 +31,11 @@ namespace Habr.Services
 
             string salt = _passwordHasher.GenerateSalt();
             string hashedPassword = _passwordHasher.HashPassword(password, salt);
+
+            if(name == null)
+            {
+                name = email.Split('@')[0];
+            }
 
             User user = new User
             {
