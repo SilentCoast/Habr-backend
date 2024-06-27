@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240625154524_Architecture")]
+    [Migration("20240627113247_Architecture")]
     partial class Architecture
     {
         /// <inheritdoc />
@@ -124,6 +124,9 @@ namespace Habr.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsEmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

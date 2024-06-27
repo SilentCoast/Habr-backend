@@ -20,6 +20,13 @@ namespace Habr.DataAccess.Migrations
                 oldType: "nvarchar(254)",
                 oldMaxLength: 254);
 
+            migrationBuilder.AddColumn<bool>(
+                name: "IsEmailConfirmed",
+                table: "Users",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AlterColumn<string>(
                 name: "Text",
                 table: "Posts",
@@ -34,6 +41,10 @@ namespace Habr.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "IsEmailConfirmed",
+                table: "Users");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
                 table: "Users",
