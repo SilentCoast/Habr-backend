@@ -1,4 +1,5 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,11 @@ namespace Habr.Services
 
         public async Task CreateUserAsync(string email, string password, string? name = null)
         {
+            if(email.Length > ConstraintValue.UserEmailMaxLength)
+            {
+                throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
+            }
+
             if (!IsValidEmail(email))
             {
                 throw new ArgumentException("Invalid email format.");
@@ -26,7 +32,7 @@ namespace Habr.Services
 
             if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                throw new ArgumentException("email is already taken");
+                throw new ArgumentException("The email is already taken");
             }
 
             string salt = _passwordHasher.GenerateSalt();
@@ -35,6 +41,11 @@ namespace Habr.Services
             if(name == null)
             {
                 name = email.Split('@')[0];
+            }
+
+            if (name.Length > ConstraintValue.UserNameMaxLength)
+            {
+                throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
             }
 
             User user = new User

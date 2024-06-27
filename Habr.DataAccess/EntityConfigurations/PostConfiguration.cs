@@ -1,4 +1,5 @@
-﻿using Habr.DataAccess.Entities;
+﻿using Habr.DataAccess.Constraints;
+using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,11 +15,11 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Title)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(ConstraintValue.PostTitleMaxLength);
 
             builder.Property(p => p.Text)
                 .IsRequired()
-                .HasMaxLength(2000);
+                .HasMaxLength(ConstraintValue.PostTextMaxLength);
 
             builder.Property(p => p.CreatedDate)
                 .IsRequired();

@@ -1,4 +1,5 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -62,19 +63,8 @@ namespace Habr.Services
                 throw new ArgumentNullException($"The {nameof(text)} is required");
             }
 
-            int titleMaxLength = 200;
-
-            if (title.Length > titleMaxLength)
-            {
-                throw new ArgumentOutOfRangeException($"The {nameof(title)} must be less than {titleMaxLength} symbols");
-            }
-
-            int textMaxLength = 2000;
-
-            if (text.Length > textMaxLength)
-            {
-                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {textMaxLength} symbols");
-            }
+            CheckTitleContraints(title);
+            CheckTextContraints(text);
 
             Post post = new Post
             {
@@ -145,12 +135,14 @@ namespace Habr.Services
 
             if (newTitle != null)
             {
+                CheckTitleContraints(newTitle);
                 post.Title = newTitle;
             }
 
-            if (text != null)
+            if (newText != null)
             {
-                post.Text = text;
+                CheckTextContraints(newText);
+                post.Text = newText;
             }
 
             post.ModifiedDate = DateTime.UtcNow;
@@ -189,6 +181,24 @@ namespace Habr.Services
             }
 
             return post;
+        }
+        private void CheckTitleContraints(string title)
+        {
+            int titleMaxLength = ConstraintValue.PostTitleMaxLength;
+
+            if (title.Length > titleMaxLength)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(title)} must be less than {titleMaxLength} symbols");
+            }
+        }
+        private void CheckTextContraints(string text)
+        {
+            int textMaxLength = ConstraintValue.PostTextMaxLength;
+
+            if (text.Length > textMaxLength)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {textMaxLength} symbols");
+            }
         }
     }
 }

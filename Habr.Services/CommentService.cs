@@ -1,4 +1,5 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,8 @@ namespace Habr.Services
 
         public async Task AddCommentAsync(string text, int postId, int userId)
         {
+            CheckTextConstraints(text);
+
             Comment comment = new Comment()
             {
                 Text = text,
@@ -29,6 +32,8 @@ namespace Habr.Services
 
         public async Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId)
         {
+            CheckTextConstraints(text);
+
             Comment comment = new Comment()
             {
                 Text = text,
@@ -44,6 +49,8 @@ namespace Habr.Services
 
         public async Task ModifyCommentAsync(string newText, int commentId, int userId)
         {
+            CheckTextConstraints(newText);
+
             Comment comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
 
             CheckAccess(comment.UserId, userId);
@@ -78,6 +85,13 @@ namespace Habr.Services
             if (userId != commentOwnerId)
             {
                 throw new UnauthorizedAccessException($"Access denied. User can only modify their own comments");
+            }
+        }
+        private void CheckTextConstraints(string text)
+        {
+            if(text.Length > ConstraintValue.CommentTextMaxLength)
+            {
+                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {ConstraintValue.CommentTextMaxLength} symbols");
             }
         }
     }

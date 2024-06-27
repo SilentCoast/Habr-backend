@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Habr.DataAccess.Constraints;
 
 namespace Habr.DataAccess.EntityConfigurations
 {
@@ -14,11 +15,11 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(ConstraintValue.UserNameMaxLength);
 
             builder.Property(p => p.Email)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(ConstraintValue.UserEmailMaxLength);
 
             builder.HasIndex(p => p.Email)
                 .IsUnique();
