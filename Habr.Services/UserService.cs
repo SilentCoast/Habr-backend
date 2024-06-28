@@ -35,9 +35,6 @@ namespace Habr.Services
                 throw new ArgumentException("The email is already taken");
             }
 
-            string salt = _passwordHasher.GenerateSalt();
-            string hashedPassword = _passwordHasher.HashPassword(password, salt);
-
             if(name == null)
             {
                 name = email.Split('@')[0];
@@ -47,6 +44,9 @@ namespace Habr.Services
             {
                 throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
             }
+
+            string salt = _passwordHasher.GenerateSalt();
+            string hashedPassword = _passwordHasher.HashPassword(password, salt);
 
             var user = new User
             {
