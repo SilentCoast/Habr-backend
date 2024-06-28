@@ -26,11 +26,11 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.PasswordHash)
                 .IsRequired()
-                .HasMaxLength(64);
+                .HasMaxLength(ConstraintValue.UserPasswordHashMaxLength);
 
             builder.Property(p => p.Salt)
                 .IsRequired()
-                .HasMaxLength(24);
+                .HasMaxLength(ConstraintValue.UserSaltMaxLength);
 
             builder.Property(p => p.CreatedDate)
                 .IsRequired();

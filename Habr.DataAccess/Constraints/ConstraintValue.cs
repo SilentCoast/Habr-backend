@@ -4,6 +4,8 @@
     {
         public const int UserNameMaxLength = 100;
         public const int UserEmailMaxLength = 200;
+        public const int UserPasswordHashMaxLength = 64;
+        public const int UserSaltMaxLength = 24;
 
         public const int PostTitleMaxLength = 200;
         public const int PostTextMaxLength = 2000;
