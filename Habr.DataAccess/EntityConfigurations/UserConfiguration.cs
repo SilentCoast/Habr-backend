@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Habr.DataAccess.Constraints;
 
 namespace Habr.DataAccess.EntityConfigurations
 {
@@ -14,22 +15,22 @@ namespace Habr.DataAccess.EntityConfigurations
 
             builder.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(ConstraintValue.UserNameMaxLength);
 
             builder.Property(p => p.Email)
                 .IsRequired()
-                .HasMaxLength(254);
+                .HasMaxLength(ConstraintValue.UserEmailMaxLength);
 
             builder.HasIndex(p => p.Email)
                 .IsUnique();
 
             builder.Property(p => p.PasswordHash)
                 .IsRequired()
-                .HasMaxLength(64);
+                .HasMaxLength(ConstraintValue.UserPasswordHashMaxLength);
 
             builder.Property(p => p.Salt)
                 .IsRequired()
-                .HasMaxLength(24);
+                .HasMaxLength(ConstraintValue.UserSaltMaxLength);
 
             builder.Property(p => p.CreatedDate)
                 .IsRequired();

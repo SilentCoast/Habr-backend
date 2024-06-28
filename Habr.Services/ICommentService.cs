@@ -4,7 +4,7 @@
     {
         Task AddCommentAsync(string text, int postId, int userId);
         Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId);
-        Task ModifyCommentAsync(string newText, int commentId, int currentUserId);
-        Task DeleteCommentAsync(int commentId, int currentUserId);
+        Task ModifyCommentAsync(string newText, int commentId, int userId);
+        Task DeleteCommentAsync(int commentId, int userId);
     }
 }

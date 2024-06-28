@@ -1,6 +1,9 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
+using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Habr.Services
 {
@@ -15,17 +18,37 @@ namespace Habr.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task CreateUserAsync(string name, string email, string password)
+        public async Task CreateUserAsync(string email, string password, string? name = null)
         {
-            string salt = _passwordHasher.GenerateSalt();
-            string hashedPassword = _passwordHasher.HashPassword(password, salt);
-
-            if (await _context.Users.SingleOrDefaultAsync(u => u.Email == email) != null)
+            if(email.Length > ConstraintValue.UserEmailMaxLength)
             {
-                throw new Exception("User with that email already exists");
+                throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
             }
 
-            User user = new User
+            if (!IsValidEmail(email))
+            {
+                throw new ArgumentException("Invalid email format.");
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+            {
+                throw new ArgumentException("The email is already taken");
+            }
+
+            if(name == null)
+            {
+                name = email.Split('@')[0];
+            }
+
+            if (name.Length > ConstraintValue.UserNameMaxLength)
+            {
+                throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
+            }
+
+            var salt = _passwordHasher.GenerateSalt();
+            var hashedPassword = _passwordHasher.HashPassword(password, salt);
+
+            var user = new User
             {
                 Name = name,
                 Email = email,
@@ -37,21 +60,44 @@ namespace Habr.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
-
-        public async Task LogIn(string email, string password)
+        
+        public async Task<int> LogIn(string email, string password)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
 
-            if (user != null)
+            var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
+            if (hashedPassword != user.PasswordHash)
             {
-                string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
-                if (hashedPassword == user.PasswordHash)
-                {
-                    return;
-                }
+                throw new UnauthorizedAccessException("Wrong credentials");
             }
 
-            throw new UnauthorizedAccessException("Wrong Credentials");
+            return user.Id;
+        }
+
+        public async Task ConfirmEmailAsync(string email, int userId)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId);
+            if (user == null)
+            {
+                throw new ArgumentException("User doesn't exist");
+            }
+
+            //add actual confirmation mechanism
+            if (email is not string)
+            {
+                throw new EmailConfirmationException();
+            }
+
+            user.IsEmailConfirmed = true;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
+            return emailRegex.IsMatch(email);
         }
     }
 }
