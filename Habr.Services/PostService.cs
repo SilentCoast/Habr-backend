@@ -53,16 +53,6 @@ namespace Habr.Services
 
         public async Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false)
         {
-            if (string.IsNullOrEmpty(title))
-            {
-                throw new ArgumentNullException($"The {nameof(title)} is required.");
-            }
-
-            if (string.IsNullOrEmpty(text))
-            {
-                throw new ArgumentNullException($"The {nameof(text)} is required");
-            }
-
             CheckTitleContraints(title);
             CheckTextContraints(text);
 
@@ -184,6 +174,11 @@ namespace Habr.Services
         }
         private void CheckTitleContraints(string title)
         {
+            if (string.IsNullOrEmpty(title))
+            {
+                throw new ArgumentNullException($"The {nameof(title)} is required.");
+            }
+
             if (title.Length > ConstraintValue.PostTitleMaxLength)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(title)} must be less than {ConstraintValue.PostTitleMaxLength} symbols");
@@ -191,6 +186,11 @@ namespace Habr.Services
         }
         private void CheckTextContraints(string text)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException($"The {nameof(text)} is required");
+            }
+
             if (text.Length > ConstraintValue.PostTextMaxLength)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {ConstraintValue.PostTextMaxLength} symbols");
