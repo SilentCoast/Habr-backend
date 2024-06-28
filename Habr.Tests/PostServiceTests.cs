@@ -12,17 +12,19 @@ namespace Habr.Tests
     public class PostServiceTests
     {
         private DataContext _context;
+        private DataContext _secondContext;
         private ServiceProvider _serviceProvider;
         private IPostService _postService;
+        private IUserService _userService;
+        private ICommentService _commentService;
 
         [TestInitialize]
         public async Task InitializeAsync()
         {
             _serviceProvider = new ServiceCollection()
-                .AddDbContext<DataContext>(options => {
-                    options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString());
-                })
+                .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
                 .AddScoped<IPostService, PostService>()
+                .AddScoped<ICommentService, CommentService>()
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IPasswordHasher, PasswordHasher>()
                 .AddLogging(builder =>
@@ -34,10 +36,27 @@ namespace Habr.Tests
 
             _context = _serviceProvider.GetRequiredService<DataContext>();
             _postService = _serviceProvider.GetRequiredService<IPostService>();
-            var userService = _serviceProvider.GetRequiredService<IUserService>();
+            _userService = _serviceProvider.GetRequiredService<IUserService>();
+            _commentService = _serviceProvider.GetRequiredService<ICommentService>();
 
-            await userService.CreateUserAsync("john.doe@example.com", "password");
-            await userService.CreateUserAsync("johnsecond.doe@example.com", "passwordsecure");
+            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            Configurator.ConfigureDbContextOptions(optionsBuilder);
+
+            _secondContext = new DataContext(optionsBuilder.Options);
+
+            await _context.Database.MigrateAsync();
+        }
+
+        [TestCleanup]
+        public async Task Cleanup()
+        {
+            await _context.Users.ExecuteDeleteAsync();
+            await _context.Posts.ExecuteDeleteAsync();
+            await _context.Comments.ExecuteDeleteAsync();
+
+            await _context.DisposeAsync();
+            await _secondContext.DisposeAsync();
+            await _serviceProvider.DisposeAsync();
         }
 
         [TestMethod]
@@ -81,9 +100,13 @@ namespace Habr.Tests
         [TestMethod]
         public async Task GetDraftedPostsAsync_ShouldReturnDraftedPosts()
         {
-            await SeedPostRangeAsync();
+            await _userService.CreateUserAsync("john.doe@example.com", "password");
 
-            var result = await _postService.GetDraftedPostsAsync(1);
+            var user = await _context.Users.FirstAsync();
+
+            await SeedPostRangeAsync(user.Id);
+
+            var result = await _postService.GetDraftedPostsAsync(user.Id);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
@@ -92,13 +115,16 @@ namespace Habr.Tests
         [TestMethod]
         public async Task PublishPostAsync_ShouldPublishPost()
         {
-            int userId = 1;
-            int postId = 1;
-            await _postService.AddPostAsync("test", "test", userId);
+            await _userService.CreateUserAsync("email@mail.com","password");
+
+            var user = await _context.Users.FirstAsync();
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
             
-            var post = await _context.Posts.FindAsync(postId);
-            
-            await _postService.PublishPostAsync(postId, userId);
+            await _postService.PublishPostAsync(post.Id, user.Id);
+
+            post = await _secondContext.Posts.FirstAsync();
 
             Assert.IsNotNull(post);
             Assert.IsTrue(post.IsPublished);
@@ -107,41 +133,53 @@ namespace Habr.Tests
 
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
-        public async Task PublishPostAsync_ShouldThrowUnauthorizedAccessException_WhenUserDoesNotHaveAccess()
+        public async Task PublishPostAsync_UserDoesNotHaveAccess_ShouldThrowUnauthorizedAccessException()
         {
-            await _postService.AddPostAsync("test", "test", 2);
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "password");
 
-            await _postService.PublishPostAsync(postId, userId);
+            var user = await _context.Users.FirstAsync();
+
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
+
+            int unauthorizedUserId = user.Id + 1;
+
+            await _postService.PublishPostAsync(post.Id, unauthorizedUserId);
         }
 
         [TestMethod]
         public async Task AddPostAsync_ValidPost_ShouldAddToDatabase()
         {
+            await _userService.CreateUserAsync("email@mail.com", "pas");
+            
+            var user = await _context.Users.FirstAsync();
+
             var title = "Sample Title";
             var text = "Sample Text";
-            var createdByUserId = 1;
 
-            await _postService.AddPostAsync(title, text, createdByUserId);
+            await _postService.AddPostAsync(title, text, user.Id);
 
-            var post = _context.Posts.FirstOrDefault();
+            var post = await _secondContext.Posts.FirstOrDefaultAsync();
             Assert.IsNotNull(post);
             Assert.AreEqual(title, post.Title);
             Assert.AreEqual(text, post.Text);
-            Assert.AreEqual(createdByUserId, post.UserId);
+            Assert.AreEqual(user.Id, post.UserId);
         }
 
         [TestMethod]
         public async Task AddPostAsync_PublishNow_ShouldSetPublishDate()
         {
+            await _userService.CreateUserAsync("email@mail.com", "pas");
+
+            var user = await _context.Users.FirstAsync();
+
             var title = "Sample Title";
             var text = "Sample Text";
-            var createdByUserId = 1;
 
-            await _postService.AddPostAsync(title, text, createdByUserId, isPublishedNow: true);
+            await _postService.AddPostAsync(title, text, user.Id, isPublishedNow: true);
 
-            var post = _context.Posts.FirstOrDefault();
+            var post = await _secondContext.Posts.FirstOrDefaultAsync();
             Assert.IsNotNull(post);
             Assert.IsTrue(post.IsPublished);
             Assert.IsNotNull(post.PublishedDate);
@@ -150,16 +188,17 @@ namespace Habr.Tests
         [TestMethod]
         public async Task ReturnPostToDraft_Success()
         {
-            await _postService.AddPostAsync("Sample Post", "Sample post text", 1, true);
-            await _postService.UnpublishPostAsync(1, 1);
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            var post = await _context.Posts
-                .Where(p => p.Id == 1)
-                .Select(p => new
-                {
-                    p.IsPublished,
-                    p.PublishedDate
-                }).SingleAsync();
+            var user = await _context.Users.FirstAsync();
+
+            await _postService.AddPostAsync("Sample Post", "Sample post text", user.Id, true);
+
+            var post = await _context.Posts.FirstAsync();
+
+            await _postService.UnpublishPostAsync(post.Id, user.Id);
+
+            post = await _secondContext.Posts.FirstAsync();
 
             Assert.IsFalse(post.IsPublished, "Post should be in draft state");
             Assert.IsNull(post.PublishedDate, "PublishedDate should be null for a draft post");
@@ -178,36 +217,53 @@ namespace Habr.Tests
         [TestMethod]
         public async Task ReturnPostToDraft_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
         {
-            await _postService.AddPostAsync("test", "test", 1);
+            await _userService.CreateUserAsync("email@mail.com", "pas");
+
+            var user = await _context.Users.FirstAsync();
+
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
+
             var exception = await Assert.ThrowsExceptionAsync<UnauthorizedAccessException>(() =>
-                _postService.UnpublishPostAsync(1, 2));
+                _postService.UnpublishPostAsync(post.Id, user.Id+1));
         }
 
         [TestMethod]
         public async Task ReturnPostToDraft_PostHasComments_ShouldThrowInvalidOperationException()
         {
-            await _postService.AddPostAsync("test", "test", 1);
-            _context.Comments.Add(new Comment { Text = "Sample comment", PostId = 1, UserId = 1 });
-            await _context.SaveChangesAsync();
+            await _userService.CreateUserAsync("email@mail.com", "pas");
+
+            var user = await _context.Users.FirstAsync();
+
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
+
+            await _commentService.AddCommentAsync("text", post.Id, user.Id);
 
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
-                _postService.UnpublishPostAsync(1, 1));
+                _postService.UnpublishPostAsync(post.Id, user.Id));
         }
 
         [TestMethod]
         public async Task UpdatePostAsync_ShouldUpdatePostTitleAndText()
         {
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test", "test", userId);
+            var user = await _context.Users.FirstAsync();
+
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
 
             string newTitle = "Updated Title";
             string newText = "Updated Text";
 
-            await _postService.UpdatePostAsync(postId, userId, newTitle, newText);
+            await _postService.UpdatePostAsync(post.Id, user.Id, newTitle, newText);
 
-            var post = await _context.Posts.FindAsync(postId);
+            post = await _secondContext.Posts.FirstAsync();
+
             Assert.IsNotNull(post);
             Assert.AreEqual(newTitle, post.Title);
             Assert.AreEqual(newText, post.Text);
@@ -217,43 +273,53 @@ namespace Habr.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public async Task UpdatePostAsync_PostIsPublished_ShouldThrowInvalidOperationException()
         {
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test","test",userId,isPublishedNow: true);
+            var user = await _context.Users.FirstAsync();
 
-            string newTitle = "Updated Title";
-            string newText = "Updated Text";
+            await _postService.AddPostAsync("test", "test", user.Id, true);
 
-            await _postService.UpdatePostAsync(postId, userId, newTitle, newText);
+            var post = await _context.Posts.FirstAsync();
+
+            var newTitle = "Updated Title";
+            var newText = "Updated Text";
+
+            await _postService.UpdatePostAsync(post.Id, user.Id, newTitle, newText);
         }
 
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public async Task UpdatePostAsync_ShouldThrowUnauthorizedAccessException()
         {
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test", "test", 2);
+            var user = await _context.Users.FirstAsync();
 
-            string newTitle = "Updated Title";
-            string newText = "Updated Text";
+            await _postService.AddPostAsync("test", "test", user.Id);
 
-            await _postService.UpdatePostAsync(postId, userId, newTitle, newText);
+            var post = await _context.Posts.FirstAsync();
+
+            var newTitle = "Updated Title";
+            var newText = "Updated Text";
+
+            await _postService.UpdatePostAsync(post.Id, user.Id+1, newTitle, newText);
         }
 
         [TestMethod]
         public async Task DeletePostAsync_ShouldDeletePost()
         {
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test", "test", userId);
+            var user = await _context.Users.FirstAsync();
 
-            await _postService.DeletePostAsync(postId, userId);
+            await _postService.AddPostAsync("test", "test", user.Id);
 
-            var post = await _context.Posts.FindAsync(postId);
+            var post = await _context.Posts.FirstAsync();
+
+            await _postService.DeletePostAsync(post.Id, user.Id);
+
+            post = await _secondContext.Posts.FirstOrDefaultAsync();
+
             Assert.IsNull(post, "Post should be deleted from the database.");
         }
 
@@ -261,41 +327,43 @@ namespace Habr.Tests
         [ExpectedException(typeof(ArgumentException))]
         public async Task DeletePostAsync_PostDoesNotExist_ShouldThrowArgumentException()
         {
-            int postId = 999; // Non-existent post ID
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test", "test", userId);
+            var user = await _context.Users.FirstAsync();
 
-            await _postService.DeletePostAsync(postId, userId);
+            await _postService.DeletePostAsync(1, user.Id);
         }
 
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public async Task DeletePostAsync_UserDoesNotHaveAccess_ShouldThrowUnauthorizedAccessException()
         {
-            int postId = 1;
-            int userId = 1;
+            await _userService.CreateUserAsync("email@mail.com", "pas");
 
-            await _postService.AddPostAsync("test", "test", userId);
+            var user = await _context.Users.FirstAsync();
 
-            await _postService.DeletePostAsync(postId, 2);
+            await _postService.AddPostAsync("test", "test", user.Id);
+
+            var post = await _context.Posts.FirstAsync();
+
+            await _postService.DeletePostAsync(post.Id, user.Id+1);
         }
 
-        [TestCleanup]
-        public async Task Cleanup()
+        private async Task SeedPostRangeAsync(int? userId = null)
         {
-            await _context.Database.EnsureDeletedAsync();
-            await _context.DisposeAsync();
-            await _serviceProvider.DisposeAsync();
-        }
+            if (userId == null)
+            {
+                await _userService.CreateUserAsync("john.doe@example.com", "password");
 
-        private async Task SeedPostRangeAsync()
-        {
+                var user = await _context.Users.FirstAsync();
+                userId = user.Id;
+            }
+
             _context.Posts.AddRange(new List<Post>
             {
-                new Post { Title = "Post 1", Text = "Text 1", UserId = 1 },
-                new Post { Title = "Post 2", Text = "Text 2", UserId = 1, IsPublished = true, PublishedDate = DateTime.UtcNow },
-                new Post { Title = "Post 3", Text = "Text 3", UserId = 1, IsPublished = true, PublishedDate = DateTime.UtcNow }
+                new Post { Title = "Post 1", Text = "Text 1", UserId = (int)userId },
+                new Post { Title = "Post 2", Text = "Text 2", UserId = (int)userId, IsPublished = true, PublishedDate = DateTime.UtcNow },
+                new Post { Title = "Post 3", Text = "Text 3", UserId = (int)userId, IsPublished = true, PublishedDate = DateTime.UtcNow }
             });
             await _context.SaveChangesAsync();
         }

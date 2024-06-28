@@ -10,17 +10,15 @@ namespace Habr.Tests
     public class UserServiceTests
     {
         private DataContext _context;
+        private DataContext _secondContext;
         private ServiceProvider _serviceProvider;
         private IUserService _userService;
 
         [TestInitialize]
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             _serviceProvider = new ServiceCollection()
-                .AddDbContext<DataContext>(options =>
-                {
-                    options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString());
-                })
+                .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
                 .AddScoped<IUserService, UserService>()
                 .AddSingleton<IPasswordHasher, PasswordHasher>()
                 .AddLogging(builder =>
@@ -32,26 +30,37 @@ namespace Habr.Tests
 
             _context = _serviceProvider.GetRequiredService<DataContext>();
             _userService = _serviceProvider.GetRequiredService<IUserService>();
+
+            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            Configurator.ConfigureDbContextOptions(optionsBuilder);
+            
+            _secondContext = new DataContext(optionsBuilder.Options);
+
+            await _context.Database.MigrateAsync();
         }
 
         [TestCleanup]
         public async Task Cleanup()
         {
-            await _context.Database.EnsureDeletedAsync();
+            await _context.Users.ExecuteDeleteAsync();
+            await _context.Posts.ExecuteDeleteAsync();
+            await _context.Comments.ExecuteDeleteAsync();
+
             await _context.DisposeAsync();
+            await _secondContext.DisposeAsync();
             await _serviceProvider.DisposeAsync();
         }
 
         [TestMethod]
         public async Task CreateUserAsync_ShouldCreateUser()
         {
-            string name = "Test User";
-            string email = "testuser@example.com";
-            string password = "Password123!";
+            var name = "Test User";
+            var email = "testuser@example.com";
+            var password = "Password123!";
 
             await _userService.CreateUserAsync(email, password, name);
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _secondContext.Users.SingleOrDefaultAsync(u => u.Email == email);
             Assert.IsNotNull(user, "User should be created and found in the database.");
             Assert.AreEqual(name, user.Name, "The user's name should be set correctly.");
             Assert.AreEqual(email, user.Email, "The user's email should be set correctly.");
@@ -63,9 +72,9 @@ namespace Habr.Tests
         [ExpectedException(typeof(ArgumentException))]
         public async Task CreateUserAsync_InvalidEmail_ShouldThrowArgumentException()
         {
-            string name = "Test User";
-            string email = "invalid-email";
-            string password = "Password123!";
+            var name = "Test User";
+            var email = "invalid-email";
+            var password = "Password123!";
 
             await _userService.CreateUserAsync(email, password,name);
         }
@@ -74,25 +83,26 @@ namespace Habr.Tests
         [ExpectedException(typeof(ArgumentException))]
         public async Task CreateUserAsync_DuplicateEmail_ShouldThrowArgumentException()
         {
-            string name = "Test User";
-            string email = "existinguser@example.com";
-            string password = "Password123!";
+            var name = "Test User";
+            var email = "existinguser@example.com";
+            var password = "Password123!";
 
+            //Adds fine
             await _userService.CreateUserAsync(email, password, name);
-
+            //Throws exception for duplicate email
             await _userService.CreateUserAsync(email, password, name);
         }
 
         [TestMethod]
         public async Task LogIn_CredentialsAreCorrect_ShouldReturnUserId()
         {
-            string name = "Test User";
-            string email = "testuser@example.com";
-            string password = "Password123!";
+            var name = "Test User";
+            var email = "testuser@example.com";
+            var password = "Password123!";
 
             await _userService.CreateUserAsync(email, password, name);
 
-            var user = _context.Users.First();
+            var user = _secondContext.Users.First();
 
             var result = await _userService.LogIn(email, password);
 
@@ -103,9 +113,9 @@ namespace Habr.Tests
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public async Task LogIn_WrongCredentials_ShouldThrowUnauthorizedAccessException()
         {
-            string name = "Test User";
-            string email = "testuser@example.com";
-            string password = "Password123!";
+            var name = "Test User";
+            var email = "testuser@example.com";
+            var password = "Password123!";
 
             await _userService.CreateUserAsync(email, password, name);
 
@@ -122,6 +132,8 @@ namespace Habr.Tests
             var user = _context.Users.First();
 
             await _userService.ConfirmEmailAsync(email, user.Id);
+
+            user = _secondContext.Users.First();
 
             Assert.IsTrue(user.IsEmailConfirmed);
         }
