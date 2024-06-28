@@ -45,8 +45,8 @@ namespace Habr.Services
                 throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
             }
 
-            string salt = _passwordHasher.GenerateSalt();
-            string hashedPassword = _passwordHasher.HashPassword(password, salt);
+            var salt = _passwordHasher.GenerateSalt();
+            var hashedPassword = _passwordHasher.HashPassword(password, salt);
 
             var user = new User
             {
@@ -63,9 +63,9 @@ namespace Habr.Services
         
         public async Task<int> LogIn(string email, string password)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
 
-            string hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
+            var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
             {
                 throw new UnauthorizedAccessException("Wrong credentials");

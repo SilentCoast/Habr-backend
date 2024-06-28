@@ -125,7 +125,7 @@ namespace Habr.Tests
         [TestMethod]
         public async Task ConfirmEmailAsync_ShouldSetIsEmailConfirmed()
         {
-            string email = "email@mail.com";
+            var email = "email@mail.com";
 
             await _userService.CreateUserAsync(email, "password");
 

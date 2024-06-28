@@ -143,7 +143,7 @@ namespace Habr.Tests
 
             var post = await _context.Posts.FirstAsync();
 
-            int unauthorizedUserId = user.Id + 1;
+            var unauthorizedUserId = user.Id + 1;
 
             await _postService.PublishPostAsync(post.Id, unauthorizedUserId);
         }
@@ -207,7 +207,7 @@ namespace Habr.Tests
         [TestMethod]
         public async Task ReturnPostToDraft_PostNotFound_ShouldThrowArgumentException()
         {
-            int postId = 99;
+            var postId = 99;
             var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(() =>
                 _postService.UnpublishPostAsync(postId, 1));
 
@@ -257,8 +257,8 @@ namespace Habr.Tests
 
             var post = await _context.Posts.FirstAsync();
 
-            string newTitle = "Updated Title";
-            string newText = "Updated Text";
+            var newTitle = "Updated Title";
+            var newText = "Updated Text";
 
             await _postService.UpdatePostAsync(post.Id, user.Id, newTitle, newText);
 

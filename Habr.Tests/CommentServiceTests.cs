@@ -144,7 +144,7 @@ namespace Habr.Tests
 
             var comment = await _context.Comments.FirstAsync();
 
-            DateTime? initialModifiedDate = comment.ModifiedDate;
+            var initialModifiedDate = comment.ModifiedDate;
 
             await _commentService.DeleteCommentAsync(comment.Id, user.Id);
 

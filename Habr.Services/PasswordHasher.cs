@@ -9,8 +9,8 @@ namespace Habr.Services
         {
             using (var sha256 = SHA256.Create())
             {
-                string saltedPassword = password + salt;
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+                var saltedPassword = password + salt;
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
 
                 var builder = new StringBuilder();
 
@@ -24,7 +24,7 @@ namespace Habr.Services
 
         public string GenerateSalt()
         {
-            byte[] saltBytes = new byte[16];
+            var saltBytes = new byte[16];
             using (var rng = new RNGCryptoServiceProvider())
             {
                 rng.GetBytes(saltBytes);
