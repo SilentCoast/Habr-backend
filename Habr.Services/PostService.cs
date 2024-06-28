@@ -66,7 +66,7 @@ namespace Habr.Services
             CheckTitleContraints(title);
             CheckTextContraints(text);
 
-            Post post = new Post
+            var post = new Post
             {
                 Title = title,
                 Text = text,
@@ -86,7 +86,7 @@ namespace Habr.Services
 
         public async Task PublishPostAsync(int postId, int userId)
         {
-            Post post = await GetPostByIdAsync(postId);
+            var post = await GetPostByIdAsync(postId);
 
             CheckAccess(userId, post.UserId);
 
@@ -124,7 +124,7 @@ namespace Habr.Services
 
         public async Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null)
         {
-            Post post = await GetPostByIdAsync(postId);
+            var post = await GetPostByIdAsync(postId);
 
             CheckAccess(userId, post.UserId);
 
@@ -153,7 +153,7 @@ namespace Habr.Services
 
         public async Task DeletePostAsync(int postId, int userId)
         {
-            Post post = await GetPostByIdAsync(postId);
+            var post = await GetPostByIdAsync(postId);
 
             CheckAccess(userId, post.UserId);
 
@@ -173,7 +173,7 @@ namespace Habr.Services
         }
         private async Task<Post> GetPostByIdAsync(int postId)
         {
-            Post post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId);
+            var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId);
 
             if (post == null)
             {

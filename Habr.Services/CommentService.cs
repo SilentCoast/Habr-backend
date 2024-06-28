@@ -20,7 +20,7 @@ namespace Habr.Services
 
             CheckTextConstraints(text);
 
-            Comment comment = new Comment()
+            var comment = new Comment()
             {
                 Text = text,
                 PostId = postId,
@@ -40,7 +40,7 @@ namespace Habr.Services
 
             CheckTextConstraints(text);
 
-            Comment comment = new Comment()
+            var comment = new Comment()
             {
                 Text = text,
                 PostId = postId,
@@ -57,7 +57,7 @@ namespace Habr.Services
         {
             CheckTextConstraints(newText);
 
-            Comment? comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId);
+            var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId);
 
             if (comment == null)
             {
@@ -76,7 +76,7 @@ namespace Habr.Services
 
         public async Task DeleteCommentAsync(int commentId, int userId)
         {
-            Comment comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
+            var comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
 
             CheckAccess(comment.UserId, userId);
 

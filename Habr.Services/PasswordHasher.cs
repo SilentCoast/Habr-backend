@@ -7,11 +7,13 @@ namespace Habr.Services
     {
         public string HashPassword(string password, string salt)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 string saltedPassword = password + salt;
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                StringBuilder builder = new StringBuilder();
+
+                var builder = new StringBuilder();
+
                 for (int i = 0; i < bytes.Length; i++)
                 {
                     builder.Append(bytes[i].ToString("x2"));

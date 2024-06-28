@@ -48,7 +48,7 @@ namespace Habr.Services
                 throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
             }
 
-            User user = new User
+            var user = new User
             {
                 Name = name,
                 Email = email,
