@@ -40,7 +40,7 @@ namespace Habr.Services
         public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId)
         {
             return await _context.Posts
-                .Where(p => p.IsPublished == false && p.Id == userId)
+                .Where(p => p.IsPublished == false && p.UserId == userId)
                 .Select(p => new DraftedPostDTO
                 {
                     PostId = p.Id,
