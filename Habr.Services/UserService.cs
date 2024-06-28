@@ -89,6 +89,9 @@ namespace Habr.Services
             }
 
             user.IsEmailConfirmed = true;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
         private bool IsValidEmail(string email)
