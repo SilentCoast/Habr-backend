@@ -184,20 +184,16 @@ namespace Habr.Services
         }
         private void CheckTitleContraints(string title)
         {
-            int titleMaxLength = ConstraintValue.PostTitleMaxLength;
-
-            if (title.Length > titleMaxLength)
+            if (title.Length > ConstraintValue.PostTitleMaxLength)
             {
-                throw new ArgumentOutOfRangeException($"The {nameof(title)} must be less than {titleMaxLength} symbols");
+                throw new ArgumentOutOfRangeException($"The {nameof(title)} must be less than {ConstraintValue.PostTitleMaxLength} symbols");
             }
         }
         private void CheckTextContraints(string text)
         {
-            int textMaxLength = ConstraintValue.PostTextMaxLength;
-
-            if (text.Length > textMaxLength)
+            if (text.Length > ConstraintValue.PostTextMaxLength)
             {
-                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {textMaxLength} symbols");
+                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {ConstraintValue.PostTextMaxLength} symbols");
             }
         }
     }
