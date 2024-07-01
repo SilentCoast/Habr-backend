@@ -24,7 +24,7 @@ namespace Habr.WebApp.Controllers
         {
             try
             {
-                var userId = await _userService.LogIn(model.Email, model.Password);
+                var userId = await _userService.LogInAsync(model.Email, model.Password);
                 return Ok(userId);
             }
             catch (Exception e)

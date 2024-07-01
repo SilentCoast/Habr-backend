@@ -61,7 +61,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
         
-        public async Task<int> LogIn(string email, string password)
+        public async Task<int> LogInAsync(string email, string password)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
 

@@ -104,7 +104,7 @@ namespace Habr.Tests
 
             var user = _secondContext.Users.First();
 
-            var result = await _userService.LogIn(email, password);
+            var result = await _userService.LogInAsync(email, password);
 
             Assert.AreEqual(user.Id, result, "The returned user ID should match the logged-in user's ID.");
         }
@@ -119,7 +119,7 @@ namespace Habr.Tests
 
             await _userService.CreateUserAsync(email, password, name);
 
-            await _userService.LogIn(email, "wrong password");
+            await _userService.LogInAsync(email, "wrong password");
         }
 
         [TestMethod]
