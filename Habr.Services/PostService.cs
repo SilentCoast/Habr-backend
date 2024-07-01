@@ -14,15 +14,7 @@ namespace Habr.Services
         {
             _context = context;
         }
-
-        public async Task<IEnumerable<Post>> GetPostsAsync()
-        {
-            return await _context.Posts.AsNoTracking().ToListAsync();
-        }
-        public async Task<IEnumerable<Post>> GetPostsAsync(Expression<Func<Post, bool>> filter)
-        {
-            return await _context.Posts.Where(filter).AsNoTracking().ToListAsync();
-        }
+        
         public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync()
         {
             return await _context.Posts
@@ -154,6 +146,7 @@ namespace Habr.Services
         /// <summary>
         /// Checks if User sending the requst owns the post.
         /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
         private void CheckAccess(int userId, int postOwnerId)
         {
             if (userId != postOwnerId)

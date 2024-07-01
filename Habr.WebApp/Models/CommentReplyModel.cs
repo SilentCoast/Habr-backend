@@ -1,0 +1,18 @@
+﻿using Habr.DataAccess.Constraints;
+using System.ComponentModel.DataAnnotations;
+
+namespace Habr.WebApp.Models
+{
+    public class CommentReplyModel
+    {
+        [Required]
+        [MaxLength(ConstraintValue.CommentTextMaxLength)]
+        public string Text {  get; set; }
+
+        [Required]
+        public int PostId {  get; set; }
+
+        [Required]
+        public int ParrentCommentId {  get; set; }
+    }
+}

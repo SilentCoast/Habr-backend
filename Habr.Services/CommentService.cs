@@ -64,10 +64,15 @@ namespace Habr.Services
                 throw new ArgumentException("Comment not found");
             }
 
+            if (comment.IsDeleted)
+            {
+                throw new ArgumentException("Cannot edit deleted comment");
+            }
+
             CheckAccess(comment.UserId, userId);
 
             comment.Text = newText;
-
+            
             comment.ModifiedDate = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
@@ -91,6 +96,7 @@ namespace Habr.Services
         /// <summary>
         /// Checks if User sending the requst owns the comment.
         /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
         private void CheckAccess(int userId, int commentOwnerId)
         {
             if (userId != commentOwnerId)

@@ -60,34 +60,6 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task GetPostsAsync_ShouldReturnAllPosts()
-        {
-            await SeedPostRangeAsync();
-
-            var posts = await _postService.GetPostsAsync();
-
-            Assert.IsNotNull(posts, "Posts collection should not be null");
-            Assert.AreEqual(3, posts.Count(), "Expected number of posts does not match");
-
-            Assert.IsTrue(posts.Any(p => p.Title == "Post 1"));
-            Assert.IsTrue(posts.Any(p => p.Title == "Post 2"));
-            Assert.IsTrue(posts.Any(p => p.Title == "Post 3"));
-        }
-
-        [TestMethod]
-        public async Task GetPostsAsync_Filter_ShouldReturnFilteredPosts()
-        {
-            await SeedPostRangeAsync();
-
-            Expression<Func<Post, bool>> filter = p => p.Title == "Post 1";
-
-            var posts = await _postService.GetPostsAsync(filter);
-
-            Assert.IsNotNull(posts, "Filtered posts collection should not be null");
-            Assert.AreEqual(1, posts.Count(), "Expected number of filtered posts does not match");
-        }
-
-        [TestMethod]
         public async Task GetPublishedPostsAsync_ShouldReturnPublishedPosts()
         {
             await SeedPostRangeAsync();
