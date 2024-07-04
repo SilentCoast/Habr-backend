@@ -19,11 +19,11 @@ namespace Habr.WebApp.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> LogInAsync([FromBody] UserLoginModel model)
+        public async Task<IActionResult> LogIn([FromBody] UserLoginModel model)
         {
             try
             {
-                var userId = await _userService.LogInAsync(model.Email, model.Password);
+                var userId = await _userService.LogIn(model.Email, model.Password);
                 return Ok(userId);
             }
             catch (Exception e)
@@ -35,11 +35,11 @@ namespace Habr.WebApp.Controllers
         [HttpPost("confirm-email")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ConfirmEmailAsync([FromBody][EmailAddress] string email, [FromHeader] int userId)
+        public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, [FromHeader] int userId)
         {
             try
             {
-                await _userService.ConfirmEmailAsync(email, userId);
+                await _userService.ConfirmEmail(email, userId);
                 return Ok();
             }
             catch (Exception e)

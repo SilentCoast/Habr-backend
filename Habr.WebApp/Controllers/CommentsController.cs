@@ -20,13 +20,13 @@ namespace Habr.WebApp.Controllers
         [Route("~/api/posts/{postId}/comments")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddCommentAsync([FromRoute] int postId,
+        public async Task<IActionResult> AddComment([FromRoute] int postId,
             [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
             [FromHeader] int userId)
         {
             try
             {
-                await _commentService.AddCommentAsync(text, postId, userId);
+                await _commentService.AddComment(text, postId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
@@ -39,14 +39,14 @@ namespace Habr.WebApp.Controllers
         [Route("~/api/posts/{postId}/comments/{commentId}/reply")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ReplyToCommentAsync([FromRoute] int postId,
+        public async Task<IActionResult> ReplyToComment([FromRoute] int postId,
             [FromRoute] int commentId,
             [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
             [FromHeader] int userId)
         {
             try
             {
-                await _commentService.ReplyToCommentAsync(text, commentId, postId, userId);
+                await _commentService.ReplyToComment(text, commentId, postId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
@@ -58,11 +58,11 @@ namespace Habr.WebApp.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> EditCommentAsync([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId)
+        public async Task<IActionResult> EditComment([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _commentService.ModifyCommentAsync(newText, id, userId);
+                await _commentService.ModifyComment(newText, id, userId);
                 return Ok();
             }
             catch (Exception e)
@@ -75,11 +75,11 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> DeleteCommentAsync([FromRoute] int id, [FromHeader] int userId)
+        public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _commentService.DeleteCommentAsync(id, userId);
+                await _commentService.DeleteComment(id, userId);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)

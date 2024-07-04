@@ -14,7 +14,7 @@ namespace Habr.Services
             _context = context;
         }
 
-        public async Task<PostViewDTO> GetPostViewAsync(int id)
+        public async Task<PostViewDTO> GetPostView(int id)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == id && p.IsPublished == true)
@@ -29,7 +29,7 @@ namespace Habr.Services
 
             return post ?? throw new ArgumentException("post not found");
         }
-        public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync()
+        public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPosts()
         {
             return await _context.Posts
                 .Where(p => p.IsPublished)
@@ -43,7 +43,7 @@ namespace Habr.Services
                 .OrderByDescending(p => p.PublishDate)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId)
+        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPosts(int userId)
         {
             return await _context.Posts
                 .Where(p => p.IsPublished == false && p.UserId == userId)
@@ -57,7 +57,7 @@ namespace Habr.Services
                 .ToListAsync();
         }
 
-        public async Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false)
+        public async Task AddPost(string title, string text, int userId, bool isPublishedNow = false)
         {
             CheckTitleContraints(title);
             CheckTextContraints(text);
@@ -80,7 +80,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task PublishPostAsync(int postId, int userId)
+        public async Task PublishPost(int postId, int userId)
         {
             var post = await GetPostByIdAsync(postId);
 
@@ -93,7 +93,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UnpublishPostAsync(int postId, int userId)
+        public async Task UnpublishPost(int postId, int userId)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)
@@ -118,7 +118,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null)
+        public async Task UpdatePost(int postId, int userId, string? newTitle = null, string? newText = null)
         {
             var post = await GetPostByIdAsync(postId);
 
@@ -147,7 +147,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePostAsync(int postId, int userId)
+        public async Task DeletePost(int postId, int userId)
         {
             var post = await GetPostByIdAsync(postId);
 

@@ -18,7 +18,7 @@ namespace Habr.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task CreateUserAsync(string email, string password, string? name = null)
+        public async Task CreateUser(string email, string password, string? name = null)
         {
             if (email.Length > ConstraintValue.UserEmailMaxLength)
             {
@@ -61,7 +61,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> LogInAsync(string email, string password)
+        public async Task<int> LogIn(string email, string password)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
 
@@ -74,7 +74,7 @@ namespace Habr.Services
             return user.Id;
         }
 
-        public async Task ConfirmEmailAsync(string email, int userId)
+        public async Task ConfirmEmail(string email, int userId)
         {
             var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId);
             if (user == null)

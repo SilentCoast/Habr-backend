@@ -15,7 +15,7 @@ namespace Habr.Tests
         private IUserService _userService;
 
         [TestInitialize]
-        public async Task InitializeAsync()
+        public async Task Initialize()
         {
             _serviceProvider = new ServiceCollection()
                 .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
@@ -52,13 +52,13 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task CreateUserAsync_ShouldCreateUser()
+        public async Task CreateUser_ShouldCreateUser()
         {
             var name = "Test User";
             var email = "testuser@example.com";
             var password = "Password123!";
 
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
 
             var user = await _secondContext.Users.SingleOrDefaultAsync(u => u.Email == email);
             Assert.IsNotNull(user, "User should be created and found in the database.");
@@ -70,27 +70,27 @@ namespace Habr.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task CreateUserAsync_InvalidEmail_ShouldThrowArgumentException()
+        public async Task CreateUser_InvalidEmail_ShouldThrowArgumentException()
         {
             var name = "Test User";
             var email = "invalid-email";
             var password = "Password123!";
 
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task CreateUserAsync_DuplicateEmail_ShouldThrowArgumentException()
+        public async Task CreateUser_DuplicateEmail_ShouldThrowArgumentException()
         {
             var name = "Test User";
             var email = "existinguser@example.com";
             var password = "Password123!";
 
             //Adds fine
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
             //Throws exception for duplicate email
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
         }
 
         [TestMethod]
@@ -100,11 +100,11 @@ namespace Habr.Tests
             var email = "testuser@example.com";
             var password = "Password123!";
 
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
 
             var user = _secondContext.Users.First();
 
-            var result = await _userService.LogInAsync(email, password);
+            var result = await _userService.LogIn(email, password);
 
             Assert.AreEqual(user.Id, result, "The returned user ID should match the logged-in user's ID.");
         }
@@ -117,21 +117,21 @@ namespace Habr.Tests
             var email = "testuser@example.com";
             var password = "Password123!";
 
-            await _userService.CreateUserAsync(email, password, name);
+            await _userService.CreateUser(email, password, name);
 
-            await _userService.LogInAsync(email, "wrong password");
+            await _userService.LogIn(email, "wrong password");
         }
 
         [TestMethod]
-        public async Task ConfirmEmailAsync_ShouldSetIsEmailConfirmed()
+        public async Task ConfirmEmail_ShouldSetIsEmailConfirmed()
         {
             var email = "email@mail.com";
 
-            await _userService.CreateUserAsync(email, "password");
+            await _userService.CreateUser(email, "password");
 
             var user = _context.Users.First();
 
-            await _userService.ConfirmEmailAsync(email, user.Id);
+            await _userService.ConfirmEmail(email, user.Id);
 
             user = _secondContext.Users.First();
 

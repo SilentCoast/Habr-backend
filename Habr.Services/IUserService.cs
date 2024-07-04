@@ -2,8 +2,8 @@
 {
     public interface IUserService
     {
-        Task CreateUserAsync(string email, string password, string? name = null);
-        Task<int> LogInAsync(string email, string password);
-        Task ConfirmEmailAsync(string email, int userId);
+        Task CreateUser(string email, string password, string? name = null);
+        Task<int> LogIn(string email, string password);
+        Task ConfirmEmail(string email, int userId);
     }
 }

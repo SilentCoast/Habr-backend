@@ -17,7 +17,7 @@ namespace Habr.Tests
         private IUserService _userService;
 
         [TestInitialize]
-        public async Task InitializeAsync()
+        public async Task Initialize()
         {
             _serviceProvider = new ServiceCollection()
                 .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
@@ -58,17 +58,17 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task AddCommentAsync_ShouldAddComment()
+        public async Task AddComment_ShouldAddComment()
         {
-            await _userService.CreateUserAsync("email@mail.com", "pas");
+            await _userService.CreateUser("email@mail.com", "pas");
 
             var user = await _context.Users.FirstAsync();
 
-            await _postService.AddPostAsync("test", "test", user.Id);
+            await _postService.AddPost("test", "test", user.Id);
 
             var post = await _context.Posts.FirstAsync();
 
-            await _commentService.AddCommentAsync("Sample Comment", post.Id, user.Id);
+            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
             var comment = await _secondContext.Comments.FirstOrDefaultAsync();
 
@@ -78,21 +78,21 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task ReplyToCommentAsync_ShouldAddComment()
+        public async Task ReplyToComment_ShouldAddComment()
         {
-            await _userService.CreateUserAsync("email@mail.com", "pas");
+            await _userService.CreateUser("email@mail.com", "pas");
 
             var user = await _context.Users.FirstAsync();
 
-            await _postService.AddPostAsync("test", "test", user.Id);
+            await _postService.AddPost("test", "test", user.Id);
 
             var post = await _context.Posts.FirstAsync();
 
-            await _commentService.AddCommentAsync("Sample Comment", post.Id, user.Id);
+            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
             var parentComment = await _context.Comments.FirstAsync();
 
-            await _commentService.ReplyToCommentAsync("Reply Comment", parentComment.Id, post.Id, user.Id);
+            await _commentService.ReplyToComment("Reply Comment", parentComment.Id, post.Id, user.Id);
 
             var replyComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
 
@@ -104,23 +104,23 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task ModifyCommentAsync_ShouldUpdateComment()
+        public async Task ModifyComment_ShouldUpdateComment()
         {
-            await _userService.CreateUserAsync("email@mail.com", "pas");
+            await _userService.CreateUser("email@mail.com", "pas");
 
             var user = await _context.Users.FirstAsync();
 
-            await _postService.AddPostAsync("test", "test", user.Id);
+            await _postService.AddPost("test", "test", user.Id);
 
             var post = await _context.Posts.FirstAsync();
 
-            await _commentService.AddCommentAsync("Sample Comment", post.Id, user.Id);
+            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
             var comment = await _context.Comments.FirstAsync();
 
             var newText = "newText";
 
-            await _commentService.ModifyCommentAsync(newText, comment.Id, user.Id);
+            await _commentService.ModifyComment(newText, comment.Id, user.Id);
 
             var modifiedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 
@@ -130,23 +130,23 @@ namespace Habr.Tests
         }
 
         [TestMethod]
-        public async Task DeleteCommentAsync_ShouldDeleteComment()
+        public async Task DeleteComment_ShouldDeleteComment()
         {
-            await _userService.CreateUserAsync("email@mail.com", "pas");
+            await _userService.CreateUser("email@mail.com", "pas");
 
             var user = await _context.Users.FirstAsync();
 
-            await _postService.AddPostAsync("test", "test", user.Id);
+            await _postService.AddPost("test", "test", user.Id);
 
             var post = await _context.Posts.FirstAsync();
 
-            await _commentService.AddCommentAsync("Sample Comment", post.Id, user.Id);
+            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
             var comment = await _context.Comments.FirstAsync();
 
             var initialModifiedDate = comment.ModifiedDate;
 
-            await _commentService.DeleteCommentAsync(comment.Id, user.Id);
+            await _commentService.DeleteComment(comment.Id, user.Id);
 
             var deletedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 

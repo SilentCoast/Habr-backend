@@ -14,7 +14,7 @@ namespace Habr.Services
             _context = context;
         }
 
-        public async Task AddCommentAsync(string text, int postId, int userId)
+        public async Task AddComment(string text, int postId, int userId)
         {
             _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
 
@@ -32,7 +32,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId)
+        public async Task ReplyToComment(string text, int parentCommentId, int postId, int userId)
         {
             _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
 
@@ -53,7 +53,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ModifyCommentAsync(string newText, int commentId, int userId)
+        public async Task ModifyComment(string newText, int commentId, int userId)
         {
             CheckTextConstraints(newText);
 
@@ -79,7 +79,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCommentAsync(int commentId, int userId)
+        public async Task DeleteComment(int commentId, int userId)
         {
             var comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
 

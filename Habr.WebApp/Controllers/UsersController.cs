@@ -20,7 +20,7 @@ namespace Habr.WebApp.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserCreateModel model)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -29,7 +29,7 @@ namespace Habr.WebApp.Controllers
 
             try
             {
-                await _userService.CreateUserAsync(model.Email, model.Password, model.Name);
+                await _userService.CreateUser(model.Email, model.Password, model.Name);
             }
             catch (Exception e)
             {
