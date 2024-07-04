@@ -20,11 +20,11 @@ namespace Habr.WebApp.Controllers
         [HttpPost("add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddCommentAsync([FromHeader] string text, [FromHeader] int postId, [FromHeader] int userId)
+        public async Task<IActionResult> AddCommentAsync([FromBody] CommentAddModel model, [FromHeader] int userId)
         {
             try
             {
-                await _commentService.AddCommentAsync(text, postId, userId);
+                await _commentService.AddCommentAsync(model.Text, model.PostId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
