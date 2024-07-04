@@ -65,15 +65,15 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> DeleteCommentAsync([FromHeader] int commentId, [FromHeader] int userId)
+        public async Task<IActionResult> DeleteCommentAsync([FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _commentService.DeleteCommentAsync(commentId, userId);
+                await _commentService.DeleteCommentAsync(id, userId);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
