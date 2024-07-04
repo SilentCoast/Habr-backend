@@ -33,7 +33,7 @@ namespace Habr.Tests
 
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
             Configurator.ConfigureDbContextOptions(optionsBuilder);
-            
+
             _secondContext = new DataContext(optionsBuilder.Options);
 
             await _context.Database.MigrateAsync();
@@ -76,7 +76,7 @@ namespace Habr.Tests
             var email = "invalid-email";
             var password = "Password123!";
 
-            await _userService.CreateUserAsync(email, password,name);
+            await _userService.CreateUserAsync(email, password, name);
         }
 
         [TestMethod]

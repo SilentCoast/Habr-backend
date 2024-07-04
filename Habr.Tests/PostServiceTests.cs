@@ -1,10 +1,9 @@
-﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess;
+﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 
 namespace Habr.Tests
 {
@@ -87,13 +86,13 @@ namespace Habr.Tests
         [TestMethod]
         public async Task PublishPostAsync_ShouldPublishPost()
         {
-            await _userService.CreateUserAsync("email@mail.com","password");
+            await _userService.CreateUserAsync("email@mail.com", "password");
 
             var user = await _context.Users.FirstAsync();
             await _postService.AddPostAsync("test", "test", user.Id);
 
             var post = await _context.Posts.FirstAsync();
-            
+
             await _postService.PublishPostAsync(post.Id, user.Id);
 
             post = await _secondContext.Posts.FirstAsync();
@@ -124,7 +123,7 @@ namespace Habr.Tests
         public async Task AddPostAsync_ValidPost_ShouldAddToDatabase()
         {
             await _userService.CreateUserAsync("email@mail.com", "pas");
-            
+
             var user = await _context.Users.FirstAsync();
 
             var title = "Sample Title";
@@ -198,7 +197,7 @@ namespace Habr.Tests
             var post = await _context.Posts.FirstAsync();
 
             var exception = await Assert.ThrowsExceptionAsync<UnauthorizedAccessException>(() =>
-                _postService.UnpublishPostAsync(post.Id, user.Id+1));
+                _postService.UnpublishPostAsync(post.Id, user.Id + 1));
         }
 
         [TestMethod]
@@ -274,7 +273,7 @@ namespace Habr.Tests
             var newTitle = "Updated Title";
             var newText = "Updated Text";
 
-            await _postService.UpdatePostAsync(post.Id, user.Id+1, newTitle, newText);
+            await _postService.UpdatePostAsync(post.Id, user.Id + 1, newTitle, newText);
         }
 
         [TestMethod]
@@ -318,7 +317,7 @@ namespace Habr.Tests
 
             var post = await _context.Posts.FirstAsync();
 
-            await _postService.DeletePostAsync(post.Id, user.Id+1);
+            await _postService.DeletePostAsync(post.Id, user.Id + 1);
         }
 
         private async Task SeedPostRangeAsync(int? userId = null)

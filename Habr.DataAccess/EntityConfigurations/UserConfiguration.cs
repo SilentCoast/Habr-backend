@@ -1,7 +1,7 @@
-﻿using Habr.DataAccess.Entities;
+﻿using Habr.DataAccess.Constraints;
+using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Habr.DataAccess.Constraints;
 
 namespace Habr.DataAccess.EntityConfigurations
 {

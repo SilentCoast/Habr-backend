@@ -1,8 +1,6 @@
-﻿using Habr.DataAccess;
-using Habr.Services;
+﻿using Habr.Services;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Habr.WebApp.Controllers
 {
@@ -22,7 +20,7 @@ namespace Habr.WebApp.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPostAsync([FromRoute]int id)
+        public async Task<IActionResult> GetPostAsync([FromRoute] int id)
         {
             try
             {
@@ -39,8 +37,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPublishedPostsAsync()
         {
-            try 
-            { 
+            try
+            {
                 var posts = await _postService.GetPublishedPostsAsync();
                 return Ok(posts);
             }
@@ -77,7 +75,7 @@ namespace Habr.WebApp.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreatePostAsync([FromHeader] int userId,[FromBody] PostCreateModel model)
+        public async Task<IActionResult> CreatePostAsync([FromHeader] int userId, [FromBody] PostCreateModel model)
         {
             try
             {

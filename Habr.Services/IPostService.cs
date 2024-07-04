@@ -1,6 +1,4 @@
 ﻿using Habr.DataAccess.DTOs;
-using Habr.DataAccess.Entities;
-using System.Linq.Expressions;
 
 namespace Habr.Services
 {

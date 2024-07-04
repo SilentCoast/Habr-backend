@@ -7,12 +7,12 @@ namespace Habr.WebApp.Models
     {
         [Required]
         [MaxLength(ConstraintValue.CommentTextMaxLength)]
-        public string Text {  get; set; }
+        public string Text { get; set; }
 
         [Required]
-        public int PostId {  get; set; }
+        public int PostId { get; set; }
 
         [Required]
-        public int ParentCommentId {  get; set; }
+        public int ParentCommentId { get; set; }
     }
 }

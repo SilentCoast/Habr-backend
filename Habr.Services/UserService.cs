@@ -20,7 +20,7 @@ namespace Habr.Services
 
         public async Task CreateUserAsync(string email, string password, string? name = null)
         {
-            if(email.Length > ConstraintValue.UserEmailMaxLength)
+            if (email.Length > ConstraintValue.UserEmailMaxLength)
             {
                 throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
             }
@@ -35,7 +35,7 @@ namespace Habr.Services
                 throw new ArgumentException("The email is already taken");
             }
 
-            if(name == null)
+            if (name == null)
             {
                 name = email.Split('@')[0];
             }
@@ -60,7 +60,7 @@ namespace Habr.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
-        
+
         public async Task<int> LogInAsync(string email, string password)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");

@@ -72,7 +72,7 @@ namespace Habr.Services
             CheckAccess(comment.UserId, userId);
 
             comment.Text = newText;
-            
+
             comment.ModifiedDate = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
@@ -106,7 +106,7 @@ namespace Habr.Services
         }
         private void CheckTextConstraints(string text)
         {
-            if(text.Length > ConstraintValue.CommentTextMaxLength)
+            if (text.Length > ConstraintValue.CommentTextMaxLength)
             {
                 throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {ConstraintValue.CommentTextMaxLength} symbols");
             }

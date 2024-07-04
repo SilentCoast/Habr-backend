@@ -2,7 +2,6 @@
 using Habr.DataAccess;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 namespace Habr.WebApp

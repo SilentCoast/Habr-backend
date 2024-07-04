@@ -2,7 +2,6 @@
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 
 namespace Habr.WebApp.Controllers
 {
@@ -16,7 +15,7 @@ namespace Habr.WebApp.Controllers
         {
             _userService = userService;
         }
-        
+
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

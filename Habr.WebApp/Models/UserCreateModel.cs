@@ -13,6 +13,6 @@ namespace Habr.WebApp.Models
         [Required]
         public string Password { get; set; }
 
-        public string? Name {  get; set; }
+        public string? Name { get; set; }
     }
 }

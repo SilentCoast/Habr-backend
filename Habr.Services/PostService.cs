@@ -13,7 +13,7 @@ namespace Habr.Services
         {
             _context = context;
         }
-        
+
         public async Task<PostViewDTO> GetPostViewAsync(int id)
         {
             var post = await _context.Posts
