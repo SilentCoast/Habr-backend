@@ -3,7 +3,6 @@ using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Habr.Services
 {
@@ -15,6 +14,21 @@ namespace Habr.Services
             _context = context;
         }
         
+        public async Task<PostViewDTO> GetPostViewAsync(int id)
+        {
+            var post = await _context.Posts
+                .Where(p => p.Id == id && p.IsPublished == true)
+                .Select(p => new PostViewDTO
+                {
+                    Title = p.Title,
+                    Text = p.Text,
+                    AuthorEmail = p.User.Email,
+                    PublishDate = p.PublishedDate,
+                    Comments = p.Comments
+                }).SingleOrDefaultAsync();
+
+            return post ?? throw new ArgumentException("post not found");
+        }
         public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync()
         {
             return await _context.Posts

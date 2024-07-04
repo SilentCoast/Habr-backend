@@ -1,8 +1,8 @@
 ﻿using Habr.DataAccess.Entities;
 
-namespace Habr.WebApp.Models
+namespace Habr.DataAccess.DTOs
 {
-    public class PostDTO
+    public class PostViewDTO
     {
         public string Title {  get; set; }
         public string Text {  get; set; }

@@ -6,6 +6,7 @@ namespace Habr.Services
 {
     public interface IPostService
     {
+        Task<PostViewDTO> GetPostViewAsync(int id);
         Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync();
         Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId);
         Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false);

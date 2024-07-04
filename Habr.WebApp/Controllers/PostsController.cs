@@ -12,40 +12,26 @@ namespace Habr.WebApp.Controllers
     {
         private readonly ILogger<PostsController> _logger;
         private readonly IPostService _postService;
-        private readonly DataContext _context;
 
-        public PostsController(ILogger<PostsController> logger, IPostService postService, DataContext context)
+        public PostsController(ILogger<PostsController> logger, IPostService postService)
         {
             _logger = logger;
             _postService = postService;
-            _context = context;
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPostAsync([FromRoute]int id)
         {
-            //TODO: for mentor: is it ok to use dbContext in controller?
-            //Should this code be put into _postService.GetPostAsync(int id); ?
-            var post = await _context.Posts
-                .Where(p => p.Id == id && p.IsPublished == true)
-                .Select(p => new PostDTO
-                {
-                    Title = p.Title,
-                    Text = p.Text,
-                    AuthorEmail = p.User.Email,
-                    PublishDate = p.PublishedDate,
-                    Comments = p.Comments
-                }).SingleOrDefaultAsync();
-
-            if (post == null)
+            try
             {
-                return StatusCode(StatusCodes.Status404NotFound, "Post not found");
+                return Ok(await _postService.GetPostViewAsync(id));
             }
-
-            return Ok(post);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("published")]
