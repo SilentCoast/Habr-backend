@@ -13,6 +13,6 @@ namespace Habr.WebApp.Models
         public int PostId {  get; set; }
 
         [Required]
-        public int ParrentCommentId {  get; set; }
+        public int ParentCommentId {  get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Habr.WebApp.Controllers
         {
             try
             {
-                await _commentService.ReplyToCommentAsync(model.Text, model.ParrentCommentId, model.PostId, userId);
+                await _commentService.ReplyToCommentAsync(model.Text, model.ParentCommentId, model.PostId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
