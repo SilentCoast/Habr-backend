@@ -74,7 +74,7 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePostAsync([FromHeader] int userId,[FromBody] PostCreateModel model)
@@ -91,15 +91,15 @@ namespace Habr.WebApp.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPut("edit")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> EditPostAsync([FromBody] PostUpdateModel model, [FromHeader] int userId)
+        public async Task<IActionResult> EditPostAsync([FromRoute] int id, [FromBody] PostUpdateModel model, [FromHeader] int userId)
         {
             try
             {
-                await _postService.UpdatePostAsync(model.Id, userId, model.NewTitle, model.NewText);
+                await _postService.UpdatePostAsync(id, userId, model.NewTitle, model.NewText);
             }
             catch (UnauthorizedAccessException e)
             {
@@ -113,15 +113,15 @@ namespace Habr.WebApp.Controllers
             return Ok();
         }
 
-        [HttpPut("publish")]
+        [HttpPut("{id}/publish")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PublishPostAsync([FromHeader] int postId, [FromHeader] int userId)
+        public async Task<IActionResult> PublishPostAsync([FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _postService.PublishPostAsync(postId, userId);
+                await _postService.PublishPostAsync(id, userId);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
@@ -134,15 +134,15 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpPut("unpublish")]
+        [HttpPut("{id}/unpublish")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> UnpublishPostAsync([FromHeader] int postId, [FromHeader] int userId)
+        public async Task<IActionResult> UnpublishPostAsync([FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _postService.UnpublishPostAsync(postId, userId);
+                await _postService.UnpublishPostAsync(id, userId);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
@@ -155,15 +155,15 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> DeletePostAsync([FromHeader] int postId, [FromHeader] int userId)
+        public async Task<IActionResult> DeletePostAsync([FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _postService.DeletePostAsync(postId, userId);
+                await _postService.DeletePostAsync(id, userId);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
