@@ -36,7 +36,7 @@ namespace Habr.WebApp.Controllers
         [HttpPost("confirm-email")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ConfirmEmailAsync([FromHeader][EmailAddress] string email, [FromHeader] int userId)
+        public async Task<IActionResult> ConfirmEmailAsync([FromBody][EmailAddress] string email, [FromHeader] int userId)
         {
             try
             {
