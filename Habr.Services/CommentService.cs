@@ -14,9 +14,10 @@ namespace Habr.Services
             _context = context;
         }
 
-        public async Task AddComment(string text, int postId, int userId)
+        public async Task AddComment(string text, int postId, int userId, CancellationToken cancellationToken = default)
         {
-            _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
+            _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
+                ?? throw new ArgumentException("Post not found");
 
             CheckTextConstraints(text);
 
@@ -29,14 +30,16 @@ namespace Habr.Services
             };
 
             _context.Add(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task ReplyToComment(string text, int parentCommentId, int postId, int userId)
+        public async Task ReplyToComment(string text, int parentCommentId, int postId, int userId, CancellationToken cancellationToken = default)
         {
-            _ = await _context.Posts.FindAsync(postId) ?? throw new ArgumentException("Post not found");
+            _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
+                ?? throw new ArgumentException("Post not found");
 
-            _ = await _context.Comments.FindAsync(parentCommentId) ?? throw new ArgumentException("Parent comment not found");
+            _ = await _context.Comments.SingleOrDefaultAsync(p => p.Id == parentCommentId, cancellationToken)
+                ?? throw new ArgumentException("Parent comment not found");
 
             CheckTextConstraints(text);
 
@@ -50,14 +53,14 @@ namespace Habr.Services
             };
 
             _context.Add(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task ModifyComment(string newText, int commentId, int userId)
+        public async Task ModifyComment(string newText, int commentId, int userId, CancellationToken cancellationToken = default)
         {
             CheckTextConstraints(newText);
 
-            var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId);
+            var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId, cancellationToken);
 
             if (comment == null)
             {
@@ -76,12 +79,13 @@ namespace Habr.Services
             comment.ModifiedDate = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteComment(int commentId, int userId)
+        public async Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken = default)
         {
-            var comment = await _context.Comments.SingleAsync(p => p.Id == commentId);
+            var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId, cancellationToken)
+                ?? throw new ArgumentException("Comment not found");
 
             CheckAccess(comment.UserId, userId);
 
@@ -90,7 +94,7 @@ namespace Habr.Services
             comment.ModifiedDate = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>

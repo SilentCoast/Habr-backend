@@ -20,11 +20,16 @@ namespace Habr.WebApp.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPost([FromRoute] int id)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> GetPost([FromRoute] int id, CancellationToken cancellationToken = default)
         {
             try
             {
-                return Ok(await _postService.GetPostView(id));
+                return Ok(await _postService.GetPostView(id, cancellationToken));
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -35,12 +40,17 @@ namespace Habr.WebApp.Controllers
         [HttpGet("published")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPublishedPosts()
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> GetPublishedPosts(CancellationToken cancellationToken = default)
         {
             try
             {
-                var posts = await _postService.GetPublishedPosts();
+                var posts = await _postService.GetPublishedPosts(cancellationToken);
                 return Ok(posts);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -52,11 +62,12 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetDraftedPosts([FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> GetDraftedPosts([FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var posts = await _postService.GetDraftedPosts(userId);
+                var posts = await _postService.GetDraftedPosts(userId, cancellationToken);
                 if (posts.Any())
                 {
                     return Ok(posts);
@@ -65,6 +76,10 @@ namespace Habr.WebApp.Controllers
                 {
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -75,11 +90,16 @@ namespace Habr.WebApp.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreatePost([FromHeader] int userId, [FromBody] PostCreateModel model)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> CreatePost([FromHeader] int userId, [FromBody] PostCreateModel model, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _postService.AddPost(model.Title, model.Text, userId, model.IsPublishedNow);
+                await _postService.AddPost(model.Title, model.Text, userId, model.IsPublishedNow, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -93,15 +113,20 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostUpdateModel model, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostUpdateModel model, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _postService.UpdatePost(id, userId, model.NewTitle, model.NewText);
+                await _postService.UpdatePost(id, userId, model.NewTitle, model.NewText, cancellationToken);
             }
             catch (UnauthorizedAccessException e)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -115,16 +140,21 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PublishPost([FromRoute] int id, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> PublishPost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _postService.PublishPost(id, userId);
+                await _postService.PublishPost(id, userId, cancellationToken);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -136,16 +166,21 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> UnpublishPost([FromRoute] int id, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> UnpublishPost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _postService.UnpublishPost(id, userId);
+                await _postService.UnpublishPost(id, userId, cancellationToken);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -157,16 +192,21 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> DeletePost([FromRoute] int id, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> DeletePost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _postService.DeletePost(id, userId);
+                await _postService.DeletePost(id, userId, cancellationToken);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {

@@ -36,6 +36,11 @@ namespace Habr.WebApp
             {
                 notFoundResponse.Description = "Not found - The requested resource does not exist.";
             }
+
+            if (operation.Responses.TryGetValue("408", out OpenApiResponse timeOutResponse))
+            {
+                timeOutResponse.Description = "Request Timeout - Request timed out or operation was cancelled.";
+            }
         }
     }
 }

@@ -20,14 +20,20 @@ namespace Habr.WebApp.Controllers
         [Route("~/api/posts/{postId}/comments")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> AddComment([FromRoute] int postId,
             [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
-            [FromHeader] int userId)
+            [FromHeader] int userId,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                await _commentService.AddComment(text, postId, userId);
+                await _commentService.AddComment(text, postId, userId, cancellationToken);
                 return StatusCode(StatusCodes.Status201Created);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception ex)
             {
@@ -39,15 +45,21 @@ namespace Habr.WebApp.Controllers
         [Route("~/api/posts/{postId}/comments/{commentId}/reply")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> ReplyToComment([FromRoute] int postId,
             [FromRoute] int commentId,
             [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
-            [FromHeader] int userId)
+            [FromHeader] int userId,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                await _commentService.ReplyToComment(text, commentId, postId, userId);
+                await _commentService.ReplyToComment(text, commentId, postId, userId, cancellationToken);
                 return StatusCode(StatusCodes.Status201Created);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception ex)
             {
@@ -58,12 +70,17 @@ namespace Habr.WebApp.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> EditComment([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> EditComment([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _commentService.ModifyComment(newText, id, userId);
+                await _commentService.ModifyComment(newText, id, userId, cancellationToken);
                 return Ok();
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -75,16 +92,21 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _commentService.DeleteComment(id, userId);
+                await _commentService.DeleteComment(id, userId, cancellationToken);
                 return Ok();
             }
             catch (UnauthorizedAccessException e)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, e.Message);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {

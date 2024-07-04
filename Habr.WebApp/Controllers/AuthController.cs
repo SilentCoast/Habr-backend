@@ -19,12 +19,17 @@ namespace Habr.WebApp.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> LogIn([FromBody] UserLoginModel model)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> LogIn([FromBody] UserLoginModel model, CancellationToken cancellationToken = default)
         {
             try
             {
-                var userId = await _userService.LogIn(model.Email, model.Password);
+                var userId = await _userService.LogIn(model.Email, model.Password, cancellationToken);
                 return Ok(userId);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
@@ -35,12 +40,17 @@ namespace Habr.WebApp.Controllers
         [HttpPost("confirm-email")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, [FromHeader] int userId)
+        [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
+        public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _userService.ConfirmEmail(email, userId);
+                await _userService.ConfirmEmail(email, userId, cancellationToken);
                 return Ok();
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status408RequestTimeout);
             }
             catch (Exception e)
             {
