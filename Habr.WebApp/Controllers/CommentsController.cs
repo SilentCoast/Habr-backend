@@ -49,14 +49,14 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpPut("edit")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> EditComment([FromHeader] string newText, [FromHeader] int commentId, [FromHeader] int userId)
+        public async Task<IActionResult> EditCommentAsync([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId)
         {
             try
             {
-                await _commentService.ModifyCommentAsync(newText, commentId, userId);
+                await _commentService.ModifyCommentAsync(newText, id, userId);
                 return Ok();
             }
             catch (Exception e)
