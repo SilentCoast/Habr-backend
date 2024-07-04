@@ -1,6 +1,7 @@
-﻿using Habr.Services;
-using Habr.WebApp.Models;
+﻿using Habr.DataAccess.Constraints;
+using Habr.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Habr.WebApp.Controllers
 {
@@ -15,14 +16,17 @@ namespace Habr.WebApp.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
+        [Route("~/api/posts/{postId}/comments")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddCommentAsync([FromBody] CommentAddModel model, [FromHeader] int userId)
+        public async Task<IActionResult> AddCommentAsync([FromRoute] int postId,
+            [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
+            [FromHeader] int userId)
         {
             try
             {
-                await _commentService.AddCommentAsync(model.Text, model.PostId, userId);
+                await _commentService.AddCommentAsync(text, postId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
@@ -31,14 +35,18 @@ namespace Habr.WebApp.Controllers
             }
         }
 
-        [HttpPost("reply")]
+        [HttpPost]
+        [Route("~/api/posts/{postId}/comments/{commentId}/reply")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ReplyToCommentAsync([FromBody] CommentReplyModel model, [FromHeader] int userId)
+        public async Task<IActionResult> ReplyToCommentAsync([FromRoute] int postId,
+            [FromRoute] int commentId,
+            [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
+            [FromHeader] int userId)
         {
             try
             {
-                await _commentService.ReplyToCommentAsync(model.Text, model.ParentCommentId, model.PostId, userId);
+                await _commentService.ReplyToCommentAsync(text, commentId, postId, userId);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception ex)
