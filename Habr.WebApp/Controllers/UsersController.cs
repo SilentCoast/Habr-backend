@@ -17,7 +17,7 @@ namespace Habr.WebApp.Controllers
             _userService = userService;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUserAsync([FromBody] UserCreateModel model)
