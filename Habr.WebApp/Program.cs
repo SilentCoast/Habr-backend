@@ -1,6 +1,7 @@
 
 using Habr.DataAccess;
 using Habr.Services;
+using Habr.Services.AutoMapperProfiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -24,6 +25,8 @@ namespace Habr.WebApp
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
+            builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
             builder.Services.AddLogging(builder =>
             {

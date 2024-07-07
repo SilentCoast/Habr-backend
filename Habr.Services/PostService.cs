@@ -1,4 +1,6 @@
-﻿using Habr.DataAccess;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Habr.DataAccess;
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
@@ -9,23 +11,20 @@ namespace Habr.Services
     public class PostService : IPostService
     {
         private readonly DataContext _context;
-        public PostService(DataContext context)
+        private readonly IMapper _mapper;
+
+        public PostService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<PostViewDTO> GetPostView(int id, CancellationToken cancellationToken = default)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == id && p.IsPublished == true)
-                .Select(p => new PostViewDTO
-                {
-                    Title = p.Title,
-                    Text = p.Text,
-                    AuthorEmail = p.User.Email,
-                    PublishDate = p.PublishedDate,
-                    Comments = p.Comments
-                }).SingleOrDefaultAsync(cancellationToken);
+                .ProjectTo<PostViewDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(cancellationToken);
 
             return post ?? throw new ArgumentException("post not found");
         }
@@ -33,13 +32,7 @@ namespace Habr.Services
         {
             return await _context.Posts
                 .Where(p => p.IsPublished)
-                .Select(p => new PublishedPostDTO
-                {
-                    PostId = p.Id,
-                    Title = p.Title,
-                    AuthorEmail = p.User.Email,
-                    PublishDate = (DateTime)p.PublishedDate
-                })
+                .ProjectTo<PublishedPostDTO>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.PublishDate)
                 .ToListAsync(cancellationToken);
         }
@@ -47,12 +40,7 @@ namespace Habr.Services
         {
             return await _context.Posts
                 .Where(p => p.IsPublished == false && p.UserId == userId)
-                .Select(p => new DraftedPostDTO
-                {
-                    PostId = p.Id,
-                    CreatedAt = p.CreatedDate,
-                    UpdatedAt = p.ModifiedDate
-                })
+                .ProjectTo<DraftedPostDTO>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.UpdatedAt)
                 .ToListAsync(cancellationToken);
         }
