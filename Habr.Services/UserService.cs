@@ -2,6 +2,7 @@
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.Services.Exceptions;
+using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -22,17 +23,17 @@ namespace Habr.Services
         {
             if (email.Length > ConstraintValue.UserEmailMaxLength)
             {
-                throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
+                throw new ArgumentException(string.Format(ExceptionMessageGeneric.ValueTooLongMaxLengthIs, nameof(email), ConstraintValue.UserEmailMaxLength));
             }
 
             if (!IsValidEmail(email))
             {
-                throw new ArgumentException("Invalid email format.");
+                throw new ArgumentException(ExceptionMessage.InvalidEmail);
             }
 
             if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                throw new ArgumentException("The email is already taken");
+                throw new ArgumentException(ExceptionMessage.EmailTaken);
             }
 
             if (name == null)
@@ -42,7 +43,7 @@ namespace Habr.Services
 
             if (name.Length > ConstraintValue.UserNameMaxLength)
             {
-                throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
+                throw new ArgumentException(string.Format(ExceptionMessageGeneric.ValueTooLongMaxLengthIs, nameof(name), ConstraintValue.UserNameMaxLength));
             }
 
             var salt = _passwordHasher.GenerateSalt();
@@ -64,12 +65,12 @@ namespace Habr.Services
         public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
-                ?? throw new LogInException("The email is incorrect");
+                ?? throw new LogInException(ExceptionMessage.EmailIncorrect);
 
             var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
             {
-                throw new LogInException("Wrong credentials");
+                throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
             return user.Id;
@@ -80,7 +81,7 @@ namespace Habr.Services
             var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId, cancellationToken);
             if (user == null)
             {
-                throw new ArgumentException("User doesn't exist");
+                throw new ArgumentException(ExceptionMessage.UserDoesntExist);
             }
 
             //add actual confirmation mechanism
