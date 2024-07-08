@@ -1,7 +1,7 @@
-
 using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
+using Habr.WebApp.ExceptionHandle;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -27,6 +27,8 @@ namespace Habr.WebApp
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
+
+            builder.Services.AddGlobalExceptionHandler();
 
             builder.Services.AddLogging(builder =>
             {
@@ -72,6 +74,8 @@ namespace Habr.WebApp
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseGlobalExceptionHandler();
 
             app.MapControllers();
 

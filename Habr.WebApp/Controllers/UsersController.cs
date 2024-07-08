@@ -27,14 +27,7 @@ namespace Habr.WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
-            {
-                await _userService.CreateUser(model.Email, model.Password, model.Name);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await _userService.CreateUser(model.Email, model.Password, model.Name);
 
             return StatusCode(StatusCodes.Status201Created);
         }

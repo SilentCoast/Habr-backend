@@ -64,12 +64,12 @@ namespace Habr.Services
         public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
-                ?? throw new UnauthorizedAccessException("The email is incorrect");
+                ?? throw new LogInException("The email is incorrect");
 
             var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
             {
-                throw new UnauthorizedAccessException("Wrong credentials");
+                throw new LogInException("Wrong credentials");
             }
 
             return user.Id;
