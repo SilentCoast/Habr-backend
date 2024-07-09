@@ -18,9 +18,9 @@ namespace Habr.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task CreateUserAsync(string email, string password, string? name = null)
+        public async Task CreateUser(string email, string password, string? name = null, CancellationToken cancellationToken = default)
         {
-            if(email.Length > ConstraintValue.UserEmailMaxLength)
+            if (email.Length > ConstraintValue.UserEmailMaxLength)
             {
                 throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
             }
@@ -35,7 +35,7 @@ namespace Habr.Services
                 throw new ArgumentException("The email is already taken");
             }
 
-            if(name == null)
+            if (name == null)
             {
                 name = email.Split('@')[0];
             }
@@ -58,12 +58,13 @@ namespace Habr.Services
             };
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
-        
-        public async Task<int> LogIn(string email, string password)
+
+        public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email) ?? throw new UnauthorizedAccessException("The email is incorrect");
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
+                ?? throw new UnauthorizedAccessException("The email is incorrect");
 
             var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
@@ -74,9 +75,9 @@ namespace Habr.Services
             return user.Id;
         }
 
-        public async Task ConfirmEmailAsync(string email, int userId)
+        public async Task ConfirmEmail(string email, int userId, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId);
+            var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId, cancellationToken);
             if (user == null)
             {
                 throw new ArgumentException("User doesn't exist");
@@ -91,7 +92,7 @@ namespace Habr.Services
             user.IsEmailConfirmed = true;
 
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         private bool IsValidEmail(string email)

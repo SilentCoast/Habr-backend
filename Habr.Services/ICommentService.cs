@@ -2,9 +2,9 @@
 {
     public interface ICommentService
     {
-        Task AddCommentAsync(string text, int postId, int userId);
-        Task ReplyToCommentAsync(string text, int parentCommentId, int postId, int userId);
-        Task ModifyCommentAsync(string newText, int commentId, int userId);
-        Task DeleteCommentAsync(int commentId, int userId);
+        Task AddComment(string text, int postId, int userId, CancellationToken cancellationToken = default);
+        Task ReplyToComment(string text, int parentCommentId, int postId, int userId, CancellationToken cancellationToken = default);
+        Task ModifyComment(string newText, int commentId, int userId, CancellationToken cancellationToken = default);
+        Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken = default);
     }
 }

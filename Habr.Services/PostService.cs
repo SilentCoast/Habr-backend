@@ -3,7 +3,6 @@ using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Habr.Services
 {
@@ -15,15 +14,22 @@ namespace Habr.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> GetPostsAsync()
+        public async Task<PostViewDTO> GetPostView(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Posts.AsNoTracking().ToListAsync();
+            var post = await _context.Posts
+                .Where(p => p.Id == id && p.IsPublished == true)
+                .Select(p => new PostViewDTO
+                {
+                    Title = p.Title,
+                    Text = p.Text,
+                    AuthorEmail = p.User.Email,
+                    PublishDate = p.PublishedDate,
+                    Comments = p.Comments
+                }).SingleOrDefaultAsync(cancellationToken);
+
+            return post ?? throw new ArgumentException("post not found");
         }
-        public async Task<IEnumerable<Post>> GetPostsAsync(Expression<Func<Post, bool>> filter)
-        {
-            return await _context.Posts.Where(filter).AsNoTracking().ToListAsync();
-        }
-        public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync()
+        public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPosts(CancellationToken cancellationToken = default)
         {
             return await _context.Posts
                 .Where(p => p.IsPublished)
@@ -35,9 +41,9 @@ namespace Habr.Services
                     PublishDate = (DateTime)p.PublishedDate
                 })
                 .OrderByDescending(p => p.PublishDate)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
-        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId)
+        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Posts
                 .Where(p => p.IsPublished == false && p.UserId == userId)
@@ -48,10 +54,10 @@ namespace Habr.Services
                     UpdatedAt = p.ModifiedDate
                 })
                 .OrderByDescending(p => p.UpdatedAt)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false)
+        public async Task AddPost(string title, string text, int userId, bool isPublishedNow = false, CancellationToken cancellationToken = default)
         {
             CheckTitleContraints(title);
             CheckTextContraints(text);
@@ -71,12 +77,12 @@ namespace Habr.Services
             }
 
             _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task PublishPostAsync(int postId, int userId)
+        public async Task PublishPost(int postId, int userId, CancellationToken cancellationToken = default)
         {
-            var post = await GetPostByIdAsync(postId);
+            var post = await GetPostById(postId, cancellationToken);
 
             CheckAccess(userId, post.UserId);
 
@@ -84,14 +90,14 @@ namespace Habr.Services
             post.PublishedDate = DateTime.UtcNow;
 
             _context.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UnpublishPostAsync(int postId, int userId)
+        public async Task UnpublishPost(int postId, int userId, CancellationToken cancellationToken = default)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -109,12 +115,12 @@ namespace Habr.Services
             post.PublishedDate = null;
 
             _context.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null)
+        public async Task UpdatePost(int postId, int userId, string? newTitle = null, string? newText = null, CancellationToken cancellationToken = default)
         {
-            var post = await GetPostByIdAsync(postId);
+            var post = await GetPostById(postId, cancellationToken);
 
             CheckAccess(userId, post.UserId);
 
@@ -138,22 +144,23 @@ namespace Habr.Services
             post.ModifiedDate = DateTime.UtcNow;
 
             _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeletePostAsync(int postId, int userId)
+        public async Task DeletePost(int postId, int userId, CancellationToken cancellationToken = default)
         {
-            var post = await GetPostByIdAsync(postId);
+            var post = await GetPostById(postId, cancellationToken);
 
             CheckAccess(userId, post.UserId);
 
             _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>
         /// Checks if User sending the requst owns the post.
         /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
         private void CheckAccess(int userId, int postOwnerId)
         {
             if (userId != postOwnerId)
@@ -161,16 +168,11 @@ namespace Habr.Services
                 throw new UnauthorizedAccessException($"Access denied. User can only modify their own posts");
             }
         }
-        private async Task<Post> GetPostByIdAsync(int postId)
+        private async Task<Post> GetPostById(int postId, CancellationToken cancellationToken)
         {
-            var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId);
+            var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken);
 
-            if (post == null)
-            {
-                throw new ArgumentException("The post does not exist");
-            }
-
-            return post;
+            return post ?? throw new ArgumentException("The post does not exist");
         }
         private void CheckTitleContraints(string title)
         {

@@ -1,19 +1,16 @@
 ﻿using Habr.DataAccess.DTOs;
-using Habr.DataAccess.Entities;
-using System.Linq.Expressions;
 
 namespace Habr.Services
 {
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetPostsAsync();
-        Task<IEnumerable<Post>> GetPostsAsync(Expression<Func<Post, bool>> filter);
-        Task<IEnumerable<PublishedPostDTO>> GetPublishedPostsAsync();
-        Task<IEnumerable<DraftedPostDTO>> GetDraftedPostsAsync(int userId);
-        Task AddPostAsync(string title, string text, int userId, bool isPublishedNow = false);
-        Task PublishPostAsync(int postId, int userId);
-        Task UnpublishPostAsync(int postId, int userId);
-        Task UpdatePostAsync(int postId, int userId, string? newTitle = null, string? newText = null);
-        Task DeletePostAsync(int postId, int userId);
+        Task<PostViewDTO> GetPostView(int id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<PublishedPostDTO>> GetPublishedPosts(CancellationToken cancellationToken = default);
+        Task<IEnumerable<DraftedPostDTO>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default);
+        Task AddPost(string title, string text, int userId, bool isPublishedNow = false, CancellationToken cancellationToken = default);
+        Task PublishPost(int postId, int userId, CancellationToken cancellationToken = default);
+        Task UnpublishPost(int postId, int userId, CancellationToken cancellationToken = default);
+        Task UpdatePost(int postId, int userId, string? newTitle = null, string? newText = null, CancellationToken cancellationToken = default);
+        Task DeletePost(int postId, int userId, CancellationToken cancellationToken = default);
     }
 }

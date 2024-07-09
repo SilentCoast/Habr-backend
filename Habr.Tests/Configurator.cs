@@ -11,7 +11,7 @@ namespace Habr.Tests
             get
             {
                 configuration ??= new ConfigurationBuilder()
-                       .SetBasePath(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"../../../../Habr.ConsoleApp")))
+                       .SetBasePath(Directory.GetCurrentDirectory())
                        .AddJsonFile("appsettings.json")
                        .Build();
 
@@ -21,7 +21,7 @@ namespace Habr.Tests
 
         public static void ConfigureDbContextOptions(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("HabrDBConnection"));
+            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("HabrDBTestConnection"));
         }
     }
 }
