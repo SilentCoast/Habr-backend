@@ -6,6 +6,7 @@ using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Habr.Services
@@ -14,11 +15,13 @@ namespace Habr.Services
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<PostService> _logger;
 
-        public PostService(DataContext context, IMapper mapper)
+        public PostService(DataContext context, IMapper mapper, ILogger<PostService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<PostViewDTO> GetPostView(int id, CancellationToken cancellationToken = default)
@@ -81,6 +84,8 @@ namespace Habr.Services
 
             _context.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation($"Post (id:{postId}) published");
         }
 
         public async Task UnpublishPost(int postId, int userId, CancellationToken cancellationToken = default)
@@ -106,6 +111,8 @@ namespace Habr.Services
 
             _context.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation($"Post (id:{postId}) drafted");
         }
 
         public async Task UpdatePost(int postId, int userId, string? newTitle = null, string? newText = null, CancellationToken cancellationToken = default)

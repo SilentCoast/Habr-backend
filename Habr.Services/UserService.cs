@@ -4,6 +4,7 @@ using Habr.DataAccess.Entities;
 using Habr.Services.Exceptions;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace Habr.Services
@@ -12,11 +13,13 @@ namespace Habr.Services
     {
         private readonly DataContext _context;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(DataContext context, IPasswordHasher passwordHasher)
+        public UserService(DataContext context, IPasswordHasher passwordHasher, ILogger<UserService> logger)
         {
             _context = context;
             _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         public async Task CreateUser(string email, string password, string? name = null, CancellationToken cancellationToken = default)
@@ -60,6 +63,8 @@ namespace Habr.Services
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation($"User registered: {email}");
         }
 
         public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
@@ -73,6 +78,7 @@ namespace Habr.Services
                 throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
+            _logger.LogInformation($"User logged in: {email}");
             return user.Id;
         }
 

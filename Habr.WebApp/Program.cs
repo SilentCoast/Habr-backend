@@ -30,11 +30,7 @@ namespace Habr.WebApp
 
             builder.Services.AddGlobalExceptionHandler();
 
-            builder.Services.AddLogging(builder =>
-            {
-                builder.AddConsole();
-                builder.SetMinimumLevel(LogLevel.Information);
-            });
+            builder.Host.AddSerilogLogging(configuration);
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
@@ -51,7 +47,7 @@ namespace Habr.WebApp
 
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
 
                 c.OperationFilter<SwaggerResponseCodesFilter>();
             });
