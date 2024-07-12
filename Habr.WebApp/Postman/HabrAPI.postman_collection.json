@@ -1,0 +1,2305 @@
+{
+	"info": {
+		"_postman_id": "8d0059e4-56b0-47b4-bd03-c843315505d1",
+		"name": "HabrAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26121391"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "login",
+							"item": [
+								{
+									"name": "/api/auth/login",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"login"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"string\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/login",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"login"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/login",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"login"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "confirm-email",
+							"item": [
+								{
+									"name": "/api/auth/confirm-email",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "<email>",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/confirm-email",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"confirm-email"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "\"user@example.com\"",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/confirm-email",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"confirm-email"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "<email>",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/confirm-email",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"confirm-email"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "posts",
+					"item": [
+						{
+							"name": "{postId}",
+							"item": [
+								{
+									"name": "comments",
+									"item": [
+										{
+											"name": "{commentId}",
+											"item": [
+												{
+													"name": "reply",
+													"item": [
+														{
+															"name": "/api/posts/:postId/comments/:commentId/reply",
+															"request": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "userId",
+																		"value": "<integer>"
+																	},
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "text/plain"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "<string>",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/posts/:postId/comments/:commentId/reply",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"posts",
+																		":postId",
+																		"comments",
+																		":commentId",
+																		"reply"
+																	],
+																	"variable": [
+																		{
+																			"key": "postId",
+																			"value": "<integer>",
+																			"description": "(Required) "
+																		},
+																		{
+																			"key": "commentId",
+																			"value": "<integer>",
+																			"description": "(Required) "
+																		}
+																	]
+																}
+															},
+															"response": [
+																{
+																	"name": "Created - The resource was successfully created.",
+																	"originalRequest": {
+																		"method": "POST",
+																		"header": [
+																			{
+																				"key": "userId",
+																				"value": "1"
+																			},
+																			{
+																				"key": "Content-Type",
+																				"value": "application/json"
+																			}
+																		],
+																		"body": {
+																			"mode": "raw",
+																			"raw": "\"sfsagsagag\"",
+																			"options": {
+																				"raw": {
+																					"headerFamily": "json",
+																					"language": "json"
+																				}
+																			}
+																		},
+																		"url": {
+																			"raw": "{{baseUrl}}/api/posts/:postId/comments/:commentId/reply",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"posts",
+																				":postId",
+																				"comments",
+																				":commentId",
+																				"reply"
+																			],
+																			"variable": [
+																				{
+																					"key": "postId",
+																					"value": "1"
+																				},
+																				{
+																					"key": "commentId",
+																					"value": "1"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Created",
+																	"code": 201,
+																	"_postman_previewlanguage": "text",
+																	"header": [],
+																	"cookie": [],
+																	"body": ""
+																},
+																{
+																	"name": "Bad request - The request is malformed or contains invalid data.",
+																	"originalRequest": {
+																		"method": "POST",
+																		"header": [
+																			{
+																				"key": "userId",
+																				"value": "<integer>"
+																			},
+																			{
+																				"key": "Content-Type",
+																				"value": "application/json"
+																			},
+																			{
+																				"key": "Accept",
+																				"value": "text/plain"
+																			}
+																		],
+																		"body": {
+																			"mode": "raw",
+																			"raw": "<string>",
+																			"options": {
+																				"raw": {
+																					"headerFamily": "json",
+																					"language": "json"
+																				}
+																			}
+																		},
+																		"url": {
+																			"raw": "{{baseUrl}}/api/posts/:postId/comments/:commentId/reply",
+																			"host": [
+																				"{{baseUrl}}"
+																			],
+																			"path": [
+																				"api",
+																				"posts",
+																				":postId",
+																				"comments",
+																				":commentId",
+																				"reply"
+																			],
+																			"variable": [
+																				{
+																					"key": "postId"
+																				},
+																				{
+																					"key": "commentId"
+																				}
+																			]
+																		}
+																	},
+																	"status": "Bad Request",
+																	"code": 400,
+																	"_postman_previewlanguage": "json",
+																	"header": [
+																		{
+																			"key": "Content-Type",
+																			"value": "application/json"
+																		}
+																	],
+																	"cookie": [],
+																	"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+																}
+															]
+														}
+													]
+												}
+											]
+										},
+										{
+											"name": "/api/posts/:postId/comments",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "<string>",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:postId/comments",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":postId",
+														"comments"
+													],
+													"variable": [
+														{
+															"key": "postId",
+															"value": "<integer>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "Created - The resource was successfully created.",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "userId",
+																"value": "1"
+															},
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "\"<string>\"",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:postId/comments",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":postId",
+																"comments"
+															],
+															"variable": [
+																{
+																	"key": "postId",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"status": "Created",
+													"code": 201,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "Bad request - The request is malformed or contains invalid data.",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "userId",
+																"value": "<integer>"
+															},
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "<string>",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:postId/comments",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":postId",
+																"comments"
+															],
+															"variable": [
+																{
+																	"key": "postId"
+																}
+															]
+														}
+													},
+													"status": "Bad Request",
+													"code": 400,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "publish",
+									"item": [
+										{
+											"name": "/api/posts/:id/publish",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id/publish",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id",
+														"publish"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "<integer>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "OK - The request was successful.",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "1"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/publish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"publish"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "Bad request - The request is malformed or contains invalid data.",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "<integer>"
+															},
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/publish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"publish"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "Bad Request",
+													"code": 400,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+												},
+												{
+													"name": "Forbidden - User doesn't have permissions to requested resource",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "2"
+															},
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/publish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"publish"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"status": "Forbidden",
+													"code": 403,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "unpublish",
+									"item": [
+										{
+											"name": "/api/posts/:id/unpublish",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id/unpublish",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id",
+														"unpublish"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "<integer>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "OK - The request was successful.",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "1"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/unpublish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"unpublish"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "Bad request - The request is malformed or contains invalid data.",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "<integer>"
+															},
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/unpublish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"unpublish"
+															],
+															"variable": [
+																{
+																	"key": "id"
+																}
+															]
+														}
+													},
+													"status": "Bad Request",
+													"code": 400,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+												},
+												{
+													"name": "Forbidden - User doesn't have permissions to requested resource",
+													"originalRequest": {
+														"method": "PUT",
+														"header": [
+															{
+																"key": "userId",
+																"value": "2"
+															},
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/unpublish",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"unpublish"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"status": "Forbidden",
+													"code": 403,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "/api/posts/:id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "4"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/posts/:id",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"newTitle\": \"<string>\",\n  \"newText\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"newTitle\": \"<string>\",\n  \"newText\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "4"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"newTitle\": \"<string>\",\n  \"newText\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										},
+										{
+											"name": "Forbidden - User doesn't have permissions to requested resource",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "2"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"newTitle\": \"<string>\",\n  \"newText\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/posts/:id",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										},
+										{
+											"name": "Forbidden - User doesn't have permissions to requested resource",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "2"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "4"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "published",
+							"item": [
+								{
+									"name": "/api/posts/published",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/published",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												"published"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/published",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"published"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/published",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"published"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "drafted",
+							"item": [
+								{
+									"name": "/api/posts/drafted",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/drafted",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												"drafted"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/drafted",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"drafted"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "No content - No content for requested filters.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "userId",
+														"value": "5"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/drafted",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"drafted"
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/drafted",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"drafted"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "/api/posts",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "userId",
+										"value": "<integer>"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "text/plain"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"text\": \"<string>\",\n  \"title\": \"<string>\",\n  \"isPublishedNow\": \"<boolean>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/posts",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"posts"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Created - The resource was successfully created.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "userId",
+												"value": "1"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"text\": \"string\",\n  \"title\": \"string\",\n  \"isPublishedNow\": true\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/posts",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad request - The request is malformed or contains invalid data.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"text\": \"<string>\",\n  \"title\": \"<string>\",\n  \"isPublishedNow\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/posts",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "comments",
+					"item": [
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "/api/comments/:id",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "<string>",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/comments/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comments",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "\"string\"",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/comments/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comments",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "<string>",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/comments/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comments",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/comments/:id",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "userId",
+												"value": "<integer>"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/comments/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"comments",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "1"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comments/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comments",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad request - The request is malformed or contains invalid data.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "<integer>"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comments/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comments",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										},
+										{
+											"name": "Forbidden - User doesn't have permissions to requested resource",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "userId",
+														"value": "2"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/comments/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"comments",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "/api/users",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "text/plain"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"users"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Created - The resource was successfully created.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"user3214@example.com\",\n  \"password\": \"string\",\n  \"name\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"users"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad request - The request is malformed or contains invalid data.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"users"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"type\": \"<string>\",\n  \"title\": \"<string>\",\n  \"status\": \"<integer>\",\n  \"detail\": \"<string>\",\n  \"instance\": \"<string>\",\n  \"dolor_fab\": {}\n}"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7142"
+		},
+		{
+			"key": "email",
+			"value": "\"user@example.com\"",
+			"type": "string"
+		}
+	]
+}
