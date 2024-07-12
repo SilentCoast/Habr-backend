@@ -9,7 +9,7 @@ namespace Habr.WebApp.ExceptionHandle
         public DefaultGlobalExceptionHandler(IExceptionMapper mapper)
         {
             _mapper = mapper;
-        }   
+        }
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {

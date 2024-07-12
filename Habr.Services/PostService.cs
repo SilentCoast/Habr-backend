@@ -7,7 +7,6 @@ using Habr.DataAccess.Entities;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Habr.Services
 {

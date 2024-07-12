@@ -8,12 +8,10 @@ namespace Habr.WebApp.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly ILogger<PostsController> _logger;
         private readonly IPostService _postService;
 
-        public PostsController(ILogger<PostsController> logger, IPostService postService)
+        public PostsController(IPostService postService)
         {
-            _logger = logger;
             _postService = postService;
         }
 
@@ -83,8 +81,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> PublishPost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
-                await _postService.PublishPost(id, userId, cancellationToken);
-                return Ok();
+            await _postService.PublishPost(id, userId, cancellationToken);
+            return Ok();
         }
 
         [HttpPut("{id}/unpublish")]
