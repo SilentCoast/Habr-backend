@@ -1,5 +1,6 @@
 using Habr.Services;
 using Habr.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Habr.WebApp.Controllers
@@ -13,6 +14,18 @@ namespace Habr.WebApp.Controllers
         public UsersController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [HttpGet("name")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetName()
+        {
+            var name = await _userService.GetName(this.GetCurrentUserId());
+
+            return Ok(name);
         }
 
         [HttpPost]

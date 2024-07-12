@@ -22,6 +22,13 @@ namespace Habr.Services
             _logger = logger;
         }
 
+        public async Task<string> GetName(int userId)
+        {
+            var name = await _context.Users.Where(p => p.Id == userId).Select(p => p.Name).FirstOrDefaultAsync();
+
+            return name ?? throw new ArgumentException(ExceptionMessage.UserDoesntExist);
+        }
+
         public async Task CreateUser(string email, string password, string? name = null, CancellationToken cancellationToken = default)
         {
             if (email.Length > ConstraintValue.UserEmailMaxLength)

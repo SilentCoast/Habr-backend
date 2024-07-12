@@ -2,8 +2,12 @@ using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Habr.WebApp
 {
@@ -25,6 +29,7 @@ namespace Habr.WebApp
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<JwtService>();
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
@@ -45,12 +50,63 @@ namespace Habr.WebApp
 
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.Services.AddSwaggerGen(c =>
+            builder.Services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
 
-                c.OperationFilter<SwaggerResponseCodesFilter>();
+                options.OperationFilter<SwaggerResponseCodesFilter>();
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Provide token in format:   Bearer \\<your token\\>",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            Console.WriteLine("Challenge: " + context.Error);
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
             var app = builder.Build();
 
@@ -69,6 +125,7 @@ namespace Habr.WebApp
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseGlobalExceptionHandler();
