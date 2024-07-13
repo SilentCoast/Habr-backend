@@ -2,13 +2,16 @@ using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
+using Habr.WebApp.MinimalApi.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
-namespace Habr.WebApp
+namespace Habr.WebApp.MinimalApi
 {
     public class Program
     {
@@ -36,15 +39,14 @@ namespace Habr.WebApp
 
             builder.Host.AddSerilogLogging(configuration);
 
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                });
-
             builder.Services.Configure<RouteOptions>(options =>
             {
                 options.LowercaseUrls = true;
+            });
+
+            builder.Services.Configure<JsonOptions>(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
 
             builder.Services.AddEndpointsApiExplorer();
@@ -107,6 +109,8 @@ namespace Habr.WebApp
                     };
                 });
 
+            builder.Services.AddAuthorization();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -129,7 +133,10 @@ namespace Habr.WebApp
 
             app.UseGlobalExceptionHandler();
 
-            app.MapControllers();
+            app.MapAuthEndpoints();
+            app.MapCommentEndpoints();
+            app.MapPostEndpoints();
+            app.MapUserEndpoints();
 
             app.Run();
         }
