@@ -22,9 +22,9 @@ namespace Habr.Services
             _logger = logger;
         }
 
-        public async Task<string> GetName(int userId)
+        public async Task<string> GetName(int userId, CancellationToken cancellationToken = default)
         {
-            var name = await _context.Users.Where(p => p.Id == userId).Select(p => p.Name).FirstOrDefaultAsync();
+            var name = await _context.Users.Where(p => p.Id == userId).Select(p => p.Name).FirstOrDefaultAsync(cancellationToken);
 
             return name ?? throw new ArgumentException(ExceptionMessage.UserDoesntExist);
         }

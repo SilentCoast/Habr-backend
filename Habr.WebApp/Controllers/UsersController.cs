@@ -21,9 +21,9 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetName()
+        public async Task<IActionResult> GetName(CancellationToken cancellationToken = default)
         {
-            var name = await _userService.GetName(this.GetCurrentUserId());
+            var name = await _userService.GetName(this.GetCurrentUserId(), cancellationToken);
 
             return Ok(name);
         }
@@ -31,14 +31,14 @@ namespace Habr.WebApp.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _userService.CreateUser(model.Email, model.Password, model.Name);
+            await _userService.CreateUser(model.Email, model.Password, model.Name, cancellationToken);
 
             return StatusCode(StatusCodes.Status201Created);
         }
