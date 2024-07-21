@@ -24,7 +24,7 @@ namespace Habr.Services
 
         public async Task<string> GetName(int userId, CancellationToken cancellationToken = default)
         {
-            var name = await _context.Users.Where(p => p.Id == userId).Select(p => p.Name).FirstOrDefaultAsync(cancellationToken);
+            var name = await _context.Users.Where(p => p.Id == userId).Select(p => p.Name).SingleOrDefaultAsync(cancellationToken);
 
             return name ?? throw new ArgumentException(ExceptionMessage.UserDoesntExist);
         }
