@@ -14,12 +14,14 @@ namespace Habr.Services
         private readonly DataContext _context;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ILogger<UserService> _logger;
+        private readonly IJwtService _jwtService;
 
-        public UserService(DataContext context, IPasswordHasher passwordHasher, ILogger<UserService> logger)
+        public UserService(DataContext context, IPasswordHasher passwordHasher, ILogger<UserService> logger, IJwtService jwtService)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _logger = logger;
+            _jwtService = jwtService;
         }
 
         public async Task<string> GetName(int userId, CancellationToken cancellationToken = default)
@@ -74,7 +76,7 @@ namespace Habr.Services
             _logger.LogInformation($"User registered: {email}");
         }
 
-        public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<string> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
                 ?? throw new LogInException(ExceptionMessage.EmailIncorrect);
@@ -85,8 +87,11 @@ namespace Habr.Services
                 throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
+            string token = _jwtService.GenerateToken(user.Id);
+
             _logger.LogInformation($"User logged in: {email}");
-            return user.Id;
+
+            return token;
         }
 
         public async Task ConfirmEmail(string email, int userId, CancellationToken cancellationToken = default)

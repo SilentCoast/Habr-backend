@@ -11,8 +11,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
         {
             app.MapPost("/api/auth/login", async ([FromBody] UserLoginModel model, IUserService userService, JwtService jwtService, CancellationToken cancellationToken = default) =>
             {
-                var userId = await userService.LogIn(model.Email, model.Password, cancellationToken);
-                var token = jwtService.GenerateToken(userId);
+                var token = await userService.LogIn(model.Email, model.Password, cancellationToken);
                 return Results.Ok(token);
             })
             .Produces(StatusCodes.Status200OK)

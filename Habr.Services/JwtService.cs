@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Habr.Services
 {
-    public class JwtService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
 
@@ -35,5 +35,10 @@ namespace Habr.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+    }
+
+    public interface IJwtService
+    {
+        string GenerateToken(int userId);
     }
 }

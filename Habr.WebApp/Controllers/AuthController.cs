@@ -12,9 +12,9 @@ namespace Habr.WebApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly JwtService _jwtService;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(IUserService userService, JwtService jwtService)
+        public AuthController(IUserService userService, IJwtService jwtService)
         {
             _userService = userService;
             _jwtService = jwtService;
@@ -26,10 +26,7 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> LogIn([FromBody] UserLoginModel model, CancellationToken cancellationToken = default)
         {
-            var userId = await _userService.LogIn(model.Email, model.Password, cancellationToken);
-
-            var token = _jwtService.GenerateToken(userId);
-
+            var token = await _userService.LogIn(model.Email, model.Password, cancellationToken);
             return Ok(token);
         }
 
