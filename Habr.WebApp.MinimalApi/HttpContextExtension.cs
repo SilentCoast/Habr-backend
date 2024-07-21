@@ -1,10 +1,15 @@
-﻿namespace Habr.WebApp.MinimalApi
+﻿using Habr.Services.Resources;
+
+namespace Habr.WebApp.MinimalApi
 {
     public static class HttpContextExtensions
     {
         public static int GetCurrentUserId(this HttpContext httpContext)
         {
-            return int.Parse(httpContext.User.Claims.First(p => p.Type == "userId").Value);
+            var claim = httpContext.User.Claims.FirstOrDefault(p => p.Type == "userId") 
+                ?? throw new UnauthorizedAccessException(ExceptionMessage.TokenBreach);
+
+            return int.Parse(claim.Value);
         }
     }
 }

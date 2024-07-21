@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\ExceptionMessage.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ExceptionMessageGeneric.resx">

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Habr.Services.Resources;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Habr.WebApp.Extensions
 {
@@ -7,7 +8,10 @@ namespace Habr.WebApp.Extensions
         /// <returns>userId from the JWT Token</returns>
         public static int GetCurrentUserId(this ControllerBase controller)
         {
-            return int.Parse(controller.User.Claims.First(p => p.Type == "userId").Value);
+            var claim = controller.User.Claims.FirstOrDefault(p => p.Type == "userId")
+                ?? throw new UnauthorizedAccessException(ExceptionMessage.TokenBreach);
+
+            return int.Parse(claim.Value);
         }
     }
 }
