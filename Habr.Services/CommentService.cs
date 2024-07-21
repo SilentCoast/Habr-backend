@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
+using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Habr.Services
@@ -17,7 +18,7 @@ namespace Habr.Services
         public async Task AddComment(string text, int postId, int userId, CancellationToken cancellationToken = default)
         {
             _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
-                ?? throw new ArgumentException("Post not found");
+                ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
 
             CheckTextConstraints(text);
 
@@ -36,10 +37,10 @@ namespace Habr.Services
         public async Task ReplyToComment(string text, int parentCommentId, int postId, int userId, CancellationToken cancellationToken = default)
         {
             _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
-                ?? throw new ArgumentException("Post not found");
+                ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
 
             _ = await _context.Comments.SingleOrDefaultAsync(p => p.Id == parentCommentId, cancellationToken)
-                ?? throw new ArgumentException("Parent comment not found");
+                ?? throw new ArgumentException(ExceptionMessage.ParentCommentNotFound);
 
             CheckTextConstraints(text);
 
@@ -64,12 +65,12 @@ namespace Habr.Services
 
             if (comment == null)
             {
-                throw new ArgumentException("Comment not found");
+                throw new ArgumentException(ExceptionMessage.CommentNotFound);
             }
 
             if (comment.IsDeleted)
             {
-                throw new ArgumentException("Cannot edit deleted comment");
+                throw new ArgumentException(ExceptionMessage.CannotEditDeletedComment);
             }
 
             CheckAccess(comment.UserId, userId);
@@ -85,7 +86,7 @@ namespace Habr.Services
         public async Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken = default)
         {
             var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId, cancellationToken)
-                ?? throw new ArgumentException("Comment not found");
+                ?? throw new ArgumentException(ExceptionMessage.CommentNotFound);
 
             CheckAccess(comment.UserId, userId);
 
@@ -105,14 +106,14 @@ namespace Habr.Services
         {
             if (userId != commentOwnerId)
             {
-                throw new UnauthorizedAccessException($"Access denied. User can only modify their own comments");
+                throw new UnauthorizedAccessException(ExceptionMessage.AccessDeniedWrongCommentOwner);
             }
         }
         private void CheckTextConstraints(string text)
         {
             if (text.Length > ConstraintValue.CommentTextMaxLength)
             {
-                throw new ArgumentOutOfRangeException($"The {nameof(text)} must be less than {ConstraintValue.CommentTextMaxLength} symbols");
+                throw new ArgumentOutOfRangeException(string.Format(ExceptionMessageGeneric.ValueOfMustBeLessThan, nameof(text), ConstraintValue.CommentTextMaxLength));
             }
         }
     }

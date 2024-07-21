@@ -22,19 +22,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> LogIn([FromBody] UserLoginModel model, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var userId = await _userService.LogIn(model.Email, model.Password, cancellationToken);
-                return Ok(userId);
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var userId = await _userService.LogIn(model.Email, model.Password, cancellationToken);
+            return Ok(userId);
         }
 
         [HttpPost("confirm-email")]
@@ -43,19 +32,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _userService.ConfirmEmail(email, userId, cancellationToken);
-                return Ok();
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await _userService.ConfirmEmail(email, userId, cancellationToken);
+            return Ok();
         }
     }
 }

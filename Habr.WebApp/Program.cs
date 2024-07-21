@@ -1,6 +1,7 @@
-
 using Habr.DataAccess;
 using Habr.Services;
+using Habr.Services.AutoMapperProfiles;
+using Habr.WebApp.ExceptionHandle;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -25,11 +26,11 @@ namespace Habr.WebApp
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
-            builder.Services.AddLogging(builder =>
-            {
-                builder.AddConsole();
-                builder.SetMinimumLevel(LogLevel.Information);
-            });
+            builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
+
+            builder.Services.AddGlobalExceptionHandler();
+
+            builder.Host.AddSerilogLogging(configuration);
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
@@ -46,7 +47,7 @@ namespace Habr.WebApp
 
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
 
                 c.OperationFilter<SwaggerResponseCodesFilter>();
             });
@@ -69,6 +70,8 @@ namespace Habr.WebApp
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseGlobalExceptionHandler();
 
             app.MapControllers();
 

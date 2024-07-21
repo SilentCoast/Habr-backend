@@ -2,7 +2,9 @@
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.Services.Exceptions;
+using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace Habr.Services
@@ -11,28 +13,30 @@ namespace Habr.Services
     {
         private readonly DataContext _context;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(DataContext context, IPasswordHasher passwordHasher)
+        public UserService(DataContext context, IPasswordHasher passwordHasher, ILogger<UserService> logger)
         {
             _context = context;
             _passwordHasher = passwordHasher;
+            _logger = logger;
         }
 
         public async Task CreateUser(string email, string password, string? name = null, CancellationToken cancellationToken = default)
         {
             if (email.Length > ConstraintValue.UserEmailMaxLength)
             {
-                throw new ArgumentException($"Email is too long. Max allowed length is {ConstraintValue.UserEmailMaxLength}");
+                throw new ArgumentException(string.Format(ExceptionMessageGeneric.ValueTooLongMaxLengthIs, nameof(email), ConstraintValue.UserEmailMaxLength));
             }
 
             if (!IsValidEmail(email))
             {
-                throw new ArgumentException("Invalid email format.");
+                throw new ArgumentException(ExceptionMessage.InvalidEmail);
             }
 
             if (await _context.Users.AnyAsync(u => u.Email == email))
             {
-                throw new ArgumentException("The email is already taken");
+                throw new ArgumentException(ExceptionMessage.EmailTaken);
             }
 
             if (name == null)
@@ -42,7 +46,7 @@ namespace Habr.Services
 
             if (name.Length > ConstraintValue.UserNameMaxLength)
             {
-                throw new ArgumentException($"Name is too long. Max allowed length is {ConstraintValue.UserNameMaxLength}");
+                throw new ArgumentException(string.Format(ExceptionMessageGeneric.ValueTooLongMaxLengthIs, nameof(name), ConstraintValue.UserNameMaxLength));
             }
 
             var salt = _passwordHasher.GenerateSalt();
@@ -59,19 +63,22 @@ namespace Habr.Services
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation($"User registered: {email}");
         }
 
         public async Task<int> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
-                ?? throw new UnauthorizedAccessException("The email is incorrect");
+                ?? throw new LogInException(ExceptionMessage.EmailIncorrect);
 
             var hashedPassword = _passwordHasher.HashPassword(password, user.Salt);
             if (hashedPassword != user.PasswordHash)
             {
-                throw new UnauthorizedAccessException("Wrong credentials");
+                throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
+            _logger.LogInformation($"User logged in: {email}");
             return user.Id;
         }
 
@@ -80,7 +87,7 @@ namespace Habr.Services
             var user = await _context.Users.SingleOrDefaultAsync(p => p.Id == userId, cancellationToken);
             if (user == null)
             {
-                throw new ArgumentException("User doesn't exist");
+                throw new ArgumentException(ExceptionMessage.UserDoesntExist);
             }
 
             //add actual confirmation mechanism

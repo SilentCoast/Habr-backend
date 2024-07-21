@@ -8,12 +8,10 @@ namespace Habr.WebApp.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
         private readonly IUserService _userService;
 
-        public UsersController(ILogger<UsersController> logger, IUserService userService)
+        public UsersController(IUserService userService)
         {
-            _logger = logger;
             _userService = userService;
         }
 
@@ -27,14 +25,7 @@ namespace Habr.WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
-            {
-                await _userService.CreateUser(model.Email, model.Password, model.Name);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await _userService.CreateUser(model.Email, model.Password, model.Name);
 
             return StatusCode(StatusCodes.Status201Created);
         }

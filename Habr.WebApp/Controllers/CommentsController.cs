@@ -26,19 +26,8 @@ namespace Habr.WebApp.Controllers
             [FromHeader] int userId,
             CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _commentService.AddComment(text, postId, userId, cancellationToken);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _commentService.AddComment(text, postId, userId, cancellationToken);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPost]
@@ -52,19 +41,8 @@ namespace Habr.WebApp.Controllers
             [FromHeader] int userId,
             CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _commentService.ReplyToComment(text, commentId, postId, userId, cancellationToken);
-                return StatusCode(StatusCodes.Status201Created);
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _commentService.ReplyToComment(text, commentId, postId, userId, cancellationToken);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPut("{id}")]
@@ -73,19 +51,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> EditComment([FromBody] string newText, [FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _commentService.ModifyComment(newText, id, userId, cancellationToken);
-                return Ok();
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await _commentService.ModifyComment(newText, id, userId, cancellationToken);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -95,23 +62,8 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> DeleteComment([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _commentService.DeleteComment(id, userId, cancellationToken);
-                return Ok();
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, e.Message);
-            }
-            catch (OperationCanceledException)
-            {
-                return StatusCode(StatusCodes.Status408RequestTimeout);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            await _commentService.DeleteComment(id, userId, cancellationToken);
+            return Ok();
         }
     }
 }
