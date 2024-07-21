@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Habr.WebApp
+namespace Habr.WebApp.Extensions
 {
     public static class ControllerExtension
     {

@@ -2,11 +2,10 @@ using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Habr.WebApp.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Habr.WebApp
 {
@@ -36,11 +35,12 @@ namespace Habr.WebApp
 
             builder.Host.AddSerilogLogging(configuration);
 
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                });
+            builder.Services.AddControllers();
+
+            builder.Services.Configure<JsonOptions>(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
 
             builder.Services.Configure<RouteOptions>(options =>
             {
@@ -49,63 +49,9 @@ namespace Habr.WebApp
 
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.Services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
+            builder.Services.ConfigureSwagger();
 
-                options.OperationFilter<SwaggerResponseCodesFilter>();
-
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "Provide token in format:   Bearer \\<your token\\>",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
-            });
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                            return Task.CompletedTask;
-                        },
-                        OnChallenge = context =>
-                        {
-                            Console.WriteLine("Challenge: " + context.Error);
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+            builder.ConfigureAuthentication();
 
             var app = builder.Build();
 

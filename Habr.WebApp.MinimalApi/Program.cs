@@ -2,6 +2,7 @@ using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
+using Habr.WebApp.Extensions;
 using Habr.WebApp.MinimalApi.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

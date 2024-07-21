@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace Habr.WebApp
+namespace Habr.WebApp.Extensions
 {
     public static class SerilogExtension
     {
