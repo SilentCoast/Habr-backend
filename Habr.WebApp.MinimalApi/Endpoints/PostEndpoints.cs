@@ -27,7 +27,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService, 
+            app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();
@@ -47,7 +47,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext, 
+            app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();
@@ -59,7 +59,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model, 
+            app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();
@@ -72,7 +72,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext, 
+            app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();
@@ -85,7 +85,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext, 
+            app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();
@@ -98,7 +98,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext, 
+            app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 var userId = httpContext.GetCurrentUserId();

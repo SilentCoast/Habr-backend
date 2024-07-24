@@ -4,12 +4,8 @@ using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
 using Habr.WebApp.Extensions;
 using Habr.WebApp.MinimalApi.Endpoints;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Habr.WebApp.MinimalApi

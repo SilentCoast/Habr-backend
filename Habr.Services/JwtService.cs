@@ -36,9 +36,4 @@ namespace Habr.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-
-    public interface IJwtService
-    {
-        string GenerateToken(int userId);
-    }
 }
