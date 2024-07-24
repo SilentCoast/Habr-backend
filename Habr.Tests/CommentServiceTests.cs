@@ -2,12 +2,12 @@
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Habr.Tests
 {
-    [TestClass]
-    public class CommentServiceTests
+    //TODO: cover more cases
+    [Collection("Sequential")]
+    public class CommentServiceTests : IAsyncLifetime
     {
         private DataContext _context;
         private DataContext _secondContext;
@@ -16,21 +16,9 @@ namespace Habr.Tests
         private IPostService _postService;
         private IUserService _userService;
 
-        [TestInitialize]
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
-            _serviceProvider = new ServiceCollection()
-                .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
-                .AddScoped<IUserService, UserService>()
-                .AddSingleton<IPasswordHasher, PasswordHasher>()
-                .AddScoped<ICommentService, CommentService>()
-                .AddScoped<IPostService, PostService>()
-                .AddLogging(builder =>
-                {
-                    builder.AddConsole();
-                    builder.SetMinimumLevel(LogLevel.Information);
-                })
-                .BuildServiceProvider();
+            _serviceProvider = Configurator.ConfigureServiceProvider();
 
             _context = _serviceProvider.GetRequiredService<DataContext>();
             _commentService = _serviceProvider.GetRequiredService<ICommentService>();
@@ -45,8 +33,7 @@ namespace Habr.Tests
             await _context.Database.MigrateAsync();
         }
 
-        [TestCleanup]
-        public async Task Cleanup()
+        public async Task DisposeAsync()
         {
             await _context.Users.ExecuteDeleteAsync();
             await _context.Posts.ExecuteDeleteAsync();
@@ -57,7 +44,7 @@ namespace Habr.Tests
             await _serviceProvider.DisposeAsync();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task AddComment_ShouldAddComment()
         {
             await _userService.CreateUser("email@mail.com", "pas");
@@ -72,12 +59,12 @@ namespace Habr.Tests
 
             var comment = await _secondContext.Comments.FirstOrDefaultAsync();
 
-            Assert.IsNotNull(comment, "Comment should be added to the database.");
-            Assert.AreEqual(post.Id, comment.PostId, "Comment should be linked to the correct post.");
-            Assert.AreEqual(user.Id, comment.UserId, "Comment should be linked to the correct user.");
+            Assert.NotNull(comment);
+            Assert.Equal(post.Id, comment.PostId);
+            Assert.Equal(user.Id, comment.UserId);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ReplyToComment_ShouldAddComment()
         {
             await _userService.CreateUser("email@mail.com", "pas");
@@ -96,14 +83,14 @@ namespace Habr.Tests
 
             var replyComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
 
-            Assert.IsNotNull(replyComment, "Reply comment should be added to the database.");
-            Assert.AreEqual(parentComment.Id, replyComment.ParentCommentId, "Reply comment should be linked to the correct parent comment.");
-            Assert.AreEqual(post.Id, replyComment.PostId, "Reply comment should be linked to the correct post.");
-            Assert.AreEqual(user.Id, replyComment.UserId, "Reply comment should be linked to the correct user.");
-            Assert.AreEqual("Reply Comment", replyComment.Text, "Reply comment text should be correct.");
+            Assert.NotNull(replyComment);
+            Assert.Equal(parentComment.Id, replyComment.ParentCommentId);
+            Assert.Equal(post.Id, replyComment.PostId);
+            Assert.Equal(user.Id, replyComment.UserId);
+            Assert.Equal("Reply Comment", replyComment.Text);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ModifyComment_ShouldUpdateComment()
         {
             await _userService.CreateUser("email@mail.com", "pas");
@@ -124,12 +111,12 @@ namespace Habr.Tests
 
             var modifiedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 
-            Assert.IsNotNull(modifiedComment, "Comment should still exist in the database after modification.");
-            Assert.AreEqual(newText, modifiedComment.Text, "Comment text should be modified as expected.");
-            Assert.AreEqual(user.Id, modifiedComment.UserId, "Comment should still be associated with the same user.");
+            Assert.NotNull(modifiedComment);
+            Assert.Equal(newText, modifiedComment.Text);
+            Assert.Equal(user.Id, modifiedComment.UserId);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task DeleteComment_ShouldDeleteComment()
         {
             await _userService.CreateUser("email@mail.com", "pas");
@@ -150,11 +137,11 @@ namespace Habr.Tests
 
             var deletedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 
-            Assert.IsNotNull(deletedComment, "Comment should still exist in the database after deletion.");
-            Assert.IsTrue(deletedComment.IsDeleted, "Comment should be marked as deleted.");
-            Assert.AreEqual("Comment deleted", deletedComment.Text, "Comment text should be updated to 'Comment deleted'.");
-            Assert.AreEqual(user.Id, deletedComment.UserId, "Comment should still be associated with the same user.");
-            Assert.AreNotEqual(initialModifiedDate, deletedComment.ModifiedDate, "ModifiedDate should be updated after deletion.");
+            Assert.NotNull(deletedComment);
+            Assert.True(deletedComment.IsDeleted);
+            Assert.Equal("Comment deleted", deletedComment.Text);
+            Assert.Equal(user.Id, deletedComment.UserId);
+            Assert.NotEqual(initialModifiedDate, deletedComment.ModifiedDate);
         }
     }
 }
