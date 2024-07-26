@@ -3,11 +3,16 @@ using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.ExceptionHandle;
 using Habr.WebApp.Extensions;
+using Habr.WebApp.MinimalApi.Endpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Habr.WebApp
+namespace Habr.WebApp.MinimalApi
 {
     public class Program
     {
@@ -27,7 +32,7 @@ namespace Habr.WebApp
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddScoped<JwtService>();
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
@@ -35,16 +40,14 @@ namespace Habr.WebApp
 
             builder.Host.AddSerilogLogging(configuration);
 
-            builder.Services.AddControllers();
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             builder.Services.Configure<JsonOptions>(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-            });
-
-            builder.Services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
             });
 
             builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +55,8 @@ namespace Habr.WebApp
             builder.Services.ConfigureSwagger();
 
             builder.ConfigureAuthentication();
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -75,7 +80,10 @@ namespace Habr.WebApp
 
             app.UseGlobalExceptionHandler();
 
-            app.MapControllers();
+            app.MapAuthEndpoints();
+            app.MapCommentEndpoints();
+            app.MapPostEndpoints();
+            app.MapUserEndpoints();
 
             app.Run();
         }

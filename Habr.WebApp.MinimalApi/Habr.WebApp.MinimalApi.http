@@ -1,0 +1,6 @@
+@Habr.WebApp.MinimalApi_HostAddress = http://localhost:5153
+
+GET {{Habr.WebApp.MinimalApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

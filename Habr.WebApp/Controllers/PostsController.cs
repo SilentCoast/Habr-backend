@@ -1,5 +1,7 @@
 ﻿using Habr.Services;
+using Habr.WebApp.Extensions;
 using Habr.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Habr.WebApp.Controllers
@@ -34,13 +36,15 @@ namespace Habr.WebApp.Controllers
         }
 
         [HttpGet("drafted")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> GetDraftedPosts([FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetDraftedPosts(CancellationToken cancellationToken = default)
         {
-            var posts = await _postService.GetDraftedPosts(userId, cancellationToken);
+            var posts = await _postService.GetDraftedPosts(this.GetCurrentUserId(), cancellationToken);
             if (posts.Any())
             {
                 return Ok(posts);
@@ -52,58 +56,68 @@ namespace Habr.WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> CreatePost([FromHeader] int userId, [FromBody] PostCreateModel model, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> CreatePost([FromBody] PostCreateModel model, CancellationToken cancellationToken = default)
         {
-            await _postService.AddPost(model.Title, model.Text, userId, model.IsPublishedNow, cancellationToken);
+            await _postService.AddPost(model.Title, model.Text, this.GetCurrentUserId(), model.IsPublishedNow, cancellationToken);
 
             return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostUpdateModel model, [FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> EditPost([FromRoute] int id, [FromBody] PostUpdateModel model, CancellationToken cancellationToken = default)
         {
-            await _postService.UpdatePost(id, userId, model.NewTitle, model.NewText, cancellationToken);
+            await _postService.UpdatePost(id, this.GetCurrentUserId(), model.NewTitle, model.NewText, cancellationToken);
 
             return Ok();
         }
 
         [HttpPut("{id}/publish")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> PublishPost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> PublishPost([FromRoute] int id, CancellationToken cancellationToken = default)
         {
-            await _postService.PublishPost(id, userId, cancellationToken);
+            await _postService.PublishPost(id, this.GetCurrentUserId(), cancellationToken);
             return Ok();
         }
 
         [HttpPut("{id}/unpublish")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> UnpublishPost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UnpublishPost([FromRoute] int id, CancellationToken cancellationToken = default)
         {
-            await _postService.UnpublishPost(id, userId, cancellationToken);
+            await _postService.UnpublishPost(id, this.GetCurrentUserId(), cancellationToken);
             return Ok();
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> DeletePost([FromRoute] int id, [FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> DeletePost([FromRoute] int id, CancellationToken cancellationToken = default)
         {
-            await _postService.DeletePost(id, userId, cancellationToken);
+            await _postService.DeletePost(id, this.GetCurrentUserId(), cancellationToken);
             return Ok();
         }
     }

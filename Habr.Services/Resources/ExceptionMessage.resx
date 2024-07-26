@@ -150,6 +150,9 @@
   <data name="PostNotFound" xml:space="preserve">
     <value>Post not found</value>
   </data>
+  <data name="TokenBreach" xml:space="preserve">
+    <value>Access denied. Invalid or missing token</value>
+  </data>
   <data name="UserDoesntExist" xml:space="preserve">
     <value>User doesn't exist</value>
   </data>

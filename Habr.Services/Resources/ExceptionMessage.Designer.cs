@@ -22,7 +22,7 @@ namespace Habr.Services.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ExceptionMessage {
+    public class ExceptionMessage {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Habr.Services.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Habr.Services.Resources.ExceptionMessage", typeof(ExceptionMessage).Assembly);
@@ -51,7 +51,7 @@ namespace Habr.Services.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Access denied. User can only modify their own posts.
         /// </summary>
-        internal static string AcccessDeniedWrongPostOwner {
+        public static string AcccessDeniedWrongPostOwner {
             get {
                 return ResourceManager.GetString("AcccessDeniedWrongPostOwner", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Access denied. User can only modify their own comments.
         /// </summary>
-        internal static string AccessDeniedWrongCommentOwner {
+        public static string AccessDeniedWrongCommentOwner {
             get {
                 return ResourceManager.GetString("AccessDeniedWrongCommentOwner", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Cannot draft post containing comments.
         /// </summary>
-        internal static string CannotDraftPostWithComments {
+        public static string CannotDraftPostWithComments {
             get {
                 return ResourceManager.GetString("CannotDraftPostWithComments", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Cannot edit deleted comment.
         /// </summary>
-        internal static string CannotEditDeletedComment {
+        public static string CannotEditDeletedComment {
             get {
                 return ResourceManager.GetString("CannotEditDeletedComment", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Cannot edit published post, draft it first.
         /// </summary>
-        internal static string CannotEditPublishedPost {
+        public static string CannotEditPublishedPost {
             get {
                 return ResourceManager.GetString("CannotEditPublishedPost", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Comment not found.
         /// </summary>
-        internal static string CommentNotFound {
+        public static string CommentNotFound {
             get {
                 return ResourceManager.GetString("CommentNotFound", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The email is incorrect.
         /// </summary>
-        internal static string EmailIncorrect {
+        public static string EmailIncorrect {
             get {
                 return ResourceManager.GetString("EmailIncorrect", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Email is already taken.
         /// </summary>
-        internal static string EmailTaken {
+        public static string EmailTaken {
             get {
                 return ResourceManager.GetString("EmailTaken", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid email format.
         /// </summary>
-        internal static string InvalidEmail {
+        public static string InvalidEmail {
             get {
                 return ResourceManager.GetString("InvalidEmail", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Parent comment not found.
         /// </summary>
-        internal static string ParentCommentNotFound {
+        public static string ParentCommentNotFound {
             get {
                 return ResourceManager.GetString("ParentCommentNotFound", resourceCulture);
             }
@@ -153,16 +153,25 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Post not found.
         /// </summary>
-        internal static string PostNotFound {
+        public static string PostNotFound {
             get {
                 return ResourceManager.GetString("PostNotFound", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access denied. Invalid or missing token.
+        /// </summary>
+        public static string TokenBreach {
+            get {
+                return ResourceManager.GetString("TokenBreach", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User doesn&apos;t exist.
         /// </summary>
-        internal static string UserDoesntExist {
+        public static string UserDoesntExist {
             get {
                 return ResourceManager.GetString("UserDoesntExist", resourceCulture);
             }
@@ -171,7 +180,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Wrong credentials.
         /// </summary>
-        internal static string WrongCredentials {
+        public static string WrongCredentials {
             get {
                 return ResourceManager.GetString("WrongCredentials", resourceCulture);
             }

@@ -1,5 +1,7 @@
 ﻿using Habr.Services;
+using Habr.WebApp.Extensions;
 using Habr.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,10 +12,12 @@ namespace Habr.WebApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IJwtService jwtService)
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
 
         [HttpPost("login")]
@@ -22,17 +26,19 @@ namespace Habr.WebApp.Controllers
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
         public async Task<IActionResult> LogIn([FromBody] UserLoginModel model, CancellationToken cancellationToken = default)
         {
-            var userId = await _userService.LogIn(model.Email, model.Password, cancellationToken);
-            return Ok(userId);
+            var token = await _userService.LogIn(model.Email, model.Password, cancellationToken);
+            return Ok(token);
         }
 
         [HttpPost("confirm-email")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status408RequestTimeout)]
-        public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, [FromHeader] int userId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ConfirmEmail([FromBody][EmailAddress] string email, CancellationToken cancellationToken = default)
         {
-            await _userService.ConfirmEmail(email, userId, cancellationToken);
+            await _userService.ConfirmEmail(email, this.GetCurrentUserId(), cancellationToken);
             return Ok();
         }
     }
