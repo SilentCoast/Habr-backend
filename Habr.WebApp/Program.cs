@@ -1,10 +1,11 @@
 using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
+using Habr.WebApp.Endpoints;
 using Habr.WebApp.ExceptionHandle;
 using Habr.WebApp.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Habr.WebApp
@@ -35,11 +36,9 @@ namespace Habr.WebApp
 
             builder.Host.AddSerilogLogging(configuration);
 
-            builder.Services.AddControllers();
-
-            builder.Services.Configure<JsonOptions>(options =>
+            builder.Services.Configure<JsonSerializerOptions>(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.ReferenceHandler = ReferenceHandler.Preserve;
             });
 
             builder.Services.Configure<RouteOptions>(options =>
@@ -52,6 +51,7 @@ namespace Habr.WebApp
             builder.Services.ConfigureSwagger();
 
             builder.ConfigureAuthentication();
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -75,7 +75,10 @@ namespace Habr.WebApp
 
             app.UseGlobalExceptionHandler();
 
-            app.MapControllers();
+            app.MapAuthEndpoints();
+            app.MapCommentEndpoints();
+            app.MapPostEndpoints();
+            app.MapUserEndpoints();
 
             app.Run();
         }

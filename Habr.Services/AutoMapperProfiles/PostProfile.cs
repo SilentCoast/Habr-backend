@@ -13,7 +13,7 @@ namespace Habr.Services.AutoMapperProfiles
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.AuthorEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.PublishDate, opt => opt.MapFrom(src => src.PublishedDate))
-                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
+                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments.Where(p => p.ParentCommentId == null)));
 
             CreateMap<Post, DraftedPostDTO>()
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))

@@ -212,7 +212,7 @@ namespace Habr.Tests
             await _postService.UpdatePost(post.Id, user.Id, newTitle, newText);
 
             post = await _secondContext.Posts.FirstAsync();
-            
+
             Assert.NotNull(post);
             Assert.NotNull(post.ModifiedDate);
             Assert.Equal(newTitle, post.Title);
