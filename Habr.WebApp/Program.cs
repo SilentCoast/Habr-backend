@@ -28,7 +28,7 @@ namespace Habr.WebApp
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
+            builder.Services.AddSingleton<IJwtService, JwtService>();
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
