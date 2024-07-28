@@ -1,4 +1,5 @@
 using Habr.DataAccess;
+using Habr.DataAccess.Entities;
 using Habr.Services;
 using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -6,12 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Habr.Tests
 {
-    //TODO: cover more cases
-    [Collection("Sequential")]
     public class UserServiceTests : IAsyncLifetime
     {
         private DataContext _context;
-        private DataContext _secondContext;
         private ServiceProvider _serviceProvider;
         private IUserService _userService;
 
@@ -21,24 +19,24 @@ namespace Habr.Tests
 
             _context = _serviceProvider.GetRequiredService<DataContext>();
             _userService = _serviceProvider.GetRequiredService<IUserService>();
-
-            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            Configurator.ConfigureDbContextOptions(optionsBuilder);
-
-            _secondContext = new DataContext(optionsBuilder.Options);
-
-            await _context.Database.MigrateAsync();
         }
 
         public async Task DisposeAsync()
         {
-            await _context.Users.ExecuteDeleteAsync();
-            await _context.Posts.ExecuteDeleteAsync();
-            await _context.Comments.ExecuteDeleteAsync();
+            await _context.Database.EnsureDeletedAsync();
 
             await _context.DisposeAsync();
-            await _secondContext.DisposeAsync();
             await _serviceProvider.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task GetName_ReturnsName()
+        {
+            var user = await CreateUser();
+
+            var getName = await _userService.GetName(user.Id);
+
+            Assert.Equal(user.Name, getName);
         }
 
         [Fact]
@@ -49,8 +47,8 @@ namespace Habr.Tests
             var password = "Password123!";
 
             await _userService.CreateUser(email, password, name);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
-            var user = await _secondContext.Users.SingleOrDefaultAsync(u => u.Email == email);
             Assert.NotNull(user);
             Assert.Equal(name, user.Name);
             Assert.Equal(email, user.Email);
@@ -82,12 +80,11 @@ namespace Habr.Tests
         }
 
         [Fact]
-        public async Task LogIn_CredentialsAreCorrect_ShouldReturnUserId()
+        public async Task LogIn_CorrectCredentials_ShouldReturnToken()
         {
             var name = "Test User";
             var email = "testuser@example.com";
             var password = "Password123!";
-
             await _userService.CreateUser(email, password, name);
 
             var result = await _userService.LogIn(email, password);
@@ -111,16 +108,27 @@ namespace Habr.Tests
         public async Task ConfirmEmail_ShouldSetIsEmailConfirmed()
         {
             var email = "email@mail.com";
-
             await _userService.CreateUser(email, "password");
-
             var user = await _context.Users.FirstAsync();
 
             await _userService.ConfirmEmail(email, user.Id);
 
-            user = await _secondContext.Users.FirstAsync();
-
             Assert.True(user.IsEmailConfirmed);
+        }
+
+        [Fact]
+        public async Task ConfirmEmail_UserDontExist_ShouldThrowArgumentException()
+        {
+            var email = "email@mail.com";
+            var nonExistentUserId = -1;
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _userService.ConfirmEmail(email, nonExistentUserId));
+        }
+
+        private async Task<User> CreateUser()
+        {
+            await _userService.CreateUser("john.doe@example.com", "password");
+            return await _context.Users.FirstAsync();
         }
     }
 }

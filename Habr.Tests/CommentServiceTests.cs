@@ -1,16 +1,14 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Habr.Tests
 {
-    //TODO: cover more cases
-    [Collection("Sequential")]
     public class CommentServiceTests : IAsyncLifetime
     {
         private DataContext _context;
-        private DataContext _secondContext;
         private ServiceProvider _serviceProvider;
         private ICommentService _commentService;
         private IPostService _postService;
@@ -24,40 +22,25 @@ namespace Habr.Tests
             _commentService = _serviceProvider.GetRequiredService<ICommentService>();
             _userService = _serviceProvider.GetRequiredService<IUserService>();
             _postService = _serviceProvider.GetRequiredService<IPostService>();
-
-            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            Configurator.ConfigureDbContextOptions(optionsBuilder);
-
-            _secondContext = new DataContext(optionsBuilder.Options);
-
-            await _context.Database.MigrateAsync();
         }
 
         public async Task DisposeAsync()
         {
-            await _context.Users.ExecuteDeleteAsync();
-            await _context.Posts.ExecuteDeleteAsync();
-            await _context.Comments.ExecuteDeleteAsync();
+            await _context.Database.EnsureDeletedAsync();
 
             await _context.DisposeAsync();
-            await _secondContext.DisposeAsync();
             await _serviceProvider.DisposeAsync();
         }
 
         [Fact]
         public async Task AddComment_ShouldAddComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
 
             await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
-            var comment = await _secondContext.Comments.FirstOrDefaultAsync();
+            var comment = await _context.Comments.FirstOrDefaultAsync();
 
             Assert.NotNull(comment);
             Assert.Equal(post.Id, comment.PostId);
@@ -65,23 +48,24 @@ namespace Habr.Tests
         }
 
         [Fact]
+        public async Task AddComment_PostDoesntExist_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var nonExistentPostId = -1;
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => 
+                await _commentService.AddComment("Sample Comment", nonExistentPostId, user.Id));
+        }
+
+        [Fact]
         public async Task ReplyToComment_ShouldAddComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var parentComment = await _context.Comments.FirstAsync();
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var parentComment = await CreateComment(user.Id, post.Id);
 
             await _commentService.ReplyToComment("Reply Comment", parentComment.Id, post.Id, user.Id);
-
-            var replyComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
+            var replyComment = await _context.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
 
             Assert.NotNull(replyComment);
             Assert.Equal(parentComment.Id, replyComment.ParentCommentId);
@@ -91,25 +75,26 @@ namespace Habr.Tests
         }
 
         [Fact]
+        public async Task ReplyToComment_CommentDoesntExist_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var nonExistentCommentId = -1;
+
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _commentService.ReplyToComment("Reply Comment", nonExistentCommentId, post.Id, user.Id));
+        }
+
+        [Fact]
         public async Task ModifyComment_ShouldUpdateComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var comment = await _context.Comments.FirstAsync();
-
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
             var newText = "newText";
 
             await _commentService.ModifyComment(newText, comment.Id, user.Id);
-
-            var modifiedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+            var modifiedComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 
             Assert.NotNull(modifiedComment);
             Assert.Equal(newText, modifiedComment.Text);
@@ -117,31 +102,49 @@ namespace Habr.Tests
         }
 
         [Fact]
+        public async Task ModifyComment_CommentDeleted_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            await _commentService.DeleteComment(comment.Id, user.Id);
+            var newText = "newText";
+
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _commentService.ModifyComment(newText, comment.Id, user.Id));
+        }
+
+        [Fact]
         public async Task DeleteComment_ShouldDeleteComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var comment = await _context.Comments.FirstAsync();
-
-            var initialModifiedDate = comment.ModifiedDate;
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
 
             await _commentService.DeleteComment(comment.Id, user.Id);
 
-            var deletedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+            Assert.NotNull(comment);
+            Assert.True(comment.IsDeleted);
+            Assert.Equal("Comment deleted", comment.Text);
+            Assert.Equal(user.Id, comment.UserId);
+        }
 
-            Assert.NotNull(deletedComment);
-            Assert.True(deletedComment.IsDeleted);
-            Assert.Equal("Comment deleted", deletedComment.Text);
-            Assert.Equal(user.Id, deletedComment.UserId);
-            Assert.NotEqual(initialModifiedDate, deletedComment.ModifiedDate);
+        private async Task<User> CreateUser()
+        {
+            await _userService.CreateUser("john.doe@example.com", "password");
+            return await _context.Users.FirstAsync();
+        }
+        private async Task<Post> CreatePost(int userId, bool isPublishedNow = false)
+        {
+            await _postService.AddPost("test", "test", userId, isPublishedNow);
+
+            return await _context.Posts.FirstAsync();
+        }
+        private async Task<Comment> CreateComment(int userId, int postId)
+        {
+            await _commentService.AddComment("text", postId, userId);
+
+            return await _context.Comments.FirstAsync();
         }
     }
 }

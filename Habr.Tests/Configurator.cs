@@ -2,7 +2,6 @@
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,20 +10,6 @@ namespace Habr.Tests
 {
     public static class Configurator
     {
-        private static IConfigurationRoot? configuration;
-        public static IConfigurationRoot Configuration
-        {
-            get
-            {
-                configuration ??= new ConfigurationBuilder()
-                       .SetBasePath(Directory.GetCurrentDirectory())
-                       .AddJsonFile("appsettings.json")
-                       .Build();
-
-                return configuration;
-            }
-        }
-
         public static ServiceProvider ConfigureServiceProvider()
         {
             var mockJwtService = new Mock<IJwtService>();
@@ -32,9 +17,7 @@ namespace Habr.Tests
             mockJwtService.Setup(service => service.GenerateToken(It.IsAny<int>())).Returns("mocked_token");
 
             return new ServiceCollection()
-                //TODO: maybe remove configuration and use raw connectionString
-                .AddSingleton<IConfiguration>(Configurator.Configuration)
-                .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
+                .AddDbContext<DataContext>(options => ConfigureDbContextOptions(options))
                 .AddScoped<IPostService, PostService>()
                 .AddScoped<ICommentService, CommentService>()
                 .AddScoped<IUserService, UserService>()
@@ -51,7 +34,7 @@ namespace Habr.Tests
 
         public static void ConfigureDbContextOptions(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("HabrDBTestConnection"));
+            optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
         }
     }
 }
