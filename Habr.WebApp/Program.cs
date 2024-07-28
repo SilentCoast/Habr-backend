@@ -24,11 +24,7 @@ namespace Habr.WebApp
             builder.Services.AddDbContext<DataContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("HabrDBConnection")));
 
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IPostService, PostService>();
-            builder.Services.AddScoped<ICommentService, CommentService>();
-            builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddSingleton<IJwtService, JwtService>();
+            builder.Services.RegisterServices();
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
