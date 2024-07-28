@@ -1,6 +1,6 @@
 ﻿using Habr.Services.Resources;
 
-namespace Habr.WebApp.MinimalApi
+namespace Habr.WebApp
 {
     public static class HttpContextExtensions
     {

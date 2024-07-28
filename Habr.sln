@@ -16,9 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.Services", "Habr.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.WebApp", "Habr.WebApp\Habr.WebApp.csproj", "{C68D0EB5-42E5-4A91-94AF-81E6DEC76232}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.WebApp.MinimalApi", "Habr.WebApp.MinimalApi\Habr.WebApp.MinimalApi.csproj", "{B2B13295-405B-4687-A638-2D811B540096}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.Tests", "Habr.Tests\Habr.Tests.csproj", "{114DF40D-EC69-4DB7-86A6-59B52EBD4E99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.Tests", "Habr.Tests\Habr.Tests.csproj", "{114DF40D-EC69-4DB7-86A6-59B52EBD4E99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,10 +40,6 @@ Global
 		{C68D0EB5-42E5-4A91-94AF-81E6DEC76232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C68D0EB5-42E5-4A91-94AF-81E6DEC76232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C68D0EB5-42E5-4A91-94AF-81E6DEC76232}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2B13295-405B-4687-A638-2D811B540096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2B13295-405B-4687-A638-2D811B540096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2B13295-405B-4687-A638-2D811B540096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2B13295-405B-4687-A638-2D811B540096}.Release|Any CPU.Build.0 = Release|Any CPU
 		{114DF40D-EC69-4DB7-86A6-59B52EBD4E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{114DF40D-EC69-4DB7-86A6-59B52EBD4E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{114DF40D-EC69-4DB7-86A6-59B52EBD4E99}.Release|Any CPU.ActiveCfg = Release|Any CPU

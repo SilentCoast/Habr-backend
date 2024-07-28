@@ -2,17 +2,22 @@
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
 
-namespace Habr.WebApp.MinimalApi.Endpoints
+namespace Habr.WebApp.Endpoints
 {
     public static class PostEndpoints
     {
         public static void MapPostEndpoints(this WebApplication app)
         {
-            app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService, CancellationToken cancellationToken) =>
+            app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
+                IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
                 var post = await postService.GetPostView(id, cancellationToken);
-                return Results.Ok(post);
+
+                var json = JsonSerializer.Serialize(post, jsonOptions.Value);
+                return Results.Content(json, "application/json");
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
