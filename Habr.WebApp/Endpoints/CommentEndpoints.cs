@@ -4,18 +4,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace Habr.WebApp.MinimalApi.Endpoints
+namespace Habr.WebApp.Endpoints
 {
     public static class CommentEndpoints
     {
         public static void MapCommentEndpoints(this WebApplication app)
         {
-            app.MapPost("/api/posts/{postId}/comments", [Authorize] async ([FromRoute] int postId, 
-                [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text, 
+            app.MapPost("/api/posts/{postId}/comments", [Authorize] async ([FromRoute] int postId,
+                [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await commentService.AddComment(text, postId, userId, cancellationToken);
+                await commentService.AddComment(text, postId, httpContext.GetCurrentUserId(), cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
             .Produces(StatusCodes.Status201Created)
@@ -23,12 +22,11 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPost("/api/posts/{postId}/comments/{commentId}/reply", [Authorize] async ([FromRoute] int postId, 
-                [FromRoute] int commentId, [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text, 
+            app.MapPost("/api/posts/{postId}/comments/{commentId}/reply", [Authorize] async ([FromRoute] int postId,
+                [FromRoute] int commentId, [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await commentService.ReplyToComment(text, commentId, postId, userId, cancellationToken);
+                await commentService.ReplyToComment(text, commentId, postId, httpContext.GetCurrentUserId(), cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
             .Produces(StatusCodes.Status201Created)
@@ -36,11 +34,10 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPut("/api/comments/{id}", [Authorize] async ([FromRoute] int id, [FromBody] string newText, 
+            app.MapPut("/api/comments/{id}", [Authorize] async ([FromRoute] int id, [FromBody] string newText,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await commentService.ModifyComment(newText, id, userId, cancellationToken);
+                await commentService.ModifyComment(newText, id, httpContext.GetCurrentUserId(), cancellationToken);
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)
@@ -48,11 +45,10 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapDelete("/api/comments/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext, 
+            app.MapDelete("/api/comments/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 ICommentService commentService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await commentService.DeleteComment(id, userId, cancellationToken);
+                await commentService.DeleteComment(id, httpContext.GetCurrentUserId(), cancellationToken);
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)

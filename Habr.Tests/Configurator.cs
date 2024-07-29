@@ -1,27 +1,40 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Habr.DataAccess;
+using Habr.Services;
+using Habr.Services.AutoMapperProfiles;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace Habr.Tests
 {
     public static class Configurator
     {
-        private static IConfigurationRoot? configuration;
-        public static IConfigurationRoot Configuration
+        public static ServiceProvider ConfigureServiceProvider()
         {
-            get
-            {
-                configuration ??= new ConfigurationBuilder()
-                       .SetBasePath(Directory.GetCurrentDirectory())
-                       .AddJsonFile("appsettings.json")
-                       .Build();
+            var mockJwtService = new Mock<IJwtService>();
 
-                return configuration;
-            }
+            mockJwtService.Setup(service => service.GenerateToken(It.IsAny<int>())).Returns("mocked_token");
+
+            return new ServiceCollection()
+                .AddDbContext<DataContext>(options => ConfigureDbContextOptions(options))
+                .AddScoped<IPostService, PostService>()
+                .AddScoped<ICommentService, CommentService>()
+                .AddScoped<IUserService, UserService>()
+                .AddScoped(_ => mockJwtService.Object)
+                .AddScoped<IPasswordHasher, PasswordHasher>()
+                .AddAutoMapper(typeof(PostProfile).Assembly)
+                .AddLogging(builder =>
+                {
+                    builder.AddConsole();
+                    builder.SetMinimumLevel(LogLevel.Information);
+                })
+                .BuildServiceProvider();
         }
 
         public static void ConfigureDbContextOptions(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("HabrDBTestConnection"));
+            optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
         }
     }
 }

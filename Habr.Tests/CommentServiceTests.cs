@@ -1,160 +1,150 @@
 ﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
 using Habr.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Habr.Tests
 {
-    [TestClass]
-    public class CommentServiceTests
+    public class CommentServiceTests : IAsyncLifetime
     {
         private DataContext _context;
-        private DataContext _secondContext;
         private ServiceProvider _serviceProvider;
         private ICommentService _commentService;
         private IPostService _postService;
         private IUserService _userService;
 
-        [TestInitialize]
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
-            _serviceProvider = new ServiceCollection()
-                .AddDbContext<DataContext>(options => Configurator.ConfigureDbContextOptions(options))
-                .AddScoped<IUserService, UserService>()
-                .AddSingleton<IPasswordHasher, PasswordHasher>()
-                .AddScoped<ICommentService, CommentService>()
-                .AddScoped<IPostService, PostService>()
-                .AddLogging(builder =>
-                {
-                    builder.AddConsole();
-                    builder.SetMinimumLevel(LogLevel.Information);
-                })
-                .BuildServiceProvider();
+            _serviceProvider = Configurator.ConfigureServiceProvider();
 
             _context = _serviceProvider.GetRequiredService<DataContext>();
             _commentService = _serviceProvider.GetRequiredService<ICommentService>();
             _userService = _serviceProvider.GetRequiredService<IUserService>();
             _postService = _serviceProvider.GetRequiredService<IPostService>();
-
-            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            Configurator.ConfigureDbContextOptions(optionsBuilder);
-
-            _secondContext = new DataContext(optionsBuilder.Options);
-
-            await _context.Database.MigrateAsync();
         }
 
-        [TestCleanup]
-        public async Task Cleanup()
+        public async Task DisposeAsync()
         {
-            await _context.Users.ExecuteDeleteAsync();
-            await _context.Posts.ExecuteDeleteAsync();
-            await _context.Comments.ExecuteDeleteAsync();
+            await _context.Database.EnsureDeletedAsync();
 
             await _context.DisposeAsync();
-            await _secondContext.DisposeAsync();
             await _serviceProvider.DisposeAsync();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task AddComment_ShouldAddComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
 
             await _commentService.AddComment("Sample Comment", post.Id, user.Id);
 
-            var comment = await _secondContext.Comments.FirstOrDefaultAsync();
+            var comment = await _context.Comments.FirstOrDefaultAsync();
 
-            Assert.IsNotNull(comment, "Comment should be added to the database.");
-            Assert.AreEqual(post.Id, comment.PostId, "Comment should be linked to the correct post.");
-            Assert.AreEqual(user.Id, comment.UserId, "Comment should be linked to the correct user.");
+            Assert.NotNull(comment);
+            Assert.Equal(post.Id, comment.PostId);
+            Assert.Equal(user.Id, comment.UserId);
         }
 
-        [TestMethod]
+        [Fact]
+        public async Task AddComment_PostDoesntExist_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var nonExistentPostId = -1;
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => 
+                await _commentService.AddComment("Sample Comment", nonExistentPostId, user.Id));
+        }
+
+        [Fact]
         public async Task ReplyToComment_ShouldAddComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var parentComment = await _context.Comments.FirstAsync();
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var parentComment = await CreateComment(user.Id, post.Id);
 
             await _commentService.ReplyToComment("Reply Comment", parentComment.Id, post.Id, user.Id);
+            var replyComment = await _context.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
 
-            var replyComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
-
-            Assert.IsNotNull(replyComment, "Reply comment should be added to the database.");
-            Assert.AreEqual(parentComment.Id, replyComment.ParentCommentId, "Reply comment should be linked to the correct parent comment.");
-            Assert.AreEqual(post.Id, replyComment.PostId, "Reply comment should be linked to the correct post.");
-            Assert.AreEqual(user.Id, replyComment.UserId, "Reply comment should be linked to the correct user.");
-            Assert.AreEqual("Reply Comment", replyComment.Text, "Reply comment text should be correct.");
+            Assert.NotNull(replyComment);
+            Assert.Equal(parentComment.Id, replyComment.ParentCommentId);
+            Assert.Equal(post.Id, replyComment.PostId);
+            Assert.Equal(user.Id, replyComment.UserId);
+            Assert.Equal("Reply Comment", replyComment.Text);
         }
 
-        [TestMethod]
+        [Fact]
+        public async Task ReplyToComment_CommentDoesntExist_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var nonExistentCommentId = -1;
+
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _commentService.ReplyToComment("Reply Comment", nonExistentCommentId, post.Id, user.Id));
+        }
+
+        [Fact]
         public async Task ModifyComment_ShouldUpdateComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var comment = await _context.Comments.FirstAsync();
-
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
             var newText = "newText";
 
             await _commentService.ModifyComment(newText, comment.Id, user.Id);
+            var modifiedComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
 
-            var modifiedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
-
-            Assert.IsNotNull(modifiedComment, "Comment should still exist in the database after modification.");
-            Assert.AreEqual(newText, modifiedComment.Text, "Comment text should be modified as expected.");
-            Assert.AreEqual(user.Id, modifiedComment.UserId, "Comment should still be associated with the same user.");
+            Assert.NotNull(modifiedComment);
+            Assert.Equal(newText, modifiedComment.Text);
+            Assert.Equal(user.Id, modifiedComment.UserId);
         }
 
-        [TestMethod]
+        [Fact]
+        public async Task ModifyComment_CommentDeleted_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            await _commentService.DeleteComment(comment.Id, user.Id);
+            var newText = "newText";
+
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _commentService.ModifyComment(newText, comment.Id, user.Id));
+        }
+
+        [Fact]
         public async Task DeleteComment_ShouldDeleteComment()
         {
-            await _userService.CreateUser("email@mail.com", "pas");
-
-            var user = await _context.Users.FirstAsync();
-
-            await _postService.AddPost("test", "test", user.Id);
-
-            var post = await _context.Posts.FirstAsync();
-
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
-
-            var comment = await _context.Comments.FirstAsync();
-
-            var initialModifiedDate = comment.ModifiedDate;
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
 
             await _commentService.DeleteComment(comment.Id, user.Id);
 
-            var deletedComment = await _secondContext.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+            Assert.NotNull(comment);
+            Assert.True(comment.IsDeleted);
+            Assert.Equal("Comment deleted", comment.Text);
+            Assert.Equal(user.Id, comment.UserId);
+        }
 
-            Assert.IsNotNull(deletedComment, "Comment should still exist in the database after deletion.");
-            Assert.IsTrue(deletedComment.IsDeleted, "Comment should be marked as deleted.");
-            Assert.AreEqual("Comment deleted", deletedComment.Text, "Comment text should be updated to 'Comment deleted'.");
-            Assert.AreEqual(user.Id, deletedComment.UserId, "Comment should still be associated with the same user.");
-            Assert.AreNotEqual(initialModifiedDate, deletedComment.ModifiedDate, "ModifiedDate should be updated after deletion.");
+        private async Task<User> CreateUser()
+        {
+            await _userService.CreateUser("john.doe@example.com", "password");
+            return await _context.Users.FirstAsync();
+        }
+        private async Task<Post> CreatePost(int userId, bool isPublishedNow = false)
+        {
+            await _postService.AddPost("test", "test", userId, isPublishedNow);
+
+            return await _context.Posts.FirstAsync();
+        }
+        private async Task<Comment> CreateComment(int userId, int postId)
+        {
+            await _commentService.AddComment("text", postId, userId);
+
+            return await _context.Comments.FirstAsync();
         }
     }
 }

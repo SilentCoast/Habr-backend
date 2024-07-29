@@ -3,14 +3,14 @@ using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Habr.WebApp.MinimalApi.Endpoints
+namespace Habr.WebApp.Endpoints
 {
     public static class AuthEndpoints
     {
         public static void MapAuthEndpoints(this WebApplication app)
         {
-            app.MapPost("/api/auth/login", async ([FromBody] UserLoginModel model, IUserService userService, 
-                JwtService jwtService, CancellationToken cancellationToken = default) =>
+            app.MapPost("/api/auth/login", async ([FromBody] UserLoginModel model, IUserService userService,
+                IJwtService jwtService, CancellationToken cancellationToken = default) =>
             {
                 var token = await userService.LogIn(model.Email, model.Password, cancellationToken);
                 return Results.Ok(token);
@@ -19,7 +19,7 @@ namespace Habr.WebApp.MinimalApi.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPost("/api/auth/confirm-email", [Authorize] async ([FromBody] string email, HttpContext httpContext, 
+            app.MapPost("/api/auth/confirm-email", [Authorize] async ([FromBody] string email, HttpContext httpContext,
                 IUserService userService, CancellationToken cancellationToken = default) =>
             {
                 await userService.ConfirmEmail(email, httpContext.GetCurrentUserId(), cancellationToken);
