@@ -24,8 +24,7 @@ namespace Habr.WebApp
             builder.Services.AddDbContext<DataContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("HabrDBConnection")));
 
-            builder.Services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-            builder.Services.RegisterServices();
+            builder.Services.RegisterServices(configuration);
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
