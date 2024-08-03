@@ -1,4 +1,4 @@
-﻿namespace Habr.WebApp.ExceptionHandle
+﻿namespace Habr.WebApp.GlobalExceptionHandler
 {
     public static class GlobalExceptionHandlerExtension
     {

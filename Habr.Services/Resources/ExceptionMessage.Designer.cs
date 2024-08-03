@@ -142,6 +142,15 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid role type.
+        /// </summary>
+        public static string InvalidRoleType {
+            get {
+                return ResourceManager.GetString("InvalidRoleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parent comment not found.
         /// </summary>
         public static string ParentCommentNotFound {
@@ -165,6 +174,15 @@ namespace Habr.Services.Resources {
         public static string TokenBreach {
             get {
                 return ResourceManager.GetString("TokenBreach", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token is invalid or expired.
+        /// </summary>
+        public static string TokenValidationFailed {
+            get {
+                return ResourceManager.GetString("TokenValidationFailed", resourceCulture);
             }
         }
         

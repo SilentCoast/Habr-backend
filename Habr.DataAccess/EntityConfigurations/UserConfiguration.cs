@@ -46,6 +46,11 @@ namespace Habr.DataAccess.EntityConfigurations
                 .HasForeignKey(p => p.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasMany(p => p.RefreshTokens)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .IsRequired();
         }
     }
 }

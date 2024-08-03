@@ -1,7 +1,11 @@
-﻿namespace Habr.Services
+﻿using Habr.DataAccess.Entities;
+
+namespace Habr.Services
 {
     public interface IJwtService
     {
-        string GenerateToken(int userId);
+        Task<string> GenerateAccessToken(int userId);
+        Task<RefreshToken> GenerateRefreshToken(int userId, CancellationToken cancellationToken = default);
+        Task ValidateRefreshToken(RefreshToken token, CancellationToken cancellationToken = default);
     }
 }

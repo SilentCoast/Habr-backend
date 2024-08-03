@@ -14,7 +14,7 @@ namespace Habr.Tests
         {
             var mockJwtService = new Mock<IJwtService>();
 
-            mockJwtService.Setup(service => service.GenerateToken(It.IsAny<int>())).Returns("mocked_token");
+            mockJwtService.Setup(service => service.GenerateAccessToken(It.IsAny<int>())).ReturnsAsync("mocked_token");
 
             return new ServiceCollection()
                 .AddDbContext<DataContext>(options => ConfigureDbContextOptions(options))

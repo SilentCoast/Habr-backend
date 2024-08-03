@@ -4,6 +4,7 @@ using Habr.DataAccess;
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess.Enums;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -49,7 +50,8 @@ namespace Habr.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task AddPost(string title, string text, int userId, bool isPublishedNow = false, CancellationToken cancellationToken = default)
+        public async Task AddPost(string title, string text, int userId,
+            bool isPublishedNow = false, CancellationToken cancellationToken = default)
         {
             CheckTitleContraints(title);
             CheckTextContraints(text);
@@ -72,11 +74,11 @@ namespace Habr.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task PublishPost(int postId, int userId, CancellationToken cancellationToken = default)
+        public async Task PublishPost(int postId, int userId, RoleType role, CancellationToken cancellationToken = default)
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            CheckAccess(userId, post.UserId);
+            AccessController.CheckPostAccess(userId, post.UserId, role);
 
             post.IsPublished = true;
             post.PublishedDate = DateTime.UtcNow;
@@ -87,7 +89,7 @@ namespace Habr.Services
             _logger.LogInformation($"Post (id:{postId}) published");
         }
 
-        public async Task UnpublishPost(int postId, int userId, CancellationToken cancellationToken = default)
+        public async Task UnpublishPost(int postId, int userId, RoleType role, CancellationToken cancellationToken = default)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)
@@ -98,7 +100,7 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.PostNotFound);
             }
 
-            CheckAccess(userId, post.UserId);
+            AccessController.CheckPostAccess(userId, post.UserId, role);
 
             if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
@@ -114,11 +116,12 @@ namespace Habr.Services
             _logger.LogInformation($"Post (id:{postId}) drafted");
         }
 
-        public async Task UpdatePost(int postId, int userId, string? newTitle = null, string? newText = null, CancellationToken cancellationToken = default)
+        public async Task UpdatePost(int postId, int userId, RoleType role,
+            string? newTitle = null, string? newText = null, CancellationToken cancellationToken = default)
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            CheckAccess(userId, post.UserId);
+            AccessController.CheckPostAccess(userId, post.UserId, role);
 
             if (post.IsPublished)
             {
@@ -138,32 +141,22 @@ namespace Habr.Services
             }
 
             post.ModifiedDate = DateTime.UtcNow;
+            //TODO: maybe add modifiedBy
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeletePost(int postId, int userId, CancellationToken cancellationToken = default)
+        public async Task DeletePost(int postId, int userId, RoleType role, CancellationToken cancellationToken = default)
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            CheckAccess(userId, post.UserId);
+            AccessController.CheckPostAccess(userId, post.UserId, role);
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        /// <summary>
-        /// Checks if User sending the requst owns the post.
-        /// </summary>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        private void CheckAccess(int userId, int postOwnerId)
-        {
-            if (userId != postOwnerId)
-            {
-                throw new UnauthorizedAccessException(ExceptionMessage.AcccessDeniedWrongPostOwner);
-            }
-        }
         private async Task<Post> GetPostById(int postId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken);

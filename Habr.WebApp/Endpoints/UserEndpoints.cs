@@ -12,7 +12,7 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/users/name", [Authorize] async (HttpContext httpContext, IUserService userService,
                 CancellationToken cancellationToken = default) =>
             {
-                var name = await userService.GetName(httpContext.GetCurrentUserId(), cancellationToken);
+                var name = await userService.GetName(httpContext.GetUserId(), cancellationToken);
                 return Results.Ok(name);
             })
             .Produces(StatusCodes.Status200OK)

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Habr.DataAccess;
+using Habr.DataAccess.Entities;
+using Habr.Services.Resources;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,17 +13,22 @@ namespace Habr.Services
     public class JwtService : IJwtService
     {
         private readonly JwtSettings _jwtSettings;
+        private readonly DataContext _context;
 
-        public JwtService(IOptions<JwtSettings> jwtSettings)
+        public JwtService(IOptions<JwtSettings> jwtSettings, DataContext context)
         {
             _jwtSettings = jwtSettings.Value;
+            _context = context;
         }
 
-        public string GenerateToken(int userId)
+        public async Task<string> GenerateAccessToken(int userId)
         {
+            var user = await _context.Users.Include(p => p.Role).SingleAsync(p => p.Id == userId);
+
             var claims = new[]
             {
                 new Claim("userId", userId.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.RoleType.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -30,10 +39,45 @@ namespace Habr.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.LifetimeMinutes),
+                expires: DateTime.UtcNow.AddHours(_jwtSettings.AccessTokenLifetimeHours),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<RefreshToken> GenerateRefreshToken(int userId, CancellationToken cancellationToken = default)
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Guid.NewGuid().ToString(),
+                Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays),
+                Created = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            _context.RefreshTokens.Add(refreshToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return refreshToken;
+        }
+
+        public async Task ValidateRefreshToken(RefreshToken token, CancellationToken cancellationToken = default)
+        {
+            var tokenFromDb = await _context.RefreshTokens.FirstOrDefaultAsync(p => p.Id == token.Id, cancellationToken);
+            if (tokenFromDb != null)
+            {
+                if (tokenFromDb.Token == token.Token)
+                {
+                    if (tokenFromDb.Revoked == null)
+                    {
+                        if (tokenFromDb.Expires > DateTime.UtcNow)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+            throw new SecurityTokenValidationException(ExceptionMessage.TokenValidationFailed);
         }
     }
 }

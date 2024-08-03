@@ -1,35 +1,22 @@
-﻿using Habr.DataAccess;
-using Habr.DataAccess.Entities;
-using Habr.Services;
+﻿using Habr.DataAccess.Entities;
+using Habr.DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Habr.Tests
 {
     public class CommentServiceTests : IAsyncLifetime
     {
-        private DataContext _context;
-        private ServiceProvider _serviceProvider;
-        private ICommentService _commentService;
-        private IPostService _postService;
-        private IUserService _userService;
+        private DependencyObject _dObject;
 
         public async Task InitializeAsync()
         {
-            _serviceProvider = Configurator.ConfigureServiceProvider();
-
-            _context = _serviceProvider.GetRequiredService<DataContext>();
-            _commentService = _serviceProvider.GetRequiredService<ICommentService>();
-            _userService = _serviceProvider.GetRequiredService<IUserService>();
-            _postService = _serviceProvider.GetRequiredService<IPostService>();
+            _dObject = new DependencyObject();
+            await _dObject.Initilize();
         }
 
         public async Task DisposeAsync()
         {
-            await _context.Database.EnsureDeletedAsync();
-
-            await _context.DisposeAsync();
-            await _serviceProvider.DisposeAsync();
+            await _dObject.Dispose();
         }
 
         [Fact]
@@ -38,9 +25,9 @@ namespace Habr.Tests
             var user = await CreateUser();
             var post = await CreatePost(user.Id, true);
 
-            await _commentService.AddComment("Sample Comment", post.Id, user.Id);
+            await _dObject.CommentService.AddComment("Sample Comment", post.Id, user.Id);
 
-            var comment = await _context.Comments.FirstOrDefaultAsync();
+            var comment = await _dObject.Context.Comments.FirstOrDefaultAsync();
 
             Assert.NotNull(comment);
             Assert.Equal(post.Id, comment.PostId);
@@ -53,8 +40,8 @@ namespace Habr.Tests
             var user = await CreateUser();
             var nonExistentPostId = -1;
 
-            await Assert.ThrowsAsync<ArgumentException>(async () => 
-                await _commentService.AddComment("Sample Comment", nonExistentPostId, user.Id));
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _dObject.CommentService.AddComment("Sample Comment", nonExistentPostId, user.Id));
         }
 
         [Fact]
@@ -64,8 +51,8 @@ namespace Habr.Tests
             var post = await CreatePost(user.Id, true);
             var parentComment = await CreateComment(user.Id, post.Id);
 
-            await _commentService.ReplyToComment("Reply Comment", parentComment.Id, post.Id, user.Id);
-            var replyComment = await _context.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
+            await _dObject.CommentService.ReplyToComment("Reply Comment", parentComment.Id, post.Id, user.Id);
+            var replyComment = await _dObject.Context.Comments.FirstOrDefaultAsync(c => c.Text == "Reply Comment");
 
             Assert.NotNull(replyComment);
             Assert.Equal(parentComment.Id, replyComment.ParentCommentId);
@@ -82,36 +69,60 @@ namespace Habr.Tests
             var nonExistentCommentId = -1;
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
-                await _commentService.ReplyToComment("Reply Comment", nonExistentCommentId, post.Id, user.Id));
+                await _dObject.CommentService.ReplyToComment("Reply Comment", nonExistentCommentId, post.Id, user.Id));
         }
 
         [Fact]
-        public async Task ModifyComment_ShouldUpdateComment()
+        public async Task EditComment_ShouldUpdateComment()
         {
             var user = await CreateUser();
             var post = await CreatePost(user.Id, true);
             var comment = await CreateComment(user.Id, post.Id);
             var newText = "newText";
 
-            await _commentService.ModifyComment(newText, comment.Id, user.Id);
-            var modifiedComment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+            await _dObject.CommentService.EditComment(newText, comment.Id, user.Id, RoleType.User);
 
-            Assert.NotNull(modifiedComment);
-            Assert.Equal(newText, modifiedComment.Text);
-            Assert.Equal(user.Id, modifiedComment.UserId);
+            Assert.Equal(newText, comment.Text);
         }
 
         [Fact]
-        public async Task ModifyComment_CommentDeleted_ShouldThrowArgumentException()
+        public async Task EditComment_CommentDeleted_ShouldThrowArgumentException()
         {
             var user = await CreateUser();
             var post = await CreatePost(user.Id, true);
             var comment = await CreateComment(user.Id, post.Id);
-            await _commentService.DeleteComment(comment.Id, user.Id);
+            await _dObject.CommentService.DeleteComment(comment.Id, user.Id, RoleType.User);
             var newText = "newText";
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
-                await _commentService.ModifyComment(newText, comment.Id, user.Id));
+                await _dObject.CommentService.EditComment(newText, comment.Id, user.Id, RoleType.User));
+        }
+
+        [Fact]
+        public async Task EditComment_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            var newText = "newText";
+            var unauthorizedUserId = user.Id + 1;
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
+                await _dObject.CommentService.EditComment(newText, comment.Id, unauthorizedUserId, RoleType.User));
+        }
+
+        [Fact]
+        public async Task EditComment_AdminUser_ShouldBypassAccessCheck()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            var newText = "newText";
+            var unauthorizedUserId = user.Id + 1;
+
+            await _dObject.CommentService.EditComment(newText, comment.Id, unauthorizedUserId, RoleType.Admin);
+
+            Assert.Equal(newText, comment.Text);
         }
 
         [Fact]
@@ -121,7 +132,7 @@ namespace Habr.Tests
             var post = await CreatePost(user.Id, true);
             var comment = await CreateComment(user.Id, post.Id);
 
-            await _commentService.DeleteComment(comment.Id, user.Id);
+            await _dObject.CommentService.DeleteComment(comment.Id, user.Id, RoleType.User);
 
             Assert.NotNull(comment);
             Assert.True(comment.IsDeleted);
@@ -129,22 +140,48 @@ namespace Habr.Tests
             Assert.Equal(user.Id, comment.UserId);
         }
 
+        [Fact]
+        public async Task DeleteComment_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            var unauthorizedUserId = user.Id + 1;
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
+                await _dObject.CommentService.DeleteComment(comment.Id, unauthorizedUserId, RoleType.User));
+        }
+
+        [Fact]
+        public async Task DeleteComment_AdminUser_ShouldBypassAccessCheck()
+        {
+            var user = await CreateUser();
+            var post = await CreatePost(user.Id, true);
+            var comment = await CreateComment(user.Id, post.Id);
+            var unauthorizedUserId = user.Id + 1;
+
+            await _dObject.CommentService.DeleteComment(comment.Id, unauthorizedUserId, RoleType.Admin);
+
+            Assert.True(comment.IsDeleted);
+            Assert.Equal("Comment deleted", comment.Text);
+        }
+
         private async Task<User> CreateUser()
         {
-            await _userService.CreateUser("john.doe@example.com", "password");
-            return await _context.Users.FirstAsync();
+            await _dObject.UserService.CreateUser("john.doe@example.com", "password");
+            return await _dObject.Context.Users.FirstAsync();
         }
         private async Task<Post> CreatePost(int userId, bool isPublishedNow = false)
         {
-            await _postService.AddPost("test", "test", userId, isPublishedNow);
+            await _dObject.PostService.AddPost("test", "test", userId, isPublishedNow);
 
-            return await _context.Posts.FirstAsync();
+            return await _dObject.Context.Posts.FirstAsync();
         }
         private async Task<Comment> CreateComment(int userId, int postId)
         {
-            await _commentService.AddComment("text", postId, userId);
+            await _dObject.CommentService.AddComment("text", postId, userId);
 
-            return await _context.Comments.FirstAsync();
+            return await _dObject.Context.Comments.FirstAsync();
         }
     }
 }

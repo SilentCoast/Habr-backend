@@ -35,8 +35,7 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                var posts = await postService.GetDraftedPosts(userId, cancellationToken);
+                var posts = await postService.GetDraftedPosts(httpContext.GetUserId(), cancellationToken);
                 if (posts.Any())
                 {
                     return Results.Ok(posts);
@@ -55,8 +54,7 @@ namespace Habr.WebApp.Endpoints
             app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.AddPost(model.Title, model.Text, userId, model.IsPublishedNow, cancellationToken);
+                await postService.AddPost(model.Title, model.Text, httpContext.GetUserId(), model.IsPublishedNow, cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
             .Produces(StatusCodes.Status201Created)
@@ -67,8 +65,9 @@ namespace Habr.WebApp.Endpoints
             app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.UpdatePost(id, userId, model.NewTitle, model.NewText, cancellationToken);
+                await postService.UpdatePost(id, httpContext.GetUserId(), httpContext.GetUserRole(),
+                    model.NewTitle, model.NewText, cancellationToken);
+
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)
@@ -80,8 +79,9 @@ namespace Habr.WebApp.Endpoints
             app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.PublishPost(id, userId, cancellationToken);
+                await postService.PublishPost(id, httpContext.GetUserId(),
+                    httpContext.GetUserRole(), cancellationToken);
+
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)
@@ -93,8 +93,9 @@ namespace Habr.WebApp.Endpoints
             app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.UnpublishPost(id, userId, cancellationToken);
+                await postService.UnpublishPost(id, httpContext.GetUserId(),
+                    httpContext.GetUserRole(), cancellationToken);
+
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)
@@ -106,8 +107,7 @@ namespace Habr.WebApp.Endpoints
             app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.DeletePost(id, userId, cancellationToken);
+                await postService.DeletePost(id, httpContext.GetUserId(), httpContext.GetUserRole(), cancellationToken);
                 return Results.Ok();
             })
             .Produces(StatusCodes.Status200OK)

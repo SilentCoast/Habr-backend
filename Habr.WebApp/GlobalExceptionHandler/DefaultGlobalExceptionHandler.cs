@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 
-namespace Habr.WebApp.ExceptionHandle
+namespace Habr.WebApp.GlobalExceptionHandler
 {
     public class DefaultGlobalExceptionHandler : IExceptionHandler
     {

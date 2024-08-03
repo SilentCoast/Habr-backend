@@ -1,9 +1,8 @@
 using Habr.DataAccess;
-using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.Endpoints;
-using Habr.WebApp.ExceptionHandle;
 using Habr.WebApp.Extensions;
+using Habr.WebApp.GlobalExceptionHandler;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -46,8 +45,7 @@ namespace Habr.WebApp
 
             builder.Services.ConfigureSwagger();
 
-            builder.ConfigureAuthentication();
-            builder.Services.AddAuthorization();
+            builder.ConfigureAuth();
 
             var app = builder.Build();
 
