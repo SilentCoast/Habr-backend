@@ -1,6 +1,6 @@
 ﻿namespace Habr.DataAccess.DTOs
 {
-    public class PublishedPostDTO
+    public class PublishedPostDto
     {
         public int PostId { get; set; }
         public string Title { get; set; }

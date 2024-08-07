@@ -81,7 +81,7 @@ namespace Habr.Services
             _logger.LogInformation($"User registered: {email}");
         }
 
-        public async Task<TokensDTO> LogIn(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<TokensDto> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
                 ?? throw new LogInException(ExceptionMessage.EmailIncorrect);
@@ -97,7 +97,7 @@ namespace Habr.Services
 
             _logger.LogInformation($"User logged in: {email}");
 
-            return new TokensDTO { AccessToken = accesToken, RefreshToken = refreshToken };
+            return new TokensDto { AccessToken = accesToken, RefreshToken = refreshToken };
         }
 
         public async Task ConfirmEmail(string email, int userId, CancellationToken cancellationToken = default)

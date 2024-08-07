@@ -8,7 +8,7 @@ namespace Habr.Services.AutoMapperProfiles
     {
         public CommentProfile()
         {
-            CreateMap<Comment, CommentDTO>()
+            CreateMap<Comment, CommentDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.ModifiedDate))

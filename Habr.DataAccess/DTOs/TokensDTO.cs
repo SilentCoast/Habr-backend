@@ -2,7 +2,7 @@
 
 namespace Habr.DataAccess.DTOs
 {
-    public class TokensDTO
+    public class TokensDto
     {
         public string AccessToken { get; set; }
         public RefreshToken RefreshToken { get; set; }

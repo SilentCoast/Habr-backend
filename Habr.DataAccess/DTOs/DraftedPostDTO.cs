@@ -1,6 +1,6 @@
 ﻿namespace Habr.DataAccess.DTOs
 {
-    public class DraftedPostDTO
+    public class DraftedPostDto
     {
         public int PostId { get; set; }
         public DateTime CreatedAt { get; set; }

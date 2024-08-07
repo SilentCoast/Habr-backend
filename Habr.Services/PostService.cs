@@ -24,28 +24,28 @@ namespace Habr.Services
             _logger = logger;
         }
 
-        public async Task<PostViewDTO> GetPostView(int id, CancellationToken cancellationToken = default)
+        public async Task<PostViewDto> GetPostView(int id, CancellationToken cancellationToken = default)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == id && p.IsPublished == true)
-                .ProjectTo<PostViewDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<PostViewDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
 
             return post ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
         }
-        public async Task<IEnumerable<PublishedPostDTO>> GetPublishedPosts(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<PublishedPostDto>> GetPublishedPosts(CancellationToken cancellationToken = default)
         {
             return await _context.Posts
                 .Where(p => p.IsPublished)
-                .ProjectTo<PublishedPostDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<PublishedPostDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.PublishDate)
                 .ToListAsync(cancellationToken);
         }
-        public async Task<IEnumerable<DraftedPostDTO>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Posts
                 .Where(p => p.IsPublished == false && p.UserId == userId)
-                .ProjectTo<DraftedPostDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<DraftedPostDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.UpdatedAt)
                 .ToListAsync(cancellationToken);
         }
