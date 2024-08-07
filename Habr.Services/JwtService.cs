@@ -22,9 +22,9 @@ namespace Habr.Services
             _context = context;
         }
 
-        public async Task<string> GenerateAccessToken(int userId)
+        public async Task<string> GenerateAccessToken(int userId, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.Include(p => p.Role).SingleAsync(p => p.Id == userId);
+            var user = await _context.Users.Include(p => p.Role).SingleAsync(p => p.Id == userId, cancellationToken);
 
             var claims = new[]
             {
