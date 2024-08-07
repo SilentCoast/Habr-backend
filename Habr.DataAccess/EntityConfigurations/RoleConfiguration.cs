@@ -17,7 +17,12 @@ namespace Habr.DataAccess.EntityConfigurations
                 .HasMaxLength(50);
 
             builder.Property(p => p.RoleType)
-                .IsRequired();
+                .IsRequired()
+                .HasConversion
+                (
+                    p => p.ToString(),
+                    p => (RoleType)Enum.Parse(typeof(RoleType), p)
+                );
 
             builder.HasMany(p => p.Users)
                 .WithOne(p => p.Role)
