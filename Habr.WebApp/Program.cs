@@ -74,7 +74,7 @@ namespace Habr.WebApp
             app.MapPostEndpoints();
             app.MapUserEndpoints();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
