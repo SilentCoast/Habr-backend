@@ -17,7 +17,9 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status401Unauthorized);
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users")
+            .WithDescription("Retrieves name of authorized user");
 
             app.MapPost("/api/users", async ([FromBody] UserCreateModel model, IUserService userService,
                 CancellationToken cancellationToken = default) =>
@@ -26,7 +28,9 @@ namespace Habr.WebApp.Endpoints
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
             .Produces(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithTags("Users")
+            .WithDescription("Creates a new user.");
         }
     }
 }

@@ -21,7 +21,9 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves a specific published post by its ID.");
 
             app.MapGet("/api/posts/published", async (IPostService postService, CancellationToken cancellationToken) =>
             {
@@ -30,7 +32,10 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all published posts.");
+
 
             app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
@@ -49,7 +54,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all drafted posts.");
 
             app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -60,7 +67,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Creates a new post.");
 
             app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
@@ -74,7 +83,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Updates a specific post by its ID.");
 
             app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -88,7 +99,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Publishes a specific post by its ID.");
 
             app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -102,7 +115,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Unpublishes a specific post by its ID.");
 
             app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -114,7 +129,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Deletes a specific post by its ID.");
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Habr.DataAccess.Entities;
-using Habr.Services.Interfaces;
+﻿using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +22,9 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Authentication")
+            .WithDescription("Logs in a user and returns an Access and Refresh tokens.");
 
             app.MapPost("/api/auth/refresh", async ([FromBody] string refreshToken, IJwtService jwtService,
                 CancellationToken cancellationToken = default) =>
@@ -34,7 +35,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Authentication")
+            .WithDescription("Refreshes the Access token.");
 
             app.MapPost("/api/auth/confirm-email", [Authorize] async ([FromBody] string email, HttpContext httpContext,
                 IUserService userService, CancellationToken cancellationToken = default) =>
@@ -45,7 +48,9 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Authentication")
+            .WithDescription("Confirms a user's email address.");
         }
     }
 }
