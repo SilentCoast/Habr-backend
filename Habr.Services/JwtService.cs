@@ -45,7 +45,7 @@ namespace Habr.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<RefreshToken> GenerateRefreshToken(int userId, CancellationToken cancellationToken = default)
+        public async Task<string> GenerateRefreshToken(int userId, CancellationToken cancellationToken = default)
         {
             var refreshToken = new RefreshToken
             {
@@ -58,22 +58,22 @@ namespace Habr.Services
             _context.RefreshTokens.Add(refreshToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return refreshToken;
+            return refreshToken.Token;
         }
 
-        public async Task ValidateRefreshToken(RefreshToken token, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// validates refreshToken and generates AccessToken
+        /// </summary>
+        public async Task<string> RefreshAccessToken(string refreshToken, CancellationToken cancellationToken = default)
         {
-            var tokenFromDb = await _context.RefreshTokens.FirstOrDefaultAsync(p => p.Id == token.Id, cancellationToken);
+            var tokenFromDb = await _context.RefreshTokens.FirstOrDefaultAsync(p => p.Token == refreshToken, cancellationToken);
             if (tokenFromDb != null)
             {
-                if (tokenFromDb.Token == token.Token)
+                if (tokenFromDb.Revoked == null)
                 {
-                    if (tokenFromDb.Revoked == null)
+                    if (tokenFromDb.Expires > DateTime.UtcNow)
                     {
-                        if (tokenFromDb.Expires > DateTime.UtcNow)
-                        {
-                            return;
-                        }
+                        return await GenerateAccessToken(tokenFromDb.UserId);
                     }
                 }
             }

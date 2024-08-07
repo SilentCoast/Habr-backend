@@ -25,12 +25,10 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout);
 
-            app.MapPost("/api/auth/refresh", async ([FromBody] RefreshToken refreshToken, IJwtService jwtService,
+            app.MapPost("/api/auth/refresh", async ([FromBody] string refreshToken, IJwtService jwtService,
                 CancellationToken cancellationToken = default) =>
             {
-                await jwtService.ValidateRefreshToken(refreshToken, cancellationToken);
-
-                var accessToken = await jwtService.GenerateAccessToken(refreshToken.UserId);
+                var accessToken = await jwtService.RefreshAccessToken(refreshToken, cancellationToken);
                 return Results.Ok(accessToken);
             })
             .Produces(StatusCodes.Status200OK)
