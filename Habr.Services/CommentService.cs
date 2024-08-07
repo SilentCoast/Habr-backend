@@ -28,7 +28,7 @@ namespace Habr.Services
                 Text = text,
                 PostId = postId,
                 UserId = userId,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Add(comment);
@@ -51,7 +51,7 @@ namespace Habr.Services
                 PostId = postId,
                 UserId = userId,
                 ParentCommentId = parentCommentId,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Add(comment);
@@ -79,7 +79,7 @@ namespace Habr.Services
 
             comment.Text = newText;
 
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedAt = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
             await _context.SaveChangesAsync(cancellationToken);
@@ -94,7 +94,7 @@ namespace Habr.Services
 
             comment.IsDeleted = true;
             comment.Text = "Comment deleted";
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedAt = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
             await _context.SaveChangesAsync(cancellationToken);

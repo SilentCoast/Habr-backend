@@ -17,7 +17,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(ConstraintValue.CommentTextMaxLength);
 
-            builder.Property(p => p.CreatedDate)
+            builder.Property(p => p.CreatedAt)
                 .IsRequired();
 
             builder.Property(p => p.IsDeleted)

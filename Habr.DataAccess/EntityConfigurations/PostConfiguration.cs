@@ -21,7 +21,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(ConstraintValue.PostTextMaxLength);
 
-            builder.Property(p => p.CreatedDate)
+            builder.Property(p => p.CreatedAt)
                 .IsRequired();
 
             builder.HasMany(p => p.Comments)

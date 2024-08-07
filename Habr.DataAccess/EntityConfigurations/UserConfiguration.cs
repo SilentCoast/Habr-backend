@@ -32,7 +32,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(ConstraintValue.UserSaltMaxLength);
 
-            builder.Property(p => p.CreatedDate)
+            builder.Property(p => p.CreatedAt)
                 .IsRequired();
 
             builder.HasMany(p => p.Posts)

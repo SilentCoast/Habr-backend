@@ -16,10 +16,10 @@ namespace Habr.DataAccess.EntityConfigurations
                .IsRequired()
                .HasMaxLength(50);
 
-            builder.Property(p => p.Expires)
+            builder.Property(p => p.ExpiresAt)
                .IsRequired();
 
-            builder.Property(p => p.Created)
+            builder.Property(p => p.CreatedAt)
                .IsRequired();
         }
     }

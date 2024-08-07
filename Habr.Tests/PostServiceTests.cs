@@ -87,11 +87,11 @@ namespace Habr.Tests
 
             if (isPublishedNow)
             {
-                Assert.NotNull(post.PublishedDate);
+                Assert.NotNull(post.PublishedAt);
             }
             else
             {
-                Assert.Null(post.PublishedDate);
+                Assert.Null(post.PublishedAt);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Habr.Tests
             await _dObject.PostService.PublishPost(post.Id, user.Id, RoleType.User);
 
             Assert.True(post.IsPublished);
-            Assert.NotNull(post.PublishedDate);
+            Assert.NotNull(post.PublishedAt);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Habr.Tests
             await _dObject.PostService.PublishPost(post.Id, unauthorizedUserId, RoleType.Admin);
 
             Assert.True(post.IsPublished);
-            Assert.NotNull(post.PublishedDate);
+            Assert.NotNull(post.PublishedAt);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Habr.Tests
             await _dObject.PostService.UnpublishPost(post.Id, user.Id, RoleType.User);
 
             Assert.False(post.IsPublished, "Post should be in draft state");
-            Assert.Null(post.PublishedDate);
+            Assert.Null(post.PublishedAt);
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace Habr.Tests
             await _dObject.PostService.UnpublishPost(post.Id, unauthorizedUserId, RoleType.Admin);
 
             Assert.False(post.IsPublished, "Post should be in draft state");
-            Assert.Null(post.PublishedDate);
+            Assert.Null(post.PublishedAt);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Habr.Tests
 
             await _dObject.PostService.UpdatePost(post.Id, user.Id, RoleType.User, newTitle, newText);
 
-            Assert.NotNull(post.ModifiedDate);
+            Assert.NotNull(post.ModifiedAt);
             Assert.Equal(newTitle, post.Title);
             Assert.Equal(newText, post.Text);
         }
@@ -241,7 +241,7 @@ namespace Habr.Tests
 
             await _dObject.PostService.UpdatePost(post.Id, unauthorizedUserId, RoleType.Admin, newTitle, newText);
 
-            Assert.NotNull(post.ModifiedDate);
+            Assert.NotNull(post.ModifiedAt);
             Assert.Equal(newTitle, post.Title);
             Assert.Equal(newText, post.Text);
         }
@@ -323,9 +323,9 @@ namespace Habr.Tests
             {
                 new Post { Title = "Post 0", Text = "Text 0", UserId = (int)userId },
                 new Post { Title = "Post 1", Text = "Text 1", UserId = (int)userId },
-                new Post { Title = "Post 2", Text = "Text 2", UserId = (int)userId, IsPublished = true, PublishedDate = DateTime.UtcNow },
-                new Post { Title = "Post 3", Text = "Text 3", UserId = (int)userId, IsPublished = true, PublishedDate = DateTime.UtcNow },
-                new Post { Title = "Post 5", Text = "Text 5", UserId = (int)userId + 1, PublishedDate = DateTime.UtcNow }
+                new Post { Title = "Post 2", Text = "Text 2", UserId = (int)userId, IsPublished = true, PublishedAt = DateTime.UtcNow },
+                new Post { Title = "Post 3", Text = "Text 3", UserId = (int)userId, IsPublished = true, PublishedAt = DateTime.UtcNow },
+                new Post { Title = "Post 5", Text = "Text 5", UserId = (int)userId + 1, PublishedAt = DateTime.UtcNow }
             });
             await _dObject.Context.SaveChangesAsync();
         }

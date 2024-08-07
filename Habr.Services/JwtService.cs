@@ -50,8 +50,8 @@ namespace Habr.Services
             var refreshToken = new RefreshToken
             {
                 Token = Guid.NewGuid().ToString(),
-                Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays),
-                Created = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays),
+                CreatedAt = DateTime.UtcNow,
                 UserId = userId
             };
 
@@ -69,9 +69,9 @@ namespace Habr.Services
             var tokenFromDb = await _context.RefreshTokens.FirstOrDefaultAsync(p => p.Token == refreshToken, cancellationToken);
             if (tokenFromDb != null)
             {
-                if (tokenFromDb.Revoked == null)
+                if (tokenFromDb.RevokedAt == null)
                 {
-                    if (tokenFromDb.Expires > DateTime.UtcNow)
+                    if (tokenFromDb.ExpiresAt > DateTime.UtcNow)
                     {
                         return await GenerateAccessToken(tokenFromDb.UserId);
                     }

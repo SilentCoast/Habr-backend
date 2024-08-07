@@ -71,7 +71,7 @@ namespace Habr.Services
                 Email = email,
                 PasswordHash = hashedPassword,
                 Salt = salt,
-                CreatedDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 RoleId = roleId
             };
 

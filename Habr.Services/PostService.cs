@@ -61,13 +61,13 @@ namespace Habr.Services
                 Title = title,
                 Text = text,
                 UserId = userId,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             if (isPublishedNow)
             {
                 post.IsPublished = true;
-                post.PublishedDate = DateTime.UtcNow;
+                post.PublishedAt = DateTime.UtcNow;
             }
 
             _context.Posts.Add(post);
@@ -81,7 +81,7 @@ namespace Habr.Services
             AccessController.CheckPostAccess(userId, post.UserId, role);
 
             post.IsPublished = true;
-            post.PublishedDate = DateTime.UtcNow;
+            post.PublishedAt = DateTime.UtcNow;
 
             _context.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
@@ -108,7 +108,7 @@ namespace Habr.Services
             }
 
             post.IsPublished = false;
-            post.PublishedDate = null;
+            post.PublishedAt = null;
 
             _context.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
@@ -140,7 +140,7 @@ namespace Habr.Services
                 post.Text = newText;
             }
 
-            post.ModifiedDate = DateTime.UtcNow;
+            post.ModifiedAt = DateTime.UtcNow;
             //TODO: maybe add modifiedBy
 
             _context.Posts.Update(post);
