@@ -1,7 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
-using Habr.Services;
+using Habr.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Habr.Tests

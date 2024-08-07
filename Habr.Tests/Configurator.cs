@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
+using Habr.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

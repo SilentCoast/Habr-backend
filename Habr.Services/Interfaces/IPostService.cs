@@ -1,7 +1,7 @@
 ﻿using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Enums;
 
-namespace Habr.Services
+namespace Habr.Services.Interfaces
 {
     public interface IPostService
     {

@@ -1,5 +1,6 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
+using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

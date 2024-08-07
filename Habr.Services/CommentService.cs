@@ -2,6 +2,7 @@
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
+using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 

@@ -4,6 +4,7 @@ using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
 using Habr.Services.Exceptions;
+using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

@@ -1,4 +1,5 @@
 ﻿using Habr.Services;
+using Habr.Services.Interfaces;
 
 namespace Habr.WebApp.Extensions
 {

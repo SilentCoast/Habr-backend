@@ -1,6 +1,6 @@
 ﻿using Habr.DataAccess.DTOs;
 
-namespace Habr.Services
+namespace Habr.Services.Interfaces
 {
     public interface IUserService
     {
