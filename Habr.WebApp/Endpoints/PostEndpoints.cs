@@ -37,7 +37,7 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Retrieves all published posts.");
 
 
-            app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService,
+            app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
             {
                 var posts = await postService.GetDraftedPosts(httpContext.GetUserId(), cancellationToken);
@@ -50,6 +50,7 @@ namespace Habr.WebApp.Endpoints
                     return Results.NoContent();
                 }
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
@@ -58,12 +59,13 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Retrieves all drafted posts.");
 
-            app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext,
+            app.MapPost("/api/posts", async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 await postService.AddPost(model.Title, model.Text, httpContext.GetUserId(), model.IsPublishedNow, cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -71,7 +73,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Creates a new post.");
 
-            app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model,
+            app.MapPut("/api/posts/{id}", async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
                 await postService.UpdatePost(id, httpContext.GetUserId(), httpContext.GetUserRole(),
@@ -79,6 +81,7 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -87,7 +90,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Updates a specific post by its ID.");
 
-            app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapPut("/api/posts/{id}/publish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 await postService.PublishPost(id, httpContext.GetUserId(),
@@ -95,6 +98,7 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -103,7 +107,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Publishes a specific post by its ID.");
 
-            app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapPut("/api/posts/{id}/unpublish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 await postService.UnpublishPost(id, httpContext.GetUserId(),
@@ -111,6 +115,7 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -119,12 +124,13 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Unpublishes a specific post by its ID.");
 
-            app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapDelete("/api/posts/{id}", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
                 await postService.DeletePost(id, httpContext.GetUserId(), httpContext.GetUserRole(), cancellationToken);
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

@@ -10,13 +10,14 @@ namespace Habr.WebApp.Endpoints
     {
         public static void MapCommentEndpoints(this WebApplication app)
         {
-            app.MapPost("/api/posts/{postId}/comments", [Authorize] async ([FromRoute] int postId,
+            app.MapPost("/api/posts/{postId}/comments", async ([FromRoute] int postId,
                 [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
                 await commentService.AddComment(text, postId, httpContext.GetUserId(), cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -24,13 +25,14 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Comments")
             .WithDescription("Adds a new comment to a post.");
 
-            app.MapPost("/api/posts/{postId}/comments/{commentId}/reply", [Authorize] async ([FromRoute] int postId,
+            app.MapPost("/api/posts/{postId}/comments/{commentId}/reply", async ([FromRoute] int postId,
                 [FromRoute] int commentId, [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
                 await commentService.ReplyToComment(text, commentId, postId, httpContext.GetUserId(), cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -38,7 +40,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Comments")
             .WithDescription("Replies to an existing comment on a post.");
 
-            app.MapPut("/api/comments/{id}", [Authorize] async ([FromRoute] int id, [FromBody] string newText,
+            app.MapPut("/api/comments/{id}", async ([FromRoute] int id, [FromBody] string newText,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
             {
                 await commentService.EditComment(newText, id, httpContext.GetUserId(),
@@ -46,6 +48,7 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -53,7 +56,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Comments")
             .WithDescription("Updates an existing comment.");
 
-            app.MapDelete("/api/comments/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapDelete("/api/comments/{id}", async ([FromRoute] int id, HttpContext httpContext,
                 ICommentService commentService, CancellationToken cancellationToken) =>
             {
                 await commentService.DeleteComment(id, httpContext.GetUserId(),
@@ -61,6 +64,7 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

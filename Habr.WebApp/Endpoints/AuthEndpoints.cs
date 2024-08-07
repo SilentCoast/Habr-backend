@@ -39,12 +39,13 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Authentication")
             .WithDescription("Refreshes the Access token.");
 
-            app.MapPost("/api/auth/confirm-email", [Authorize] async ([FromBody] string email, HttpContext httpContext,
+            app.MapPost("/api/auth/confirm-email", async ([FromBody] string email, HttpContext httpContext,
                 IUserService userService, CancellationToken cancellationToken = default) =>
             {
                 await userService.ConfirmEmail(email, httpContext.GetUserId(), cancellationToken);
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
