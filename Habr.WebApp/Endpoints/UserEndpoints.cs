@@ -25,12 +25,15 @@ namespace Habr.WebApp.Endpoints
                 CancellationToken cancellationToken = default) =>
             {
                 await userService.CreateUser(model.Email, model.Password, model.Name, cancellationToken);
-                return Results.StatusCode(StatusCodes.Status201Created);
+                var tokens = await userService.LogIn(model.Email, model.Password, cancellationToken);
+
+                return Results.Created(string.Empty, tokens);
             })
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
             .WithTags("Users")
-            .WithDescription("Creates a new user.");
+            .WithDescription("Registers a new user. Returns Refresh and Access tokens");
         }
     }
 }
