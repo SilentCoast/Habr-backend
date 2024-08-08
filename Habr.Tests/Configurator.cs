@@ -24,6 +24,7 @@ namespace Habr.Tests
                 .AddScoped<IUserService, UserService>()
                 .AddScoped(_ => mockJwtService.Object)
                 .AddScoped<IPasswordHasher, PasswordHasher>()
+                .AddScoped<ITokenRevocationService, TokenRevocationService>()
                 .AddAutoMapper(typeof(PostProfile).Assembly)
                 .AddLogging(builder =>
                 {

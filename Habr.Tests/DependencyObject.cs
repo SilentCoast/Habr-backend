@@ -13,6 +13,7 @@ namespace Habr.Tests
         public ICommentService CommentService { get; set; }
         public IPostService PostService { get; set; }
         public IUserService UserService { get; set; }
+        public ITokenRevocationService TokenRevocationService { get; set; }
 
         public async Task Initilize()
         {
@@ -22,6 +23,7 @@ namespace Habr.Tests
             CommentService = ServiceProvider.GetRequiredService<ICommentService>();
             UserService = ServiceProvider.GetRequiredService<IUserService>();
             PostService = ServiceProvider.GetRequiredService<IPostService>();
+            TokenRevocationService = ServiceProvider.GetRequiredService<ITokenRevocationService>();
 
             Context.Roles.AddRange
             (
