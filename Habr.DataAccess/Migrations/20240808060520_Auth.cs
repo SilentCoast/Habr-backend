@@ -13,8 +13,45 @@ namespace Habr.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.RenameColumn(
+                name: "CreatedDate",
+                table: "Users",
+                newName: "CreatedAt");
+
+            migrationBuilder.RenameColumn(
+                name: "PublishedDate",
+                table: "Posts",
+                newName: "PublishedAt");
+
+            migrationBuilder.RenameColumn(
+                name: "ModifiedDate",
+                table: "Posts",
+                newName: "ModifiedAt");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedDate",
+                table: "Posts",
+                newName: "CreatedAt");
+
+            migrationBuilder.RenameColumn(
+                name: "ModifiedDate",
+                table: "Comments",
+                newName: "ModifiedAt");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedDate",
+                table: "Comments",
+                newName: "CreatedAt");
+
             migrationBuilder.AddColumn<int>(
                 name: "RoleId",
+                table: "Users",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "TokenVersion",
                 table: "Users",
                 type: "int",
                 nullable: false,
@@ -27,9 +64,9 @@ namespace Habr.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Token = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Expires = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Revoked = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -50,7 +87,7 @@ namespace Habr.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    RoleType = table.Column<int>(type: "int", nullable: false)
+                    RoleType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,8 +99,8 @@ namespace Habr.DataAccess.Migrations
                 columns: new[] { "Id", "Name", "RoleType" },
                 values: new object[,]
                 {
-                    { 1, "User", 1 },
-                    { 2, "Admin", 2 }
+                    { 1, "User", "User" },
+                    { 2, "Admin", "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -105,6 +142,40 @@ namespace Habr.DataAccess.Migrations
             migrationBuilder.DropColumn(
                 name: "RoleId",
                 table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "TokenVersion",
+                table: "Users");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedAt",
+                table: "Users",
+                newName: "CreatedDate");
+
+            migrationBuilder.RenameColumn(
+                name: "PublishedAt",
+                table: "Posts",
+                newName: "PublishedDate");
+
+            migrationBuilder.RenameColumn(
+                name: "ModifiedAt",
+                table: "Posts",
+                newName: "ModifiedDate");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedAt",
+                table: "Posts",
+                newName: "CreatedDate");
+
+            migrationBuilder.RenameColumn(
+                name: "ModifiedAt",
+                table: "Comments",
+                newName: "ModifiedDate");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedAt",
+                table: "Comments",
+                newName: "CreatedDate");
         }
     }
 }
