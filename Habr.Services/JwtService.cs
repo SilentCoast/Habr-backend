@@ -30,7 +30,8 @@ namespace Habr.Services
             {
                 new Claim("userId", userId.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.RoleType.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("tokenVersion", user.TokenVersion.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

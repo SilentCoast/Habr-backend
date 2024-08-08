@@ -14,6 +14,8 @@ namespace Habr.WebApp.Extensions
 
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
             services.AddScoped<IJwtService, JwtService>();
+
+            services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         }
     }
 }

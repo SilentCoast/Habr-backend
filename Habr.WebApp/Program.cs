@@ -3,6 +3,7 @@ using Habr.Services.AutoMapperProfiles;
 using Habr.WebApp.Endpoints;
 using Habr.WebApp.Extensions;
 using Habr.WebApp.GlobalExceptionHandler;
+using Habr.WebApp.Middleware;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -68,6 +69,7 @@ namespace Habr.WebApp
             app.UseAuthorization();
 
             app.UseGlobalExceptionHandler();
+            app.UseMiddleware<TokenValidationMiddleware>();
 
             app.MapAuthEndpoints();
             app.MapCommentEndpoints();

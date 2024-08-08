@@ -156,6 +156,9 @@
   <data name="TokenBreach" xml:space="preserve">
     <value>Access denied. Invalid or missing token</value>
   </data>
+  <data name="TokenRevoked" xml:space="preserve">
+    <value>Access denied. Token has been revoked</value>
+  </data>
   <data name="TokenValidationFailed" xml:space="preserve">
     <value>Token is invalid or expired</value>
   </data>

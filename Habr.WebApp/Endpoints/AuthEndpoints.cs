@@ -1,6 +1,5 @@
 ﻿using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
@@ -52,6 +51,19 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Authentication")
             .WithDescription("Confirms a user's email address.");
+
+            app.MapPost("/api/auth/revoke", async ([FromBody] int userId, ITokenRevocationService tokenRevocationService,
+                CancellationToken cancellationToken = default) =>
+            {
+                await tokenRevocationService.RevokeAllUserTokens(userId, cancellationToken);
+                return Results.Ok();
+            })
+            .RequireAuthorization(AuthPolicies.AdminPolicy)
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status403Forbidden)
+            .WithTags("Authentication")
+            .WithDescription("Revokes all user Access and Refresh tokens");
         }
     }
 }

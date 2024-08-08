@@ -178,6 +178,15 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access denied. Token has been revoked.
+        /// </summary>
+        public static string TokenRevoked {
+            get {
+                return ResourceManager.GetString("TokenRevoked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Token is invalid or expired.
         /// </summary>
         public static string TokenValidationFailed {
