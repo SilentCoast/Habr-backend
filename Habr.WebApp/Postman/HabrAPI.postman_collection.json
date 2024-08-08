@@ -271,6 +271,68 @@
 									]
 								}
 							]
+						},
+						{
+							"name": "revoke",
+							"item": [
+								{
+									"name": "revoke",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/auth/revoke",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"auth",
+												"revoke"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "2",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/revoke",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"revoke"
+													]
+												}
+											},
+											"_postman_previewlanguage": null,
+											"header": null,
+											"cookie": [],
+											"body": null
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -1412,7 +1474,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjU4ZmFlOTVjLTNmMWYtNGQxZS05NWE0LWEwYmViMjkxZDcxMCIsImV4cCI6MTcyMjcxOTg2MywiaXNzIjoiaHR0cHM6Ly90aGF0Z3V5LmNvbSIsImF1ZCI6Imh0dHBzOi8vdGhhdGd1eS5jb20ifQ.GE0J-KlT0Cj1iUzmG6sQsep3ctb1hiFZif-6YsdY6Cs",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjNjZDdhMzY5LWY0YjQtNDVjMC05ZTRkLWUzMzUyZDA3MzhmOCIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjMxMDAwNzIsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.KEsGEuoVqayZfHJlqVlD-92JqH-Y2UZ_C37Sd5wAB6c",
 				"type": "string"
 			}
 		]
