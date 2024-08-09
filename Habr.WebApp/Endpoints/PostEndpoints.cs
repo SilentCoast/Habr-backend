@@ -1,4 +1,5 @@
-﻿using Habr.Services.Interfaces;
+﻿using Asp.Versioning;
+using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,15 @@ namespace Habr.WebApp.Endpoints
     {
         public static void MapPostEndpoints(this WebApplication app)
         {
+            var apiVersion1 = new ApiVersion(1, 0);
+            var apiVersion2 = new ApiVersion(2, 0);
+
+            var apiVersionSet = app.NewApiVersionSet()
+            .HasApiVersion(apiVersion1)
+            .HasApiVersion(apiVersion2)
+            .ReportApiVersions()
+            .Build();
+
             app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
@@ -24,7 +34,8 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Retrieves a specific published post by its ID.");
 
-            app.MapGet("/api/posts/published", async (IPostService postService, CancellationToken cancellationToken) =>
+            app.MapGet("/api/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
             {
                 var posts = await postService.GetPublishedPosts(cancellationToken);
                 return Results.Ok(posts);
@@ -33,8 +44,37 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Retrieves all published posts.");
+            .WithDescription("Retrieves all published posts. Version 1.0")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(apiVersion1);
 
+            app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
+            {
+                var posts = await postService.GetPublishedPosts(cancellationToken);
+                return Results.Ok(posts);
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all published posts. Version 1.0")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(apiVersion1);
+
+            app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
+            {
+                var posts = await postService.GetPublishedPostsV2(cancellationToken);
+                return Results.Ok(posts);
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all published posts. Version 2.0")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(apiVersion2);
 
             app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>

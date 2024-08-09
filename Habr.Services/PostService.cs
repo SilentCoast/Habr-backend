@@ -42,6 +42,14 @@ namespace Habr.Services
                 .OrderByDescending(p => p.PublishDate)
                 .ToListAsync(cancellationToken);
         }
+        public async Task<IEnumerable<PublishedPostV2Dto>> GetPublishedPostsV2(CancellationToken cancellationToken = default)
+        {
+            return await _context.Posts
+                .Where(p => p.IsPublished)
+                .ProjectTo<PublishedPostV2Dto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(p => p.PublishedAt)
+                .ToListAsync(cancellationToken);
+        }
         public async Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Posts
