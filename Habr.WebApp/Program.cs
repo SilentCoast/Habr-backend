@@ -46,6 +46,8 @@ namespace Habr.WebApp
 
             builder.Services.ConfigureSwagger();
 
+            builder.Services.ConfigureApiVersioning();
+
             builder.ConfigureAuth();
 
             var app = builder.Build();
@@ -60,7 +62,11 @@ namespace Habr.WebApp
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "v2");
+                });
             }
 
             app.UseHttpsRedirection();
