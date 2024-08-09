@@ -9,6 +9,7 @@ namespace Habr.WebApp.Extensions
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "HabrAPI", Version = "v1" });
+                options.SwaggerDoc("v2", new OpenApiInfo { Title = "HabrAPI", Version = "v2" });
 
                 options.OperationFilter<SwaggerResponseCodesFilter>();
 
