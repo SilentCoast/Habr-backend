@@ -46,7 +46,7 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.InvalidEmail);
             }
 
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == email, cancellationToken))
             {
                 throw new ArgumentException(ExceptionMessage.EmailTaken);
             }
@@ -93,7 +93,7 @@ namespace Habr.Services
                 throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
-            var accesToken = await _jwtService.GenerateAccessToken(user.Id);
+            var accesToken = await _jwtService.GenerateAccessToken(user.Id, cancellationToken);
             var refreshToken = await _jwtService.GenerateRefreshToken(user.Id, cancellationToken);
 
             _logger.LogInformation($"User logged in: {email}");

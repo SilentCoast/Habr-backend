@@ -20,7 +20,7 @@ namespace Habr.Services
         /// </summary>
         public async Task RevokeAllUserTokens(int userId, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync([userId], cancellationToken);
             if (user == null)
             {
                 throw new ArgumentException(ExceptionMessage.UserDoesntExist);
@@ -44,7 +44,7 @@ namespace Habr.Services
             var userId = int.Parse(principal.FindFirst("userId").Value);
             var tokenVersion = int.Parse(principal.FindFirst("tokenVersion").Value);
 
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync([userId], cancellationToken);
 
             if (user != null)
             {

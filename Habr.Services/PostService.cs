@@ -102,7 +102,7 @@ namespace Habr.Services
             }
 
             AccessController.CheckPostAccess(userId, post.UserId, role);
-
+            
             if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
                 throw new InvalidOperationException(ExceptionMessage.CannotDraftPostWithComments);
