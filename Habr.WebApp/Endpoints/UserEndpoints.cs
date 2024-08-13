@@ -17,7 +17,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithTags("Users")
-            .WithDescription("Retrieves name of authorized user");
+            .WithDescription("Retrieves name of authorized user")
+            .WithOpenApi();
         }
     }
 }
