@@ -3,7 +3,7 @@ using Habr.Services.Resources;
 
 namespace Habr.Services
 {
-    public static class AccessController
+    public static class AccessHelper
     {
         public static void CheckPostAccess(int userId, int postOwnerId, RoleType role)
         {

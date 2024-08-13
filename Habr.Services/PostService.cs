@@ -79,7 +79,7 @@ namespace Habr.Services
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            AccessController.CheckPostAccess(userId, post.UserId, role);
+            AccessHelper.CheckPostAccess(userId, post.UserId, role);
 
             post.IsPublished = true;
             post.PublishedAt = DateTime.UtcNow;
@@ -101,7 +101,7 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.PostNotFound);
             }
 
-            AccessController.CheckPostAccess(userId, post.UserId, role);
+            AccessHelper.CheckPostAccess(userId, post.UserId, role);
             
             if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
@@ -122,7 +122,7 @@ namespace Habr.Services
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            AccessController.CheckPostAccess(userId, post.UserId, role);
+            AccessHelper.CheckPostAccess(userId, post.UserId, role);
 
             if (post.IsPublished)
             {
@@ -152,7 +152,7 @@ namespace Habr.Services
         {
             var post = await GetPostById(postId, cancellationToken);
 
-            AccessController.CheckPostAccess(userId, post.UserId, role);
+            AccessHelper.CheckPostAccess(userId, post.UserId, role);
 
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync(cancellationToken);

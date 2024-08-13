@@ -76,7 +76,7 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.CannotEditDeletedComment);
             }
 
-            AccessController.CheckCommentAccess(comment.UserId, userId, role);
+            AccessHelper.CheckCommentAccess(comment.UserId, userId, role);
 
             comment.Text = newText;
 
@@ -91,7 +91,7 @@ namespace Habr.Services
             var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.CommentNotFound);
 
-            AccessController.CheckCommentAccess(comment.UserId, userId, role);
+            AccessHelper.CheckCommentAccess(comment.UserId, userId, role);
 
             comment.IsDeleted = true;
             comment.Text = "Comment deleted";
