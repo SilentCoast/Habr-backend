@@ -25,6 +25,20 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Authentication")
             .WithDescription("Logs in a user and returns an Access and Refresh tokens.");
 
+            app.MapPost("/api/auth/register", async ([FromBody] UserCreateModel model, IUserService userService,
+                CancellationToken cancellationToken = default) =>
+            {
+                await userService.CreateUser(model.Email, model.Password, model.Name, cancellationToken);
+                var tokens = await userService.LogIn(model.Email, model.Password, cancellationToken);
+
+                return Results.Created(string.Empty, tokens);
+            })
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users")
+            .WithDescription("Registers a new user. Returns Refresh and Access tokens");
+
             app.MapPost("/api/auth/refresh", async ([FromBody] string refreshToken, IJwtService jwtService,
                 CancellationToken cancellationToken = default) =>
             {
