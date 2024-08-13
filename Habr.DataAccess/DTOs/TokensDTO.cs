@@ -1,6 +1,4 @@
-﻿using Habr.DataAccess.Entities;
-
-namespace Habr.DataAccess.DTOs
+﻿namespace Habr.DataAccess.DTOs
 {
     public class TokensDto
     {

@@ -100,7 +100,7 @@ namespace Habr.Tests
         {
             var user = await CreateUser();
             var post = await CreatePost(user.Id);
-            
+
             await _dObject.PostService.PublishPost(post.Id, user.Id, RoleType.User);
 
             Assert.True(post.IsPublished);

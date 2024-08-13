@@ -53,7 +53,7 @@ namespace Habr.Services
                     return;
                 }
             }
-            
+
             throw new UnauthorizedAccessException(ExceptionMessage.TokenRevoked);
         }
     }
