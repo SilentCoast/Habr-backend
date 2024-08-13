@@ -17,12 +17,9 @@ namespace Habr.Services
 
         private static void CheckAccess(int userId, int ownerId, RoleType role, string exceptionMessage)
         {
-            if (role != RoleType.Admin)
+            if (role != RoleType.Admin && userId != ownerId)
             {
-                if (userId != ownerId)
-                {
-                    throw new UnauthorizedAccessException(exceptionMessage);
-                }
+                throw new UnauthorizedAccessException(exceptionMessage);
             }
         }
     }
