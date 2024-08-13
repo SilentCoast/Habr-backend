@@ -115,6 +115,15 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CurrentPage value cannot be greater than TotalPages value.
+        /// </summary>
+        public static string CurrentPageMoreThanLast {
+            get {
+                return ResourceManager.GetString("CurrentPageMoreThanLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The email is incorrect.
         /// </summary>
         public static string EmailIncorrect {
@@ -147,6 +156,24 @@ namespace Habr.Services.Resources {
         public static string InvalidRoleType {
             get {
                 return ResourceManager.GetString("InvalidRoleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Number may not be less than 1.
+        /// </summary>
+        public static string PageNumberLessThan1 {
+            get {
+                return ResourceManager.GetString("PageNumberLessThan1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Size may not be less than 1.
+        /// </summary>
+        public static string PageSizeLessThan1 {
+            get {
+                return ResourceManager.GetString("PageSizeLessThan1", resourceCulture);
             }
         }
         

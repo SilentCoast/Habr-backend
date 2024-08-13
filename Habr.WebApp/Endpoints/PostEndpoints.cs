@@ -1,5 +1,7 @@
 ﻿using Asp.Versioning;
+using Habr.Services.Exceptions;
 using Habr.Services.Interfaces;
+using Habr.Services.Resources;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -66,6 +68,31 @@ namespace Habr.WebApp.Endpoints
             .MapToApiVersion(apiVersion2)
             .WithOpenApi();
 
+            app.MapGet("/api/posts/published/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
+                IPostService postService, CancellationToken cancellationToken) =>
+            {
+                Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
+                Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
+
+                try
+                {
+                    var paginatedDto = await postService.GetPublishedPostsPaginated(pageNumber, pageSize, cancellationToken);
+
+                    var json = JsonSerializer.Serialize(paginatedDto);
+                    return Results.Content(json, "application/json");
+                }
+                catch (NothingToPaginateException)
+                {
+                    return Results.NoContent();
+                }
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves published posts by page.");
+
             app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
             {
@@ -88,6 +115,33 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Retrieves all drafted posts.")
             .WithOpenApi();
+
+            app.MapGet("/api/posts/drafted/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
+                HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
+            {
+                Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
+                Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
+
+                try
+                {
+                    var paginatedDto = await postService.GetDraftedPostsPaginated(httpContext.GetUserId(),
+                        pageNumber, pageSize, cancellationToken);
+
+                    return Results.Ok(paginatedDto);
+                }
+                catch (NothingToPaginateException)
+                {
+                    return Results.NoContent();
+                }
+            })
+            .RequireAuthorization()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all drafted posts by page.");
 
             app.MapPost("/api/posts", async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
