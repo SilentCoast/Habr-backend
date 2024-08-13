@@ -69,15 +69,9 @@ namespace Habr.Services
         public async Task<string> RefreshAccessToken(string refreshToken, CancellationToken cancellationToken = default)
         {
             var tokenFromDb = await _context.RefreshTokens.FirstOrDefaultAsync(p => p.Token == refreshToken, cancellationToken);
-            if (tokenFromDb != null)
+            if (tokenFromDb != null && tokenFromDb.RevokedAt == null && tokenFromDb.ExpiresAt > DateTime.UtcNow)
             {
-                if (tokenFromDb.RevokedAt == null)
-                {
-                    if (tokenFromDb.ExpiresAt > DateTime.UtcNow)
-                    {
-                        return await GenerateAccessToken(tokenFromDb.UserId);
-                    }
-                }
+                return await GenerateAccessToken(tokenFromDb.UserId, cancellationToken);
             }
             throw new SecurityTokenValidationException(ExceptionMessage.TokenValidationFailed);
         }
