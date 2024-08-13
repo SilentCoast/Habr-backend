@@ -135,6 +135,9 @@
   <data name="CommentNotFound" xml:space="preserve">
     <value>Comment not found</value>
   </data>
+  <data name="CurrentPageMoreThanLast" xml:space="preserve">
+    <value>CurrentPage value cannot be greater than TotalPages value</value>
+  </data>
   <data name="EmailIncorrect" xml:space="preserve">
     <value>The email is incorrect</value>
   </data>
@@ -146,6 +149,12 @@
   </data>
   <data name="InvalidRoleType" xml:space="preserve">
     <value>Invalid role type</value>
+  </data>
+  <data name="PageNumberLessThan1" xml:space="preserve">
+    <value>Page Number may not be less than 1</value>
+  </data>
+  <data name="PageSizeLessThan1" xml:space="preserve">
+    <value>Page Size may not be less than 1</value>
   </data>
   <data name="ParentCommentNotFound" xml:space="preserve">
     <value>Parent comment not found</value>
