@@ -101,7 +101,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private void CheckTextConstraints(string text)
+        private static void CheckTextConstraints(string text)
         {
             if (text.Length > ConstraintValue.CommentTextMaxLength)
             {

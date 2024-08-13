@@ -121,7 +121,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private bool IsValidEmail(string email)
+        private static bool IsValidEmail(string email)
         {
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
             return emailRegex.IsMatch(email);

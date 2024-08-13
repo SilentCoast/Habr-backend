@@ -54,8 +54,8 @@ namespace Habr.Services
         public async Task AddPost(string title, string text, int userId,
             bool isPublishedNow = false, CancellationToken cancellationToken = default)
         {
-            CheckTitleContraints(title);
-            CheckTextContraints(text);
+            CheckTitleConstraints(title);
+            CheckTextConstraints(text);
 
             var post = new Post
             {
@@ -131,13 +131,13 @@ namespace Habr.Services
 
             if (newTitle != null)
             {
-                CheckTitleContraints(newTitle);
+                CheckTitleConstraints(newTitle);
                 post.Title = newTitle;
             }
 
             if (newText != null)
             {
-                CheckTextContraints(newText);
+                CheckTextConstraints(newText);
                 post.Text = newText;
             }
 
@@ -164,7 +164,7 @@ namespace Habr.Services
 
             return post ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
         }
-        private void CheckTitleContraints(string title)
+        private static void CheckTitleConstraints(string title)
         {
             if (string.IsNullOrEmpty(title))
             {
@@ -176,7 +176,7 @@ namespace Habr.Services
                 throw new ArgumentOutOfRangeException(string.Format(ExceptionMessageGeneric.ValueOfMustBeLessThan, nameof(title), ConstraintValue.PostTitleMaxLength));
             }
         }
-        private void CheckTextContraints(string text)
+        private static void CheckTextConstraints(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
