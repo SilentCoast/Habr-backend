@@ -1,5 +1,6 @@
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
+using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Habr.Tests
@@ -56,15 +57,105 @@ namespace Habr.Tests
         }
 
         [Fact]
+        public async Task GetPublishedPostsV2_ShouldReturnPublishedPosts()
+        {
+            await SeedPostRange();
+            var result = await _dObject.PostService.GetPublishedPostsV2();
+
+            Assert.Equal(2, result.Count());
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(2, 1)]
+        [InlineData(1, 2)]
+        public async Task GetPubishedPostsPaginated_ShouldReturnValidPaginatedDto(int page, int load)
+        {
+            await SeedPostRange();
+
+            var paginatedDto = await _dObject.PostService.GetPublishedPostsPaginated(page, load);
+
+            Assert.Equal(page, paginatedDto.CurrentPage);
+            Assert.Equal(load, paginatedDto.PageSize);
+            Assert.Equal(2, paginatedDto.TotalCount);
+            Assert.Equal(load, paginatedDto.Items.Count);
+            if (load == 1)
+            {
+                Assert.Equal(2, paginatedDto.TotalPages);
+            }
+            else if (load == 2)
+            {
+                Assert.Equal(1, paginatedDto.TotalPages);
+            }
+        }
+
+        [Fact]
+        public async Task GetPubishedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowArgumentException()
+        {
+            await SeedPostRange();
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.PostService.GetPublishedPostsPaginated(2, 2));
+        }
+
+        [Fact]
+        public async Task GetPubishedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowNothingToPaginateException()
+        {
+            //no published posts in database
+            await Assert.ThrowsAsync<NothingToPaginateException>(async () => await _dObject.PostService.GetPublishedPostsPaginated(2, 2));
+        }
+
+        [Fact]
         public async Task GetDraftedPosts_ShouldReturnOwnedDraftedPosts()
         {
             var user = await CreateUser();
-
             await SeedPostRange(user.Id);
 
             var result = await _dObject.PostService.GetDraftedPosts(user.Id);
 
             Assert.Equal(2, result.Count());
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(2, 1)]
+        [InlineData(1, 2)]
+        public async Task GetDraftedPostsPaginated_ShouldReturnValidPaginatedDto(int page, int load)
+        {
+            var user = await CreateUser();
+            await SeedPostRange(user.Id);
+
+            var paginatedDto = await _dObject.PostService.GetDraftedPostsPaginated(user.Id, page, load);
+
+            Assert.Equal(page, paginatedDto.CurrentPage);
+            Assert.Equal(load, paginatedDto.PageSize);
+            Assert.Equal(2, paginatedDto.TotalCount);
+            Assert.Equal(load, paginatedDto.Items.Count);
+            if (load == 1)
+            {
+                Assert.Equal(2, paginatedDto.TotalPages);
+            }
+            else if (load == 2)
+            {
+                Assert.Equal(1, paginatedDto.TotalPages);
+            }
+        }
+
+        [Fact]
+        public async Task GetDraftedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowArgumentException()
+        {
+            var user = await CreateUser();
+            await SeedPostRange(user.Id);
+
+            await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.PostService.GetDraftedPostsPaginated(user.Id, 2, 2));
+        }
+
+        [Fact]
+        public async Task GetDraftedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowNothingToPaginateException()
+        {
+            var user = await CreateUser();
+
+            //no published posts in database
+            await Assert.ThrowsAsync<NothingToPaginateException>(async () => await _dObject.PostService.GetDraftedPostsPaginated(user.Id, 2, 2));
         }
 
         [Theory]
@@ -321,11 +412,12 @@ namespace Habr.Tests
 
             _dObject.Context.Posts.AddRange(new List<Post>
             {
+                //this configuration is bound to several tests. Change with caution.
                 new Post { Title = "Post 0", Text = "Text 0", UserId = (int)userId },
                 new Post { Title = "Post 1", Text = "Text 1", UserId = (int)userId },
                 new Post { Title = "Post 2", Text = "Text 2", UserId = (int)userId, IsPublished = true, PublishedAt = DateTime.UtcNow },
                 new Post { Title = "Post 3", Text = "Text 3", UserId = (int)userId, IsPublished = true, PublishedAt = DateTime.UtcNow },
-                new Post { Title = "Post 5", Text = "Text 5", UserId = (int)userId + 1, PublishedAt = DateTime.UtcNow }
+                new Post { Title = "Post 4", Text = "Text 4", UserId = (int)userId + 1}
             });
             await _dObject.Context.SaveChangesAsync();
         }
