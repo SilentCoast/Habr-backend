@@ -1,6 +1,6 @@
 ﻿namespace Habr.DataAccess.DTOs
 {
-    public class UserInCommentDTO
+    public class UserInCommentDto
     {
         public string Name { get; set; }
     }

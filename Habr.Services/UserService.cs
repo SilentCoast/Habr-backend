@@ -1,7 +1,10 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Constraints;
+using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess.Enums;
 using Habr.Services.Exceptions;
+using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -43,7 +46,7 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.InvalidEmail);
             }
 
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == email, cancellationToken))
             {
                 throw new ArgumentException(ExceptionMessage.EmailTaken);
             }
@@ -61,13 +64,16 @@ namespace Habr.Services
             var salt = _passwordHasher.GenerateSalt();
             var hashedPassword = _passwordHasher.HashPassword(password, salt);
 
+            var roleId = await _context.Roles.Where(p => p.RoleType == RoleType.User).Select(p => p.Id).SingleAsync(cancellationToken);
+
             var user = new User
             {
                 Name = name,
                 Email = email,
                 PasswordHash = hashedPassword,
                 Salt = salt,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                RoleId = roleId
             };
 
             _context.Users.Add(user);
@@ -76,7 +82,7 @@ namespace Habr.Services
             _logger.LogInformation($"User registered: {email}");
         }
 
-        public async Task<string> LogIn(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<TokensDto> LogIn(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken)
                 ?? throw new LogInException(ExceptionMessage.EmailIncorrect);
@@ -87,11 +93,12 @@ namespace Habr.Services
                 throw new LogInException(ExceptionMessage.WrongCredentials);
             }
 
-            string token = _jwtService.GenerateToken(user.Id);
+            var accesToken = await _jwtService.GenerateAccessToken(user.Id, cancellationToken);
+            var refreshToken = await _jwtService.GenerateRefreshToken(user.Id, cancellationToken);
 
             _logger.LogInformation($"User logged in: {email}");
 
-            return token;
+            return new TokensDto { AccessToken = accesToken, RefreshToken = refreshToken };
         }
 
         public async Task ConfirmEmail(string email, int userId, CancellationToken cancellationToken = default)
@@ -114,7 +121,7 @@ namespace Habr.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private bool IsValidEmail(string email)
+        private static bool IsValidEmail(string email)
         {
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
             return emailRegex.IsMatch(email);

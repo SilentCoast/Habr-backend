@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Habr.DataAccess.Enums;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace Habr.WebApp.Extensions
 {
-    public static class ConfigureAuthenticationExtension
+    public static class ConfigureAuthExtension
     {
-        public static void ConfigureAuthentication(this WebApplicationBuilder builder)
+        public static void ConfigureAuth(this WebApplicationBuilder builder)
         {
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -34,6 +35,11 @@ namespace Habr.WebApp.Extensions
                         }
                     };
                 });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AuthPolicies.AdminPolicy, policy => policy.RequireRole(RoleType.Admin.ToString()));
+            });
         }
     }
 }

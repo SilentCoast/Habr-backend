@@ -1,7 +1,4 @@
-﻿using Habr.Services;
-using Habr.WebApp.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Habr.Services.Interfaces;
 
 namespace Habr.WebApp.Endpoints
 {
@@ -9,24 +6,18 @@ namespace Habr.WebApp.Endpoints
     {
         public static void MapUserEndpoints(this WebApplication app)
         {
-            app.MapGet("/api/users/name", [Authorize] async (HttpContext httpContext, IUserService userService,
+            app.MapGet("/api/users/name", async (HttpContext httpContext, IUserService userService,
                 CancellationToken cancellationToken = default) =>
             {
-                var name = await userService.GetName(httpContext.GetCurrentUserId(), cancellationToken);
+                var name = await userService.GetName(httpContext.GetUserId(), cancellationToken);
                 return Results.Ok(name);
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status401Unauthorized);
-
-            app.MapPost("/api/users", async ([FromBody] UserCreateModel model, IUserService userService,
-                CancellationToken cancellationToken = default) =>
-            {
-                await userService.CreateUser(model.Email, model.Password, model.Name, cancellationToken);
-                return Results.StatusCode(StatusCodes.Status201Created);
-            })
-            .Produces(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users")
+            .WithDescription("Retrieves name of authorized user");
         }
     }
 }

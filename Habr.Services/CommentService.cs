@@ -1,6 +1,8 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess.Enums;
+using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +29,7 @@ namespace Habr.Services
                 Text = text,
                 PostId = postId,
                 UserId = userId,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Add(comment);
@@ -50,14 +52,15 @@ namespace Habr.Services
                 PostId = postId,
                 UserId = userId,
                 ParentCommentId = parentCommentId,
-                CreatedDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Add(comment);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task ModifyComment(string newText, int commentId, int userId, CancellationToken cancellationToken = default)
+        public async Task EditComment(string newText, int commentId, int userId,
+            RoleType role, CancellationToken cancellationToken = default)
         {
             CheckTextConstraints(newText);
 
@@ -73,43 +76,32 @@ namespace Habr.Services
                 throw new ArgumentException(ExceptionMessage.CannotEditDeletedComment);
             }
 
-            CheckAccess(comment.UserId, userId);
+            AccessHelper.CheckCommentAccess(comment.UserId, userId, role);
 
             comment.Text = newText;
 
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedAt = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken = default)
+        public async Task DeleteComment(int commentId, int userId, RoleType role, CancellationToken cancellationToken = default)
         {
             var comment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == commentId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.CommentNotFound);
 
-            CheckAccess(comment.UserId, userId);
+            AccessHelper.CheckCommentAccess(comment.UserId, userId, role);
 
             comment.IsDeleted = true;
             comment.Text = "Comment deleted";
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedAt = DateTime.UtcNow;
 
             _context.Comments.Update(comment);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        /// <summary>
-        /// Checks if User sending the requst owns the comment.
-        /// </summary>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        private void CheckAccess(int userId, int commentOwnerId)
-        {
-            if (userId != commentOwnerId)
-            {
-                throw new UnauthorizedAccessException(ExceptionMessage.AccessDeniedWrongCommentOwner);
-            }
-        }
-        private void CheckTextConstraints(string text)
+        private static void CheckTextConstraints(string text)
         {
             if (text.Length > ConstraintValue.CommentTextMaxLength)
             {

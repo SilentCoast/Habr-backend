@@ -144,6 +144,9 @@
   <data name="InvalidEmail" xml:space="preserve">
     <value>Invalid email format</value>
   </data>
+  <data name="InvalidRoleType" xml:space="preserve">
+    <value>Invalid role type</value>
+  </data>
   <data name="ParentCommentNotFound" xml:space="preserve">
     <value>Parent comment not found</value>
   </data>
@@ -152,6 +155,12 @@
   </data>
   <data name="TokenBreach" xml:space="preserve">
     <value>Access denied. Invalid or missing token</value>
+  </data>
+  <data name="TokenRevoked" xml:space="preserve">
+    <value>Access denied. Token has been revoked</value>
+  </data>
+  <data name="TokenValidationFailed" xml:space="preserve">
+    <value>Token is invalid or expired</value>
   </data>
   <data name="UserDoesntExist" xml:space="preserve">
     <value>User doesn't exist</value>

@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.Services;
 using Habr.Services.AutoMapperProfiles;
+using Habr.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace Habr.Tests
         {
             var mockJwtService = new Mock<IJwtService>();
 
-            mockJwtService.Setup(service => service.GenerateToken(It.IsAny<int>())).Returns("mocked_token");
+            mockJwtService.Setup(service => service.GenerateAccessToken(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync("mocked_token");
 
             return new ServiceCollection()
                 .AddDbContext<DataContext>(options => ConfigureDbContextOptions(options))
@@ -23,6 +24,7 @@ namespace Habr.Tests
                 .AddScoped<IUserService, UserService>()
                 .AddScoped(_ => mockJwtService.Object)
                 .AddScoped<IPasswordHasher, PasswordHasher>()
+                .AddScoped<ITokenRevocationService, TokenRevocationService>()
                 .AddAutoMapper(typeof(PostProfile).Assembly)
                 .AddLogging(builder =>
                 {

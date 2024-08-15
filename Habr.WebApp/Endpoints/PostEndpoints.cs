@@ -1,6 +1,5 @@
-﻿using Habr.Services;
+﻿using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
@@ -21,7 +20,9 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves a specific published post by its ID.");
 
             app.MapGet("/api/posts/published", async (IPostService postService, CancellationToken cancellationToken) =>
             {
@@ -30,13 +31,15 @@ namespace Habr.WebApp.Endpoints
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all published posts.");
 
-            app.MapGet("/api/posts/drafted", [Authorize] async (HttpContext httpContext, IPostService postService,
+
+            app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                var posts = await postService.GetDraftedPosts(userId, cancellationToken);
+                var posts = await postService.GetDraftedPosts(httpContext.GetUserId(), cancellationToken);
                 if (posts.Any())
                 {
                     return Results.Ok(posts);
@@ -46,75 +49,94 @@ namespace Habr.WebApp.Endpoints
                     return Results.NoContent();
                 }
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all drafted posts.");
 
-            app.MapPost("/api/posts", [Authorize] async ([FromBody] PostCreateModel model, HttpContext httpContext,
+            app.MapPost("/api/posts", async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.AddPost(model.Title, model.Text, userId, model.IsPublishedNow, cancellationToken);
+                await postService.AddPost(model.Title, model.Text, httpContext.GetUserId(), model.IsPublishedNow, cancellationToken);
                 return Results.StatusCode(StatusCodes.Status201Created);
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Creates a new post.");
 
-            app.MapPut("/api/posts/{id}", [Authorize] async ([FromRoute] int id, [FromBody] PostUpdateModel model,
+            app.MapPut("/api/posts/{id}", async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.UpdatePost(id, userId, model.NewTitle, model.NewText, cancellationToken);
+                await postService.UpdatePost(id, httpContext.GetUserId(), httpContext.GetUserRole(),
+                    model.NewTitle, model.NewText, cancellationToken);
+
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Updates a specific post by its ID.");
 
-            app.MapPut("/api/posts/{id}/publish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapPut("/api/posts/{id}/publish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.PublishPost(id, userId, cancellationToken);
+                await postService.PublishPost(id, httpContext.GetUserId(),
+                    httpContext.GetUserRole(), cancellationToken);
+
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Publishes a specific post by its ID.");
 
-            app.MapPut("/api/posts/{id}/unpublish", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapPut("/api/posts/{id}/unpublish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.UnpublishPost(id, userId, cancellationToken);
+                await postService.UnpublishPost(id, httpContext.GetUserId(),
+                    httpContext.GetUserRole(), cancellationToken);
+
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Unpublishes a specific post by its ID.");
 
-            app.MapDelete("/api/posts/{id}", [Authorize] async ([FromRoute] int id, HttpContext httpContext,
+            app.MapDelete("/api/posts/{id}", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var userId = httpContext.GetCurrentUserId();
-                await postService.DeletePost(id, userId, cancellationToken);
+                await postService.DeletePost(id, httpContext.GetUserId(), httpContext.GetUserRole(), cancellationToken);
                 return Results.Ok();
             })
+            .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status408RequestTimeout);
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Deletes a specific post by its ID.");
         }
     }
 }

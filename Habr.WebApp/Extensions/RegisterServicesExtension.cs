@@ -1,4 +1,5 @@
 ﻿using Habr.Services;
+using Habr.Services.Interfaces;
 
 namespace Habr.WebApp.Extensions
 {
@@ -12,7 +13,9 @@ namespace Habr.WebApp.Extensions
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
-            services.AddSingleton<IJwtService, JwtService>();
+            services.AddScoped<IJwtService, JwtService>();
+
+            services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         }
     }
 }

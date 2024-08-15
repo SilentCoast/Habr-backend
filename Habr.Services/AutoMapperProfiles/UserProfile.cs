@@ -8,7 +8,7 @@ namespace Habr.Services.AutoMapperProfiles
     {
         public UserProfile()
         {
-            CreateMap<User, UserInCommentDTO>()
+            CreateMap<User, UserInCommentDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
         }
     }

@@ -32,7 +32,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(ConstraintValue.UserSaltMaxLength);
 
-            builder.Property(p => p.CreatedDate)
+            builder.Property(p => p.CreatedAt)
                 .IsRequired();
 
             builder.HasMany(p => p.Posts)
@@ -46,6 +46,11 @@ namespace Habr.DataAccess.EntityConfigurations
                 .HasForeignKey(p => p.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasMany(p => p.RefreshTokens)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .IsRequired();
         }
     }
 }
