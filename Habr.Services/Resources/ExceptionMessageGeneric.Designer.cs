@@ -61,6 +61,15 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rating value must be in range: {0}-{1}.
+        /// </summary>
+        internal static string RatingOutOfBounds {
+            get {
+                return ResourceManager.GetString("RatingOutOfBounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The {0} must be less than {1} symbols.
         /// </summary>
         internal static string ValueOfMustBeLessThan {

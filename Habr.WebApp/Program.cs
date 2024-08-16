@@ -1,9 +1,11 @@
 using Habr.DataAccess;
 using Habr.Services.AutoMapperProfiles;
+using Habr.Services.Interfaces;
 using Habr.WebApp.Endpoints;
 using Habr.WebApp.Extensions;
 using Habr.WebApp.GlobalExceptionHandler;
 using Habr.WebApp.Middleware;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,10 +23,14 @@ namespace Habr.WebApp
 
             var builder = WebApplication.CreateBuilder(args);
 
+            var connectionString = configuration.GetConnectionString("HabrDBConnection");
+
             builder.Services.AddDbContext<DataContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("HabrDBConnection")));
+                    options.UseSqlServer(connectionString));
 
             builder.Services.RegisterServices(configuration);
+
+            builder.Services.ConfigureHangfire(connectionString);
 
             builder.Services.AddAutoMapper(typeof(PostProfile).Assembly);
 
@@ -83,6 +89,13 @@ namespace Habr.WebApp
             app.MapCommentEndpoints();
             app.MapPostEndpoints(apiVersionSet);
             app.MapUserEndpoints();
+
+            app.Lifetime.ApplicationStarted.Register(() =>
+            {
+                RecurringJob.AddOrUpdate<IPostRatingService>("UpdateAveragePostRatings",
+                service => service.UpdateAveragePostRatings(default),
+                Cron.Daily);
+            });
 
             await app.RunAsync();
         }

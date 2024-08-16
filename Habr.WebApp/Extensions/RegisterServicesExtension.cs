@@ -9,6 +9,7 @@ namespace Habr.WebApp.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IPostRatingService, PostRatingService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
 

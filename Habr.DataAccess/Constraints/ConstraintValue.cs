@@ -11,5 +11,9 @@
         public const int PostTextMaxLength = 2000;
 
         public const int CommentTextMaxLength = 1000;
+
+        public const int PostRatingStarsMin = 1;
+        public const int PostRatingStarsMax = 5;
+        public const int PostRatingDescriptionMaxLength = 1000;
     }
 }
