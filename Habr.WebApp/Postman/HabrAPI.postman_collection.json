@@ -837,6 +837,126 @@
 									]
 								},
 								{
+									"name": "rate",
+									"item": [
+										{
+											"name": "/api/posts/:id/rate",
+											"request": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/:id/rate",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														":id",
+														"rate"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": ""
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "rate - 4",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json",
+																"type": "text"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\r\n  \"ratingStars\": 4,\r\n  \"description\": \"Nice post, but could use some improvements\"\r\n}",
+															"options": {
+																"raw": {
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/rate",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"rate"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"_postman_previewlanguage": null,
+													"header": null,
+													"cookie": [],
+													"body": null
+												},
+												{
+													"name": "rate - 5",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json",
+																"type": "text"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\r\n  \"ratingStars\": 5,\r\n  \"description\": \"Nice post, but could use some improvements\"\r\n}",
+															"options": {
+																"raw": {
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/:id/rate",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																":id",
+																"rate"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "1"
+																}
+															]
+														}
+													},
+													"_postman_previewlanguage": null,
+													"header": null,
+													"cookie": [],
+													"body": null
+												}
+											]
+										}
+									]
+								},
+								{
 									"name": "/api/posts/:id",
 									"request": {
 										"method": "GET",
@@ -1199,31 +1319,6 @@
 													],
 													"path": [
 														"api",
-														"posts",
-														"published"
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [],
-											"cookie": [],
-											"body": ""
-										},
-										{
-											"name": "v1",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/api/v1/posts/published",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"v1",
 														"posts",
 														"published"
 													]
@@ -1731,7 +1826,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6ImE5YTM2NzM3LWU3ZDYtNDc2OS1hZTNjLTdiNTA4NjY2OTQyZCIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjM1NTc2MTgsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.iVEkf_L9dEFjpWX95TTqmDvDOF6Ym-Om9ZAcnl4dkw0",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjQyNmYzMWE2LWFmNjYtNDc1OC1hNjg3LWY2ZDI1YzdmZTFiZiIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjM4MTcwNDgsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.Mry4BoeFA8jF-mpvuylI4h-Zc16BKtEJ-i7wxk3YSBU",
 				"type": "string"
 			}
 		]
