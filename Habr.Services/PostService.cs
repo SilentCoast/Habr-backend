@@ -121,6 +121,7 @@ namespace Habr.Services
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)
+                .Include(p => p.Comments)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
@@ -129,7 +130,7 @@ namespace Habr.Services
             }
 
             AccessHelper.CheckPostAccess(userId, post.UserId, role);
-            
+
             if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
                 throw new InvalidOperationException(ExceptionMessage.CannotDraftPostWithComments);
@@ -169,7 +170,6 @@ namespace Habr.Services
             }
 
             post.ModifiedAt = DateTime.UtcNow;
-            //TODO: maybe add modifiedBy
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync(cancellationToken);
