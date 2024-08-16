@@ -32,7 +32,7 @@ namespace Habr.ConsoleApp
                 })
                 .BuildServiceProvider();
 
-            var logger = serviceProvider.GetService<ILogger<Program>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
             using var context = serviceProvider.GetService<DataContext>();
 
