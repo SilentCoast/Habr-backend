@@ -11,6 +11,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class PostEndpoints
     {
+        //TODO: make tags as const in all endpoints
         public static void MapPostEndpoints(this WebApplication app)
         {
             var apiVersion1 = new ApiVersion(1, 0);
@@ -71,6 +72,7 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/posts/published/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
+                //TODO: maybe put validation into service class
                 Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
                 Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
 
@@ -119,6 +121,7 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/posts/drafted/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
+                //TODO: maybe put validation into service class
                 Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
                 Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
 
@@ -226,6 +229,22 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
             .WithDescription("Deletes a specific post by its ID.")
+            .WithOpenApi();
+
+            app.MapPost("/api/posts/{id}/rate", async ([FromRoute] int id, [FromBody] PostRatingModel model, HttpContext httpContext,
+                IPostRatingService postRatingService, CancellationToken cancelationToken) =>
+            {
+                await postRatingService.AddOrUpdatePostRating(model.RatingStars, id, httpContext.GetUserId(),
+                    model.Description, cancelationToken);
+                return Results.Created();
+            })
+            .RequireAuthorization()
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription($"Adds or Updates post rating")
             .WithOpenApi();
         }
     }

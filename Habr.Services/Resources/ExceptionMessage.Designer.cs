@@ -79,6 +79,15 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot comment on drafted post.
+        /// </summary>
+        public static string CannotCommentOnDraftedPost {
+            get {
+                return ResourceManager.GetString("CannotCommentOnDraftedPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot draft post containing comments.
         /// </summary>
         public static string CannotDraftPostWithComments {
@@ -102,6 +111,24 @@ namespace Habr.Services.Resources {
         public static string CannotEditPublishedPost {
             get {
                 return ResourceManager.GetString("CannotEditPublishedPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot rate unpublished post.
+        /// </summary>
+        public static string CannotRateUnpublishedPost {
+            get {
+                return ResourceManager.GetString("CannotRateUnpublishedPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot reply to deleted comment.
+        /// </summary>
+        public static string CannotReplyToDeletedComment {
+            get {
+                return ResourceManager.GetString("CannotReplyToDeletedComment", resourceCulture);
             }
         }
         
