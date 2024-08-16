@@ -1,4 +1,3 @@
-using Habr.DataAccess.Entities;
 using Habr.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +21,7 @@ namespace Habr.Tests
         [Fact]
         public async Task GetName_ReturnsName()
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
 
             var getName = await _dObject.UserService.GetName(user.Id);
 
@@ -113,12 +112,6 @@ namespace Habr.Tests
             var nonExistentUserId = -1;
 
             await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.UserService.ConfirmEmail(email, nonExistentUserId));
-        }
-
-        private async Task<User> CreateUser()
-        {
-            await _dObject.UserService.CreateUser("john.doe@example.com", "password");
-            return await _dObject.Context.Users.FirstAsync();
         }
     }
 }
