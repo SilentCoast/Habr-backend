@@ -35,13 +35,12 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Retrieves a specific published post by its ID.")
             .WithOpenApi();
 
-            static async Task<IResult> GetPublishedPosts(IPostService postService, CancellationToken cancellationToken)
+            app.MapGet("/api/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
             {
                 var posts = await postService.GetPublishedPosts(cancellationToken);
                 return Results.Ok(posts);
-            }
-
-            app.MapGet("/api/posts/published", GetPublishedPosts)
+            })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
@@ -49,16 +48,7 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Retrieves all published posts. Version 1.0")
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(apiVersion1)
-            .WithOpenApi();
-
-            app.MapGet("/api/v{version:apiVersion}/posts/published", GetPublishedPosts)
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
-            .WithDescription("Retrieves all published posts. Version 1.0")
-            .WithApiVersionSet(apiVersionSet)
-            .MapToApiVersion(apiVersion1)
+            .HasDeprecatedApiVersion(apiVersion1)
             .WithOpenApi();
 
             app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
