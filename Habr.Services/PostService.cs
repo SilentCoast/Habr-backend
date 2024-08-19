@@ -54,6 +54,9 @@ namespace Habr.Services
         public async Task<PaginatedDto<PublishedPostV2Dto>> GetPublishedPostsPaginated(int pageNumber, int pageSize,
             CancellationToken cancellationToken = default)
         {
+            ValidationHelper.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
+            ValidationHelper.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
+
             return await _context.Posts
                 .Where(p => p.IsPublished)
                 .ProjectTo<PublishedPostV2Dto>(_mapper.ConfigurationProvider)
@@ -71,6 +74,9 @@ namespace Habr.Services
         public async Task<PaginatedDto<DraftedPostDto>> GetDraftedPostsPaginated(int userId, int pageNumber, int pageSize,
             CancellationToken cancellationToken = default)
         {
+            ValidationHelper.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
+            ValidationHelper.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
+
             return await _context.Posts
                 .Where(p => p.IsPublished == false && p.UserId == userId)
                 .ProjectTo<DraftedPostDto>(_mapper.ConfigurationProvider)
