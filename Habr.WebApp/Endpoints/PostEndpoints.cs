@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using Habr.Services.Exceptions;
 using Habr.Services.Interfaces;
-using Habr.Services.Resources;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -23,6 +22,8 @@ namespace Habr.WebApp.Endpoints
             .ReportApiVersions()
             .Build();
 
+            //TODO: add endpoint for retrieving specific drafted post by its Id(Owner only)
+            //TODO: change url to /api/posts/PUBLISHED/{id}
             app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
