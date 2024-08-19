@@ -4,6 +4,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class UserEndpoints
     {
+        public const string Tag = "Users";
         public static void MapUserEndpoints(this WebApplication app)
         {
             app.MapGet("/api/users/name", async (HttpContext httpContext, IUserService userService,
@@ -16,7 +17,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .WithTags("Users")
+            .WithTags(Tag)
             .WithDescription("Retrieves name of authorized user")
             .WithOpenApi();
         }

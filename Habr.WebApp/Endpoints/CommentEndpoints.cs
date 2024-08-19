@@ -7,6 +7,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class CommentEndpoints
     {
+        public const string Tag = "Comments";
         public static void MapCommentEndpoints(this WebApplication app)
         {
             app.MapPost("/api/posts/{postId}/comments", async ([FromRoute] int postId,
@@ -21,7 +22,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Comments")
+            .WithTags(Tag)
             .WithDescription("Adds a new comment to a post.")
             .WithOpenApi();
 
@@ -37,7 +38,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Comments")
+            .WithTags(Tag)
             .WithDescription("Replies to an existing comment on a post.")
             .WithOpenApi();
 
@@ -54,7 +55,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Comments")
+            .WithTags(Tag)
             .WithDescription("Updates an existing comment.")
             .WithOpenApi();
 
@@ -72,7 +73,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Comments")
+            .WithTags(Tag)
             .WithDescription("Deletes a comment.")
             .WithOpenApi();
         }
