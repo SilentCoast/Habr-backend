@@ -64,12 +64,8 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/posts/published/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                //TODO: maybe put validation into service class
-                Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
-                Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
-
                 var paginatedDto = await postService.GetPublishedPostsPaginated(pageNumber, pageSize, cancellationToken);
-
+                
                 var json = JsonSerializer.Serialize(paginatedDto);
                 return Results.Content(json, "application/json");
             })
@@ -106,12 +102,8 @@ namespace Habr.WebApp.Endpoints
             app.MapGet("/api/posts/drafted/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
-                //TODO: maybe put validation into service class
-                Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
-                Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
-
                 var paginatedDto = await postService.GetDraftedPostsPaginated(httpContext.GetUserId(),
-                    pageNumber, pageSize, cancellationToken);
+                        pageNumber, pageSize, cancellationToken);
 
                 return Results.Ok(paginatedDto);
             })

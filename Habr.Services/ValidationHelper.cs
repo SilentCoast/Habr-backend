@@ -1,6 +1,6 @@
-﻿namespace Habr.WebApp
+﻿namespace Habr.Services
 {
-    public static class Validator
+    public static class ValidationHelper
     {
         /// <summary>
         /// Validates that <paramref name="value"/> is more than 0. 
