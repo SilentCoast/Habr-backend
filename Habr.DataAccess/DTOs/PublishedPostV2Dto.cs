@@ -6,5 +6,6 @@
         public string Title { get; set; }
         public DateTime PublishedAt { get; set; }
         public PostAuthorDto Author { get; set; }
+        public double? AvgRating { get; set; }
     }
 }
