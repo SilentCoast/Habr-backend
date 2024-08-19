@@ -2,7 +2,6 @@
 using Habr.DataAccess.DTOs;
 using Habr.Services.Exceptions;
 using Habr.Services.Interfaces;
-using Habr.Services.Resources;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -15,6 +14,8 @@ namespace Habr.WebApp.Endpoints
         public const string Tag = "Posts";
         public static void MapPostEndpoints(this WebApplication app, ApiVersionSet apiVersionSet)
         {
+            //TODO: add endpoint for retrieving specific drafted post by its Id(Owner only)
+            //TODO: change url to /api/posts/PUBLISHED/{id}
             app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
