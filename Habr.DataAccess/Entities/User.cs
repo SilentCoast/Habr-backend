@@ -11,10 +11,10 @@
         public DateTime CreatedAt { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
-        public ICollection<Post> Posts { get; set; } = [];
-        public ICollection<Comment> Comments { get; set; } = [];
-        public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+        public ICollection<Post> Posts { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; }
         public int TokenVersion { get; set; } = 1;
-        public ICollection<PostRating> PostRatings { get; set; } = [];
+        public ICollection<PostRating> PostRatings { get; set; }
     }
 }

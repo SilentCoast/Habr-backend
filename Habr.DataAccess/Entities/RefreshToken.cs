@@ -10,6 +10,7 @@ namespace Habr.DataAccess.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? RevokedAt { get; set; }
         public int UserId { get; set; }
+        //TODO: remove JsonIgnore and configure use of RefreshTokenDto instead
         [JsonIgnore]
         public User User { get; set; }
     }
