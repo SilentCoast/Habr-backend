@@ -13,7 +13,9 @@ namespace Habr.Services.AutoMapperProfiles
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.AuthorEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.PublishDate, opt => opt.MapFrom(src => src.PublishedAt))
-                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments.Where(p => p.ParentCommentId == null)));
+                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments.Where(p => p.ParentCommentId == null)))
+                .ForMember(dest => dest.AvgRating, opt => opt.MapFrom(src => src.AverageRating))
+                .ForMember(dest => dest.Ratings, opt => opt.MapFrom(src => src.PostRatings));
 
             CreateMap<Post, DraftedPostDto>()
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
@@ -30,7 +32,8 @@ namespace Habr.Services.AutoMapperProfiles
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt))
-                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.User));
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.User))
+                .ForMember(dest => dest.AvgRating, opt => opt.MapFrom(src => src.AverageRating));
         }
     }
 }

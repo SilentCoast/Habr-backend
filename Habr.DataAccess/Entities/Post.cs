@@ -1,7 +1,6 @@
 ﻿namespace Habr.DataAccess.Entities
 {
     //TODO: currently we don't have a way to track when or by who post was drafted
-    //TODO: add new postDto with avgRating and PostRatings.Count
     public class Post
     {
         public int Id { get; set; }
