@@ -11,7 +11,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class PostEndpoints
     {
-        //TODO: make tags as const in all endpoints
+        public const string Tag = "Posts";
         public static void MapPostEndpoints(this WebApplication app)
         {
             var apiVersion1 = new ApiVersion(1, 0);
@@ -34,7 +34,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves a specific published post by its ID.")
             .WithOpenApi();
 
@@ -47,7 +47,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves all published posts. Version 1.0")
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(apiVersion1)
@@ -63,7 +63,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves all published posts. Version 2.0")
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(apiVersion2)
@@ -92,7 +92,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves published posts by page.");
 
             app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
@@ -114,7 +114,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves all drafted posts.")
             .WithOpenApi();
 
@@ -143,7 +143,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Retrieves all drafted posts by page.");
 
             app.MapPost("/api/posts", async ([FromBody] PostCreateModel model, HttpContext httpContext,
@@ -157,7 +157,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Creates a new post.")
             .WithOpenApi();
 
@@ -175,7 +175,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Updates a specific post by its ID.")
             .WithOpenApi();
 
@@ -193,7 +193,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Publishes a specific post by its ID.")
             .WithOpenApi();
 
@@ -211,7 +211,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Unpublishes a specific post by its ID.")
             .WithOpenApi();
 
@@ -227,7 +227,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription("Deletes a specific post by its ID.")
             .WithOpenApi();
 
@@ -243,7 +243,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Posts")
+            .WithTags(Tag)
             .WithDescription($"Adds or Updates post rating")
             .WithOpenApi();
         }
