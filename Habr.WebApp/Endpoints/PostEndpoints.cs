@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+﻿using Asp.Versioning.Builder;
 using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +9,8 @@ namespace Habr.WebApp.Endpoints
 {
     public static class PostEndpoints
     {
-        public static void MapPostEndpoints(this WebApplication app)
+        public static void MapPostEndpoints(this WebApplication app, ApiVersionSet apiVersionSet)
         {
-            var apiVersion1 = new ApiVersion(1, 0);
-            var apiVersion2 = new ApiVersion(2, 0);
-
-            var apiVersionSet = app.NewApiVersionSet()
-            .HasApiVersion(apiVersion1)
-            .HasApiVersion(apiVersion2)
-            .ReportApiVersions()
-            .Build();
-
             app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
@@ -47,8 +38,8 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Retrieves all published posts. Version 1.0")
             .WithApiVersionSet(apiVersionSet)
-            .MapToApiVersion(apiVersion1)
-            .HasDeprecatedApiVersion(apiVersion1)
+            .MapToApiVersion(ApiVersions.ApiVersion1)
+            .HasDeprecatedApiVersion(ApiVersions.ApiVersion1)
             .WithOpenApi();
 
             app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
@@ -63,7 +54,7 @@ namespace Habr.WebApp.Endpoints
             .WithTags("Posts")
             .WithDescription("Retrieves all published posts. Version 2.0")
             .WithApiVersionSet(apiVersionSet)
-            .MapToApiVersion(apiVersion2)
+            .MapToApiVersion(ApiVersions.ApiVersion2)
             .WithOpenApi();
 
             app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,

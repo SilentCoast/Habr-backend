@@ -77,9 +77,11 @@ namespace Habr.WebApp
             app.UseGlobalExceptionHandler();
             app.UseMiddleware<TokenValidationMiddleware>();
 
+            var apiVersionSet = app.ConfigureApiVersionSet();
+
             app.MapAuthEndpoints();
             app.MapCommentEndpoints();
-            app.MapPostEndpoints();
+            app.MapPostEndpoints(apiVersionSet);
             app.MapUserEndpoints();
 
             await app.RunAsync();

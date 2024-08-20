@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Asp.Versioning.Builder;
 
 namespace Habr.WebApp.Extensions
 {
@@ -20,6 +21,15 @@ namespace Habr.WebApp.Extensions
                     options.GroupNameFormat = "'v'VVV";
                     options.SubstituteApiVersionInUrl = true;
                 });
+        }
+
+        public static ApiVersionSet ConfigureApiVersionSet(this WebApplication app)
+        {
+            return app.NewApiVersionSet()
+                .HasApiVersion(ApiVersions.ApiVersion1)
+                .HasApiVersion(ApiVersions.ApiVersion2)
+                .ReportApiVersions()
+                .Build();
         }
     }
 }
