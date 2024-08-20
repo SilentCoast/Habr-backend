@@ -18,8 +18,7 @@ namespace Habr.WebApp.Endpoints
         public static void MapPostEndpoints(this WebApplication app, ApiVersionSet apiVersionSet)
         {
             //TODO: add endpoint for retrieving specific drafted post by its Id(Owner only)
-            //TODO: change url to /api/posts/PUBLISHED/{id}
-            app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
+            app.MapGet("/api/posts/published/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
                 var post = await postService.GetPostView(id, cancellationToken);
