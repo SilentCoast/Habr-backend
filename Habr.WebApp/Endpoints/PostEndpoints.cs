@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.Builder;
+using Habr.DataAccess.DTOs;
 using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace Habr.WebApp.Endpoints
                 var posts = await postService.GetPublishedPosts(cancellationToken);
                 return Results.Ok(posts);
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<IEnumerable<PublishedPostDto>>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
@@ -48,7 +49,7 @@ namespace Habr.WebApp.Endpoints
                 var posts = await postService.GetPublishedPostsV2(cancellationToken);
                 return Results.Ok(posts);
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<IEnumerable<PublishedPostV2Dto>>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
