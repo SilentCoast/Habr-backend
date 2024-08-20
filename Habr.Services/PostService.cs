@@ -41,7 +41,7 @@ namespace Habr.Services
             return await _context.Posts
                 .Where(p => p.IsPublished)
                 .ProjectTo<PublishedPostDto>(_mapper.ConfigurationProvider)
-                .OrderByDescending(p => p.PublishDate)
+                .OrderByDescending(p => p.PublishedAt)
                 .ToListAsync(cancellationToken);
         }
         public async Task<IEnumerable<PublishedPostV2Dto>> GetPublishedPostsV2(CancellationToken cancellationToken = default)
