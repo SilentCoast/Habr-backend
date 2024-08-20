@@ -244,7 +244,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"Id\": 1,\r\n    \"Token\": \"2d030708-67be-4f44-a8a0-d466e5ec9a6b\",\r\n    \"Expires\": \"2024-08-10T20:15:37.366616Z\",\r\n    \"Created\": \"2024-08-03T20:15:37.3666793Z\",\r\n    \"Revoked\": null,\r\n    \"UserId\": 1\r\n}",
+													"raw": "\"fe16ee8d-a86e-4ac3-bf04-722288ec4a82\"",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -877,7 +877,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\r\n  \"ratingStars\": 4,\r\n  \"description\": \"Nice post, but could use some improvements\"\r\n}",
+															"raw": "4",
 															"options": {
 																"raw": {
 																	"language": "json"
@@ -921,7 +921,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\r\n  \"ratingStars\": 5,\r\n  \"description\": \"Nice post, but could use some improvements\"\r\n}",
+															"raw": "5",
 															"options": {
 																"raw": {
 																	"language": "json"
@@ -953,68 +953,6 @@
 													"body": null
 												}
 											]
-										}
-									]
-								},
-								{
-									"name": "/api/posts/:id",
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "text/plain"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/api/posts/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"posts",
-												":id"
-											],
-											"variable": [
-												{
-													"key": "id",
-													"value": "<integer>",
-													"description": "(Required) "
-												}
-											]
-										}
-									},
-									"response": [
-										{
-											"name": "OK - The request was successful.",
-											"originalRequest": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{baseUrl}}/api/posts/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"posts",
-														":id"
-													],
-													"variable": [
-														{
-															"key": "id",
-															"value": "1"
-														}
-													]
-												}
-											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "text",
-											"header": [],
-											"cookie": [],
-											"body": ""
 										}
 									]
 								},
@@ -1308,17 +1246,18 @@
 									},
 									"response": [
 										{
-											"name": "old - default(v1)",
+											"name": "v1",
 											"originalRequest": {
 												"method": "GET",
 												"header": [],
 												"url": {
-													"raw": "{{baseUrl}}/api/posts/published",
+													"raw": "{{baseUrl}}/api/v1/posts/published",
 													"host": [
 														"{{baseUrl}}"
 													],
 													"path": [
 														"api",
+														"v1",
 														"posts",
 														"published"
 													]
@@ -1346,6 +1285,70 @@
 														"v2",
 														"posts",
 														"published"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "/api/posts/pubished/:id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/published/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												"published",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/published/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"published",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
 													]
 												}
 											},
@@ -1504,6 +1507,70 @@
 														"api",
 														"posts",
 														"drafted"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "/api/posts/drafted/:id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/posts/drafted/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												"drafted",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK - The request was successful.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/drafted/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"drafted",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "1"
+														}
 													]
 												}
 											},
@@ -1826,7 +1893,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjQyNmYzMWE2LWFmNjYtNDc1OC1hNjg3LWY2ZDI1YzdmZTFiZiIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjM4MTcwNDgsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.Mry4BoeFA8jF-mpvuylI4h-Zc16BKtEJ-i7wxk3YSBU",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjA2M2M3MjkxLTRlYzQtNGJiYy05Njc5LTg2NTJjMTBjMDRlYSIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjQxNjY2MDQsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.F85kT2BfQo98voGX7Gbp6bsknOlcSZHR6Evecu3ukW4",
 				"type": "string"
 			}
 		]
