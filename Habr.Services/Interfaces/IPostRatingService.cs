@@ -2,7 +2,7 @@
 {
     public interface IPostRatingService
     {
-        Task AddOrUpdatePostRating(int ratingStars, int postId, int userId, string? description = null,
+        Task AddOrUpdatePostRating(int ratingStars, int postId, int userId,
             CancellationToken cancellationToken = default);
         Task UpdateAveragePostRatings(CancellationToken cancellationToken = default);
     }

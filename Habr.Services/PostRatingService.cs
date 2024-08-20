@@ -11,15 +11,10 @@ namespace Habr.Services
     {
         private readonly DataContext _context = context;
 
-        public async Task AddOrUpdatePostRating(int ratingStars, int postId, int userId, string? description = null,
+        public async Task AddOrUpdatePostRating(int ratingStars, int postId, int userId,
             CancellationToken cancellationToken = default)
         {
             CheckRatingConstraints(ratingStars);
-
-            if (description != null)
-            {
-                CheckDescriptionConstraints(description);
-            }
 
             var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
@@ -33,10 +28,6 @@ namespace Habr.Services
             if (rating != null)
             {
                 rating.RatingStars = ratingStars;
-                if (description != null)
-                {
-                    rating.Description = description;
-                }
                 _context.Update(rating);
             }
             else
@@ -45,7 +36,6 @@ namespace Habr.Services
                 {
                     RatingStars = ratingStars,
                     RatedAt = DateTime.UtcNow,
-                    Description = description,
                     PostId = postId,
                     UserId = userId
                 };
@@ -72,14 +62,6 @@ namespace Habr.Services
             {
                 throw new ArgumentOutOfRangeException(string.Format(ExceptionMessageGeneric.RatingOutOfBounds,
                     ConstraintValue.PostRatingStarsMin, ConstraintValue.PostRatingStarsMax));
-            }
-        }
-        private static void CheckDescriptionConstraints(string description)
-        {
-            if (description.Length > ConstraintValue.PostRatingDescriptionMaxLength)
-            {
-                throw new ArgumentException(string.Format(ExceptionMessageGeneric.ValueTooLongMaxLengthIs,
-                    nameof(PostRating.Description), ConstraintValue.PostRatingDescriptionMaxLength));
             }
         }
     }

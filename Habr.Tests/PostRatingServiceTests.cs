@@ -23,13 +23,11 @@ namespace Habr.Tests
             var user = await _dObject.CreateUser();
             var post = await _dObject.CreatePost(user.Id, true);
             var ratingStars = 3;
-            var description = "some description";
 
-            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id, description);
+            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id);
 
             var ratingObj = await _dObject.Context.PostRatings.Where(p => p.PostId == post.Id && p.UserId == user.Id).FirstAsync();
             Assert.Equal(ratingStars, ratingObj.RatingStars);
-            Assert.Equal(description, ratingObj.Description);
         }
         [Fact]
         public async Task AddOrUpdatePostRating_UpdateEntry_ShouldUpdate()
@@ -38,17 +36,14 @@ namespace Habr.Tests
             var post = await _dObject.CreatePost(user.Id, true);
             var ratingStars = 3;
             var ratingStarsUpdated = 5;
-            var description = "some description";
-            var descriptionUpdated = "updated description";
 
             //add
-            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id, description);
+            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id);
             //update
-            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStarsUpdated, post.Id, user.Id, descriptionUpdated);
+            await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStarsUpdated, post.Id, user.Id);
 
             var ratingObj = await _dObject.Context.PostRatings.Where(p => p.PostId == post.Id && p.UserId == user.Id).FirstAsync();
             Assert.Equal(ratingStarsUpdated, ratingObj.RatingStars);
-            Assert.Equal(descriptionUpdated, ratingObj.Description);
         }
         [Fact]
         public async Task AddOrUpdatePostRating_UnpublishedPost_ShouldThrowInvalidOperationException()
@@ -56,10 +51,9 @@ namespace Habr.Tests
             var user = await _dObject.CreateUser();
             var post = await _dObject.CreatePost(user.Id, false);
             var ratingStars = 3;
-            var description = "some description";
 
             await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id, description));
+                await _dObject.PostRatingService.AddOrUpdatePostRating(ratingStars, post.Id, user.Id));
         }
     }
 }

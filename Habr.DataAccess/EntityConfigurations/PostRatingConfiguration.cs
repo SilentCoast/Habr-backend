@@ -24,9 +24,6 @@ namespace Habr.DataAccess.EntityConfigurations
             builder.Property(p => p.RatedAt)
                 .IsRequired();
 
-            builder.Property(p => p.Description)
-                .HasMaxLength(ConstraintValue.PostRatingDescriptionMaxLength);
-
             builder.HasOne(p => p.Post)
                 .WithMany(p => p.PostRatings)
                 .HasForeignKey(p => p.PostId)

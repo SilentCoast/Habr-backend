@@ -202,11 +202,11 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Deletes a specific post by its ID.")
             .WithOpenApi();
 
-            app.MapPost("/api/posts/{id}/rate", async ([FromRoute] int id, [FromBody] PostRatingModel model, HttpContext httpContext,
+            app.MapPost("/api/posts/{id}/rate", async ([FromRoute] int id, [FromBody] int ratingStars, HttpContext httpContext,
                 IPostRatingService postRatingService, CancellationToken cancelationToken) =>
             {
-                await postRatingService.AddOrUpdatePostRating(model.RatingStars, id, httpContext.GetUserId(),
-                    model.Description, cancelationToken);
+                await postRatingService.AddOrUpdatePostRating(ratingStars, id, 
+                    httpContext.GetUserId(), cancelationToken);
                 return Results.Created();
             })
             .RequireAuthorization()
