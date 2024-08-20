@@ -1,5 +1,4 @@
 ﻿using Habr.DataAccess;
-using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.Services.Interfaces;
 using Habr.Services.Resources;
@@ -14,8 +13,6 @@ namespace Habr.Services
         public async Task AddOrUpdatePostRating(int ratingStars, int postId, int userId,
             CancellationToken cancellationToken = default)
         {
-            CheckRatingConstraints(ratingStars);
-
             var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
 
@@ -54,15 +51,6 @@ namespace Habr.Services
                         .Where(r => r.PostId == post.Id)
                         .Average(r => r.RatingStars)
                 ), cancellationToken);
-        }
-
-        private static void CheckRatingConstraints(int rating)
-        {
-            if (rating < ConstraintValue.PostRatingStarsMin || rating > ConstraintValue.PostRatingStarsMax)
-            {
-                throw new ArgumentOutOfRangeException(string.Format(ExceptionMessageGeneric.RatingOutOfBounds,
-                    ConstraintValue.PostRatingStarsMin, ConstraintValue.PostRatingStarsMax));
-            }
         }
     }
 }

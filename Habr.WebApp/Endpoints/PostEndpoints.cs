@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning.Builder;
 using FluentValidation;
+using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.Services.Interfaces;
 using Habr.Services.Pagination;
+using Habr.Services.Resources;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -222,6 +224,12 @@ namespace Habr.WebApp.Endpoints
             app.MapPost("/api/posts/{id}/rate", async ([FromRoute] int id, [FromBody] int ratingStars, HttpContext httpContext,
                 IPostRatingService postRatingService, CancellationToken cancelationToken) =>
             {
+                if (ratingStars < ConstraintValue.PostRatingStarsMin || ratingStars > ConstraintValue.PostRatingStarsMax)
+                {
+                    return Results.BadRequest(string.Format(ExceptionMessageGeneric.RatingOutOfBounds,
+                        ConstraintValue.PostRatingStarsMin, ConstraintValue.PostRatingStarsMax));
+                }
+
                 await postRatingService.AddOrUpdatePostRating(ratingStars, id, 
                     httpContext.GetUserId(), cancelationToken);
                 return Results.Created();
