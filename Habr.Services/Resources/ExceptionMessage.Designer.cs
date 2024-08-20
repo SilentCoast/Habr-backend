@@ -151,6 +151,24 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Page Number may not be less than 1.
+        /// </summary>
+        public static string PageNumberLessThan1 {
+            get {
+                return ResourceManager.GetString("PageNumberLessThan1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Size may not be less than 1.
+        /// </summary>
+        public static string PageSizeLessThan1 {
+            get {
+                return ResourceManager.GetString("PageSizeLessThan1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parent comment not found.
         /// </summary>
         public static string ParentCommentNotFound {

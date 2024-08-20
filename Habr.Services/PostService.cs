@@ -6,6 +6,7 @@ using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
 using Habr.Services.Interfaces;
+using Habr.Services.Pagination;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -50,6 +51,15 @@ namespace Habr.Services
                 .OrderByDescending(p => p.PublishedAt)
                 .ToListAsync(cancellationToken);
         }
+        public async Task<PaginatedDto<PublishedPostV2Dto>> GetPublishedPostsPaginated(int pageNumber, int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Posts
+                .Where(p => p.IsPublished)
+                .ProjectTo<PublishedPostV2Dto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(p => p.PublishedAt)
+                .ToPaginatedDto(pageNumber, pageSize, cancellationToken);
+        }
         public async Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Posts
@@ -57,6 +67,15 @@ namespace Habr.Services
                 .ProjectTo<DraftedPostDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.UpdatedAt)
                 .ToListAsync(cancellationToken);
+        }
+        public async Task<PaginatedDto<DraftedPostDto>> GetDraftedPostsPaginated(int userId, int pageNumber, int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Posts
+                .Where(p => p.IsPublished == false && p.UserId == userId)
+                .ProjectTo<DraftedPostDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(p => p.UpdatedAt)
+                .ToPaginatedDto(pageNumber, pageSize, cancellationToken);
         }
 
         public async Task AddPost(string title, string text, int userId,

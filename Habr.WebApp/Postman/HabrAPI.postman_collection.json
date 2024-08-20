@@ -333,6 +333,127 @@
 									]
 								}
 							]
+						},
+						{
+							"name": "register",
+							"item": [
+								{
+									"name": "/api/auth/register",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"email\": \"user2@mail.com\",\n  \"password\": \"string\",\n  \"name\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/users",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"users"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "user1",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password\",\n  \"name\": \"John Doe\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/register",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"register"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "user2",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"email\": \"user2@example.com\",\n  \"password\": \"password\",\n  \"name\": \"Second User\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/auth/register",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"auth",
+														"register"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
 						}
 					]
 				},
@@ -944,6 +1065,106 @@
 							"name": "published",
 							"item": [
 								{
+									"name": "paginated",
+									"item": [
+										{
+											"name": "/api/posts/published/paginated",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/published",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"published"
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "page-1 size-2",
+													"originalRequest": {
+														"method": "GET",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/published/paginated?pageNumber=1&pageSize=2",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																"published",
+																"paginated"
+															],
+															"query": [
+																{
+																	"key": "pageNumber",
+																	"value": "1"
+																},
+																{
+																	"key": "pageSize",
+																	"value": "2"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "page-2 size-2",
+													"originalRequest": {
+														"method": "GET",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/published/paginated?pageNumber=2&pageSize=2",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																"published",
+																"paginated"
+															],
+															"query": [
+																{
+																	"key": "pageNumber",
+																	"value": "2"
+																},
+																{
+																	"key": "pageSize",
+																	"value": "2"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												}
+											]
+										}
+									]
+								},
+								{
 									"name": "/api/posts/published",
 									"request": {
 										"method": "GET",
@@ -967,7 +1188,7 @@
 									},
 									"response": [
 										{
-											"name": "OK - The request was successful.",
+											"name": "old - default(v1)",
 											"originalRequest": {
 												"method": "GET",
 												"header": [],
@@ -989,6 +1210,56 @@
 											"header": [],
 											"cookie": [],
 											"body": ""
+										},
+										{
+											"name": "v1",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/posts/published",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"posts",
+														"published"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "v2",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v2/posts/published",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v2",
+														"posts",
+														"published"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
 										}
 									]
 								}
@@ -997,6 +1268,106 @@
 						{
 							"name": "drafted",
 							"item": [
+								{
+									"name": "paginated",
+									"item": [
+										{
+											"name": "/api/posts/drafted/paginated",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/posts/drafted",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"posts",
+														"drafted"
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "page-1 size-2",
+													"originalRequest": {
+														"method": "GET",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/drafted/paginated?pageNumber=1&pageSize=2",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																"drafted",
+																"paginated"
+															],
+															"query": [
+																{
+																	"key": "pageNumber",
+																	"value": "1"
+																},
+																{
+																	"key": "pageSize",
+																	"value": "2"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "page-2 size-2",
+													"originalRequest": {
+														"method": "GET",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/posts/drafted/paginated?pageNumber=2&pageSize=2",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"posts",
+																"drafted",
+																"paginated"
+															],
+															"query": [
+																{
+																	"key": "pageNumber",
+																	"value": "2"
+																},
+																{
+																	"key": "pageSize",
+																	"value": "2"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "text",
+													"header": [],
+													"cookie": [],
+													"body": ""
+												}
+											]
+										}
+									]
+								},
 								{
 									"name": "/api/posts/drafted",
 									"request": {
@@ -1309,120 +1680,6 @@
 					"name": "users",
 					"item": [
 						{
-							"name": "/api/users",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "text/plain"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"user2@mail.com\",\n  \"password\": \"string\",\n  \"name\": \"string\"\n}",
-									"options": {
-										"raw": {
-											"headerFamily": "json",
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/api/users",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"users"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "user1",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password\",\n  \"name\": \"John Doe\"\n}",
-											"options": {
-												"raw": {
-													"headerFamily": "json",
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/users",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"users"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "text",
-									"header": [],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"name": "user2",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"email\": \"user2@example.com\",\n  \"password\": \"password\",\n  \"name\": \"Second User\"\n}",
-											"options": {
-												"raw": {
-													"headerFamily": "json",
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/api/users",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"users"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "text",
-									"header": [],
-									"cookie": [],
-									"body": ""
-								}
-							]
-						},
-						{
 							"name": "/api/users/name",
 							"request": {
 								"method": "GET",
@@ -1474,7 +1731,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6IjNjZDdhMzY5LWY0YjQtNDVjMC05ZTRkLWUzMzUyZDA3MzhmOCIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjMxMDAwNzIsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.KEsGEuoVqayZfHJlqVlD-92JqH-Y2UZ_C37Sd5wAB6c",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImp0aSI6ImE5YTM2NzM3LWU3ZDYtNDc2OS1hZTNjLTdiNTA4NjY2OTQyZCIsInRva2VuVmVyc2lvbiI6IjEiLCJleHAiOjE3MjM1NTc2MTgsImlzcyI6Imh0dHBzOi8vb3JpZ2luYWxzLmhhYnIuY29tIiwiYXVkIjoiaHR0cHM6Ly9vcmlnaW5hbHMuaGFici5jb20ifQ.iVEkf_L9dEFjpWX95TTqmDvDOF6Ym-Om9ZAcnl4dkw0",
 				"type": "string"
 			}
 		]

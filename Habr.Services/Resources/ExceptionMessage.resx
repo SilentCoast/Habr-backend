@@ -147,6 +147,12 @@
   <data name="InvalidRoleType" xml:space="preserve">
     <value>Invalid role type</value>
   </data>
+  <data name="PageNumberLessThan1" xml:space="preserve">
+    <value>Page Number may not be less than 1</value>
+  </data>
+  <data name="PageSizeLessThan1" xml:space="preserve">
+    <value>Page Size may not be less than 1</value>
+  </data>
   <data name="ParentCommentNotFound" xml:space="preserve">
     <value>Parent comment not found</value>
   </data>

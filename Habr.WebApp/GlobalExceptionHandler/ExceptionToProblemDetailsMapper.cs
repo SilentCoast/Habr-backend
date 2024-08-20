@@ -15,7 +15,8 @@ namespace Habr.WebApp.GlobalExceptionHandler
                 Status = exception switch
                 {
                     ArgumentException or InvalidOperationException
-                    or ArgumentNullException or ArgumentOutOfRangeException => StatusCodes.Status400BadRequest,
+                    or ArgumentNullException or ArgumentOutOfRangeException
+                    or BadHttpRequestException => StatusCodes.Status400BadRequest,
 
                     LogInException or SecurityTokenValidationException => StatusCodes.Status401Unauthorized,
 
