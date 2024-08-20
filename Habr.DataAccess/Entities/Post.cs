@@ -13,8 +13,8 @@
         public DateTime? PublishedAt { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment> Comments { get; set; } = [];
         public double? AverageRating { get; set; }
-        public ICollection<PostRating> PostRatings { get; set; }
+        public ICollection<PostRating> PostRatings { get; set; } = [];
     }
 }
