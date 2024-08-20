@@ -17,7 +17,6 @@ namespace Habr.WebApp.Endpoints
         public const string Tag = "Posts";
         public static void MapPostEndpoints(this WebApplication app, ApiVersionSet apiVersionSet)
         {
-            //TODO: add endpoint for retrieving specific drafted post by its Id(Owner only)
             app.MapGet("/api/posts/published/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
             {
@@ -108,6 +107,21 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags(Tag)
             .WithDescription("Retrieves all drafted posts.")
+            .WithOpenApi();
+
+            app.MapGet("/api/posts/drafted/{id}", async ([FromRoute] int id, HttpContext httpContext, IPostService postService,
+                CancellationToken cancellationToken) =>
+            {
+                var post = await postService.GetDraftedPostView(id, httpContext.GetUserId(), cancellationToken);
+                return Results.Ok(post);
+            })
+            .RequireAuthorization()
+            .Produces<DraftedPostViewDto>()
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags(Tag)
+            .WithDescription("Retrieves a specific drafted post by its ID")
             .WithOpenApi();
 
             app.MapGet("/api/posts/drafted/paginated", async ([AsParameters] PaginationParams model,

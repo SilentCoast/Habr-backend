@@ -22,6 +22,13 @@ namespace Habr.Services.AutoMapperProfiles
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedAt));
 
+            CreateMap<Post, DraftedPostViewDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => src.ModifiedAt));
+
             CreateMap<Post, PublishedPostDto>()
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))

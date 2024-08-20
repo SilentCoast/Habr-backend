@@ -61,6 +61,15 @@ namespace Habr.Services
                 .OrderByDescending(p => p.PublishedAt)
                 .ToPaginatedDto(pageNumber, pageSize, cancellationToken);
         }
+        public async Task<DraftedPostViewDto> GetDraftedPostView(int id, int userId, CancellationToken cancellationToken = default)
+        {
+            var post = await _context.Posts
+                .Where(p => p.Id == id && p.IsPublished == false && p.UserId == userId)
+                .ProjectTo<DraftedPostViewDto>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            return post ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
+        }
         public async Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Posts
