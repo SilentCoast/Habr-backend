@@ -75,33 +75,18 @@ namespace Habr.Tests
 
             var paginatedDto = await _dObject.PostService.GetPublishedPostsPaginated(page, load);
 
-            Assert.Equal(page, paginatedDto.CurrentPage);
-            Assert.Equal(load, paginatedDto.PageSize);
-            Assert.Equal(2, paginatedDto.TotalCount);
+            Assert.Equal(page, paginatedDto.PaginationContext.CurrentPage);
+            Assert.Equal(load, paginatedDto.PaginationContext.PageSize);
+            Assert.Equal(2, paginatedDto.PaginationContext.TotalCount);
             Assert.Equal(load, paginatedDto.Items.Count);
             if (load == 1)
             {
-                Assert.Equal(2, paginatedDto.TotalPages);
+                Assert.Equal(2, paginatedDto.PaginationContext.TotalPages);
             }
             else if (load == 2)
             {
-                Assert.Equal(1, paginatedDto.TotalPages);
+                Assert.Equal(1, paginatedDto.PaginationContext.TotalPages);
             }
-        }
-
-        [Fact]
-        public async Task GetPubishedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowArgumentException()
-        {
-            await SeedPostRange();
-
-            await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.PostService.GetPublishedPostsPaginated(2, 2));
-        }
-
-        [Fact]
-        public async Task GetPubishedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowNothingToPaginateException()
-        {
-            //no published posts in database
-            await Assert.ThrowsAsync<NothingToPaginateException>(async () => await _dObject.PostService.GetPublishedPostsPaginated(2, 2));
         }
 
         [Fact]
@@ -126,36 +111,18 @@ namespace Habr.Tests
 
             var paginatedDto = await _dObject.PostService.GetDraftedPostsPaginated(user.Id, page, load);
 
-            Assert.Equal(page, paginatedDto.CurrentPage);
-            Assert.Equal(load, paginatedDto.PageSize);
-            Assert.Equal(2, paginatedDto.TotalCount);
+            Assert.Equal(page, paginatedDto.PaginationContext.CurrentPage);
+            Assert.Equal(load, paginatedDto.PaginationContext.PageSize);
+            Assert.Equal(2, paginatedDto.PaginationContext.TotalCount);
             Assert.Equal(load, paginatedDto.Items.Count);
             if (load == 1)
             {
-                Assert.Equal(2, paginatedDto.TotalPages);
+                Assert.Equal(2, paginatedDto.PaginationContext.TotalPages);
             }
             else if (load == 2)
             {
-                Assert.Equal(1, paginatedDto.TotalPages);
+                Assert.Equal(1, paginatedDto.PaginationContext.TotalPages);
             }
-        }
-
-        [Fact]
-        public async Task GetDraftedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowArgumentException()
-        {
-            var user = await CreateUser();
-            await SeedPostRange(user.Id);
-
-            await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.PostService.GetDraftedPostsPaginated(user.Id, 2, 2));
-        }
-
-        [Fact]
-        public async Task GetDraftedPostsPaginated_RequestedPageBiggerThanTotalPagesValue_ShouldThrowNothingToPaginateException()
-        {
-            var user = await CreateUser();
-
-            //no published posts in database
-            await Assert.ThrowsAsync<NothingToPaginateException>(async () => await _dObject.PostService.GetDraftedPostsPaginated(user.Id, 2, 2));
         }
 
         [Theory]

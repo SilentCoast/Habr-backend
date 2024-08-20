@@ -66,17 +66,10 @@ namespace Habr.WebApp.Endpoints
                 Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
                 Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
 
-                try
-                {
-                    var paginatedDto = await postService.GetPublishedPostsPaginated(pageNumber, pageSize, cancellationToken);
+                var paginatedDto = await postService.GetPublishedPostsPaginated(pageNumber, pageSize, cancellationToken);
 
-                    var json = JsonSerializer.Serialize(paginatedDto);
-                    return Results.Content(json, "application/json");
-                }
-                catch (NothingToPaginateException)
-                {
-                    return Results.NoContent();
-                }
+                var json = JsonSerializer.Serialize(paginatedDto);
+                return Results.Content(json, "application/json");
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status204NoContent)
@@ -114,17 +107,10 @@ namespace Habr.WebApp.Endpoints
                 Validator.ValidateIntMoreThan0(pageNumber, ExceptionMessage.PageNumberLessThan1);
                 Validator.ValidateIntMoreThan0(pageSize, ExceptionMessage.PageSizeLessThan1);
 
-                try
-                {
-                    var paginatedDto = await postService.GetDraftedPostsPaginated(httpContext.GetUserId(),
-                        pageNumber, pageSize, cancellationToken);
+                var paginatedDto = await postService.GetDraftedPostsPaginated(httpContext.GetUserId(),
+                    pageNumber, pageSize, cancellationToken);
 
-                    return Results.Ok(paginatedDto);
-                }
-                catch (NothingToPaginateException)
-                {
-                    return Results.NoContent();
-                }
+                return Results.Ok(paginatedDto);
             })
             .RequireAuthorization()
             .Produces(StatusCodes.Status200OK)

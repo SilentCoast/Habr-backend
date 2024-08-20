@@ -115,15 +115,6 @@ namespace Habr.Services.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CurrentPage value cannot be greater than TotalPages value.
-        /// </summary>
-        public static string CurrentPageMoreThanLast {
-            get {
-                return ResourceManager.GetString("CurrentPageMoreThanLast", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The email is incorrect.
         /// </summary>
         public static string EmailIncorrect {

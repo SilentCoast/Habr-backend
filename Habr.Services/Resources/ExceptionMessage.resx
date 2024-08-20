@@ -135,9 +135,6 @@
   <data name="CommentNotFound" xml:space="preserve">
     <value>Comment not found</value>
   </data>
-  <data name="CurrentPageMoreThanLast" xml:space="preserve">
-    <value>CurrentPage value cannot be greater than TotalPages value</value>
-  </data>
   <data name="EmailIncorrect" xml:space="preserve">
     <value>The email is incorrect</value>
   </data>
