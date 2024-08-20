@@ -32,7 +32,7 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Retrieves a specific published post by its ID.")
             .WithOpenApi();
 
-            app.MapGet("/api/posts/published", async (IPostService postService,
+            app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
                 CancellationToken cancellationToken) =>
             {
                 var posts = await postService.GetPublishedPosts(cancellationToken);
