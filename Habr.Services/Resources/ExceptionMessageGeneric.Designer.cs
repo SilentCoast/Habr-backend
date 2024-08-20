@@ -22,7 +22,7 @@ namespace Habr.Services.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ExceptionMessageGeneric {
+    public class ExceptionMessageGeneric {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Habr.Services.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Habr.Services.Resources.ExceptionMessageGeneric", typeof(ExceptionMessageGeneric).Assembly);
@@ -51,7 +51,7 @@ namespace Habr.Services.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,16 +63,25 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Rating value must be in range: {0}-{1}.
         /// </summary>
-        internal static string RatingOutOfBounds {
+        public static string RatingOutOfBounds {
             get {
                 return ResourceManager.GetString("RatingOutOfBounds", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value of &quot;{0}&quot; must in range: {1} - {2}.
+        /// </summary>
+        public static string ValueMustBeWithinBounds {
+            get {
+                return ResourceManager.GetString("ValueMustBeWithinBounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The {0} must be less than {1} symbols.
         /// </summary>
-        internal static string ValueOfMustBeLessThan {
+        public static string ValueOfMustBeLessThan {
             get {
                 return ResourceManager.GetString("ValueOfMustBeLessThan", resourceCulture);
             }
@@ -81,7 +90,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The {0} is required.
         /// </summary>
-        internal static string ValueRequired {
+        public static string ValueRequired {
             get {
                 return ResourceManager.GetString("ValueRequired", resourceCulture);
             }
@@ -90,7 +99,7 @@ namespace Habr.Services.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} is too long. Max allowed length is {1}.
         /// </summary>
-        internal static string ValueTooLongMaxLengthIs {
+        public static string ValueTooLongMaxLengthIs {
             get {
                 return ResourceManager.GetString("ValueTooLongMaxLengthIs", resourceCulture);
             }

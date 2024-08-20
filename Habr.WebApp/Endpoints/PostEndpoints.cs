@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.Builder;
+using FluentValidation;
 using Habr.DataAccess.DTOs;
 using Habr.Services.Interfaces;
 using Habr.Services.Pagination;
@@ -62,16 +63,24 @@ namespace Habr.WebApp.Endpoints
             .MapToApiVersion(ApiVersions.ApiVersion2)
             .WithOpenApi();
 
-            app.MapGet("/api/posts/published/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
+            app.MapGet("/api/posts/published/paginated", async ([AsParameters]PaginationParams model,
+                IValidator<PaginationParams> validator,
                 IPostService postService, CancellationToken cancellationToken) =>
             {
-                var paginatedDto = await postService.GetPublishedPostsPaginated(pageNumber, pageSize, cancellationToken);
+                var validationResult = await validator.ValidateAsync(model, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => e.ErrorMessage);
+                    return Results.BadRequest(errors);
+                }
+
+                var paginatedDto = await postService.GetPublishedPostsPaginated(model.PageNumber, (int)model.PageSize, cancellationToken);
                 
                 var json = JsonSerializer.Serialize(paginatedDto);
                 return Results.Content(json, "application/json");
             })
             .Produces<PaginatedDto<PublishedPostV2Dto>>()
-            .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags(Tag)
@@ -100,17 +109,25 @@ namespace Habr.WebApp.Endpoints
             .WithDescription("Retrieves all drafted posts.")
             .WithOpenApi();
 
-            app.MapGet("/api/posts/drafted/paginated", async ([FromQuery] int pageNumber, [FromQuery] int pageSize,
+            app.MapGet("/api/posts/drafted/paginated", async ([AsParameters] PaginationParams model,
+                IValidator<PaginationParams> validator,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
             {
+                var validationResult = await validator.ValidateAsync(model, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => e.ErrorMessage);
+                    return Results.BadRequest(errors);
+                }
+
                 var paginatedDto = await postService.GetDraftedPostsPaginated(httpContext.GetUserId(),
-                        pageNumber, pageSize, cancellationToken);
+                        model.PageNumber, (int)model.PageSize, cancellationToken);
 
                 return Results.Ok(paginatedDto);
             })
             .RequireAuthorization()
             .Produces<PaginatedDto<DraftedPostDto>>()
-            .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)

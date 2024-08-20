@@ -33,7 +33,7 @@
       <LastGenOutput>ExceptionMessage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ExceptionMessageGeneric.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessageGeneric.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

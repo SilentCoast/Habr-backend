@@ -1,5 +1,7 @@
 ﻿using Habr.Services;
 using Habr.Services.Interfaces;
+using FluentValidation;
+using Habr.WebApp.Validation;
 
 namespace Habr.WebApp.Extensions
 {
@@ -17,6 +19,8 @@ namespace Habr.WebApp.Extensions
             services.AddScoped<IJwtService, JwtService>();
 
             services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+
+            services.AddValidatorsFromAssemblyContaining<PaginationParamsValidator>();
         }
     }
 }
