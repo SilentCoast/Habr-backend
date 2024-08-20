@@ -28,7 +28,7 @@ namespace Habr.DataAccess.EntityConfigurations
                 .WithMany(p => p.PostRatings)
                 .HasForeignKey(p => p.PostId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.User)
                 .WithMany(p => p.PostRatings)

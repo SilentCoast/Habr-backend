@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240815165832_PostRating")]
+    [Migration("20240820110646_PostRating")]
     partial class PostRating
     {
         /// <inheritdoc />
@@ -119,10 +119,6 @@ namespace Habr.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
@@ -310,7 +306,7 @@ namespace Habr.DataAccess.Migrations
                     b.HasOne("Habr.DataAccess.Entities.Post", "Post")
                         .WithMany("PostRatings")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Habr.DataAccess.Entities.User", "User")

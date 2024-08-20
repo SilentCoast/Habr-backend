@@ -25,7 +25,6 @@ namespace Habr.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RatingStars = table.Column<int>(type: "int", nullable: false),
                     RatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     PostId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -37,7 +36,8 @@ namespace Habr.DataAccess.Migrations
                         name: "FK_PostRatings_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PostRatings_Users_UserId",
                         column: x => x.UserId,

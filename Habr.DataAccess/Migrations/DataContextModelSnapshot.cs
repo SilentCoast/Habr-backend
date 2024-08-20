@@ -63,7 +63,7 @@ namespace Habr.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Habr.DataAccess.Entities.Post", b =>
@@ -106,7 +106,7 @@ namespace Habr.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Habr.DataAccess.Entities.PostRating", b =>
@@ -116,10 +116,6 @@ namespace Habr.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
@@ -141,7 +137,7 @@ namespace Habr.DataAccess.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_Rating_Post_User_Unique");
 
-                    b.ToTable("PostRatings", null, t =>
+                    b.ToTable("PostRatings", t =>
                         {
                             t.HasCheckConstraint("CK_Rating_RatingStars_Range", "RatingStars BETWEEN 1 AND 5");
                         });
@@ -176,7 +172,7 @@ namespace Habr.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Habr.DataAccess.Entities.Role", b =>
@@ -198,7 +194,7 @@ namespace Habr.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -262,7 +258,7 @@ namespace Habr.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Habr.DataAccess.Entities.Comment", b =>
@@ -307,7 +303,7 @@ namespace Habr.DataAccess.Migrations
                     b.HasOne("Habr.DataAccess.Entities.Post", "Post")
                         .WithMany("PostRatings")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Habr.DataAccess.Entities.User", "User")
