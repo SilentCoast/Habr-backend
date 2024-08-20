@@ -1,4 +1,6 @@
-﻿using Habr.Services.Interfaces;
+﻿using Asp.Versioning.Builder;
+using Habr.DataAccess.DTOs;
+using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -8,7 +10,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class PostEndpoints
     {
-        public static void MapPostEndpoints(this WebApplication app)
+        public static void MapPostEndpoints(this WebApplication app, ApiVersionSet apiVersionSet)
         {
             app.MapGet("/api/posts/{id}", async ([FromRoute] int id, IPostService postService,
                 IOptions<JsonSerializerOptions> jsonOptions, CancellationToken cancellationToken) =>
@@ -22,19 +24,39 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Retrieves a specific published post by its ID.");
+            .WithDescription("Retrieves a specific published post by its ID.")
+            .WithOpenApi();
 
-            app.MapGet("/api/posts/published", async (IPostService postService, CancellationToken cancellationToken) =>
+            app.MapGet("/api/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
             {
                 var posts = await postService.GetPublishedPosts(cancellationToken);
                 return Results.Ok(posts);
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<IEnumerable<PublishedPostDto>>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Retrieves all published posts.");
+            .WithDescription("Retrieves all published posts. Version 1.0")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(ApiVersions.ApiVersion1)
+            .HasDeprecatedApiVersion(ApiVersions.ApiVersion1)
+            .WithOpenApi();
 
+            app.MapGet("/api/v{version:apiVersion}/posts/published", async (IPostService postService,
+                CancellationToken cancellationToken) =>
+            {
+                var posts = await postService.GetPublishedPostsV2(cancellationToken);
+                return Results.Ok(posts);
+            })
+            .Produces<IEnumerable<PublishedPostV2Dto>>()
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status408RequestTimeout)
+            .WithTags("Posts")
+            .WithDescription("Retrieves all published posts. Version 2.0")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(ApiVersions.ApiVersion2)
+            .WithOpenApi();
 
             app.MapGet("/api/posts/drafted", async (HttpContext httpContext, IPostService postService,
                 CancellationToken cancellationToken) =>
@@ -56,7 +78,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Retrieves all drafted posts.");
+            .WithDescription("Retrieves all drafted posts.")
+            .WithOpenApi();
 
             app.MapPost("/api/posts", async ([FromBody] PostCreateModel model, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -70,7 +93,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Creates a new post.");
+            .WithDescription("Creates a new post.")
+            .WithOpenApi();
 
             app.MapPut("/api/posts/{id}", async ([FromRoute] int id, [FromBody] PostUpdateModel model,
                 HttpContext httpContext, IPostService postService, CancellationToken cancellationToken) =>
@@ -87,7 +111,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Updates a specific post by its ID.");
+            .WithDescription("Updates a specific post by its ID.")
+            .WithOpenApi();
 
             app.MapPut("/api/posts/{id}/publish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -104,7 +129,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Publishes a specific post by its ID.");
+            .WithDescription("Publishes a specific post by its ID.")
+            .WithOpenApi();
 
             app.MapPut("/api/posts/{id}/unpublish", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -121,7 +147,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Unpublishes a specific post by its ID.");
+            .WithDescription("Unpublishes a specific post by its ID.")
+            .WithOpenApi();
 
             app.MapDelete("/api/posts/{id}", async ([FromRoute] int id, HttpContext httpContext,
                 IPostService postService, CancellationToken cancellationToken) =>
@@ -136,7 +163,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Posts")
-            .WithDescription("Deletes a specific post by its ID.");
+            .WithDescription("Deletes a specific post by its ID.")
+            .WithOpenApi();
         }
     }
 }

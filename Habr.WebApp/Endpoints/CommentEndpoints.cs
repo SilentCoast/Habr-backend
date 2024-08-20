@@ -22,7 +22,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Comments")
-            .WithDescription("Adds a new comment to a post.");
+            .WithDescription("Adds a new comment to a post.")
+            .WithOpenApi();
 
             app.MapPost("/api/posts/{postId}/comments/{commentId}/reply", async ([FromRoute] int postId,
                 [FromRoute] int commentId, [FromBody][Required][MaxLength(ConstraintValue.CommentTextMaxLength)] string text,
@@ -37,7 +38,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Comments")
-            .WithDescription("Replies to an existing comment on a post.");
+            .WithDescription("Replies to an existing comment on a post.")
+            .WithOpenApi();
 
             app.MapPut("/api/comments/{id}", async ([FromRoute] int id, [FromBody] string newText,
                 HttpContext httpContext, ICommentService commentService, CancellationToken cancellationToken) =>
@@ -53,7 +55,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Comments")
-            .WithDescription("Updates an existing comment.");
+            .WithDescription("Updates an existing comment.")
+            .WithOpenApi();
 
             app.MapDelete("/api/comments/{id}", async ([FromRoute] int id, HttpContext httpContext,
                 ICommentService commentService, CancellationToken cancellationToken) =>
@@ -70,7 +73,8 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags("Comments")
-            .WithDescription("Deletes a comment.");
+            .WithDescription("Deletes a comment.")
+            .WithOpenApi();
         }
     }
 }
