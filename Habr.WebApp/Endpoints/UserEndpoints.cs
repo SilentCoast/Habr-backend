@@ -14,7 +14,7 @@ namespace Habr.WebApp.Endpoints
                 return Results.Ok(name);
             })
             .RequireAuthorization()
-            .Produces(StatusCodes.Status200OK)
+            .Produces<string>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithTags(Tag)

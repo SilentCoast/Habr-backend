@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning.Builder;
 using Habr.DataAccess.DTOs;
-using Habr.Services.Exceptions;
 using Habr.Services.Interfaces;
+using Habr.Services.Pagination;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -24,7 +24,7 @@ namespace Habr.WebApp.Endpoints
                 var json = JsonSerializer.Serialize(post, jsonOptions.Value);
                 return Results.Content(json, "application/json");
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<PostViewDto>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
             .WithTags(Tag)
@@ -70,7 +70,7 @@ namespace Habr.WebApp.Endpoints
                 var json = JsonSerializer.Serialize(paginatedDto);
                 return Results.Content(json, "application/json");
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<PaginatedDto<PublishedPostV2Dto>>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
@@ -91,7 +91,7 @@ namespace Habr.WebApp.Endpoints
                 }
             })
             .RequireAuthorization()
-            .Produces(StatusCodes.Status200OK)
+            .Produces<IEnumerable<DraftedPostDto>>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -109,7 +109,7 @@ namespace Habr.WebApp.Endpoints
                 return Results.Ok(paginatedDto);
             })
             .RequireAuthorization()
-            .Produces(StatusCodes.Status200OK)
+            .Produces<PaginatedDto<DraftedPostDto>>()
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
