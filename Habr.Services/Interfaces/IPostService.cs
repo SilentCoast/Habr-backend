@@ -11,6 +11,7 @@ namespace Habr.Services.Interfaces
         Task<IEnumerable<PublishedPostV2Dto>> GetPublishedPostsV2(CancellationToken cancellationToken = default);
         Task<PaginatedDto<PublishedPostV2Dto>> GetPublishedPostsPaginated(int pageNumber, int pageSize,
             CancellationToken cancellationToken = default);
+        Task<DraftedPostViewDto> GetDraftedPostView(int postId, int userId, CancellationToken cancellationToken = default);
         Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default);
         Task<PaginatedDto<DraftedPostDto>> GetDraftedPostsPaginated(int userId, int pageNumber, int pageSize,
             CancellationToken cancellationToken = default);

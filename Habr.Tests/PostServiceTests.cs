@@ -23,9 +23,9 @@ namespace Habr.Tests
         [Fact]
         public async Task GetPostView_PostPublished_ShouldReturnCorrectStructure()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id, true);
-            var comment = await CreateComment(user.Id, post.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, true);
+            var comment = await _dObject.CreateComment(user.Id, post.Id);
             var text = "reply";
             await _dObject.CommentService.ReplyToComment(text, comment.Id, post.Id, user.Id);
 
@@ -41,8 +41,8 @@ namespace Habr.Tests
         [Fact]
         public async Task GetPostView_PostNotPublished_ShouldThrowArgumentException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id, false);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, false);
 
             await Assert.ThrowsAsync<ArgumentException>(async () => await _dObject.PostService.GetPostView(post.Id));
         }
@@ -92,7 +92,7 @@ namespace Habr.Tests
         [Fact]
         public async Task GetDraftedPosts_ShouldReturnOwnedDraftedPosts()
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
             await SeedPostRange(user.Id);
 
             var result = await _dObject.PostService.GetDraftedPosts(user.Id);
@@ -106,7 +106,7 @@ namespace Habr.Tests
         [InlineData(1, 2)]
         public async Task GetDraftedPostsPaginated_ShouldReturnValidPaginatedDto(int page, int load)
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
             await SeedPostRange(user.Id);
 
             var paginatedDto = await _dObject.PostService.GetDraftedPostsPaginated(user.Id, page, load);
@@ -130,7 +130,7 @@ namespace Habr.Tests
         [InlineData(false)]
         public async Task AddPost_ShouldAddCorrectly(bool isPublishedNow)
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
             var title = "Sample Title";
             var text = "Sample Text";
 
@@ -156,8 +156,8 @@ namespace Habr.Tests
         [Fact]
         public async Task PublishPost_ShouldPublishPost()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
 
             await _dObject.PostService.PublishPost(post.Id, user.Id, RoleType.User);
 
@@ -168,8 +168,8 @@ namespace Habr.Tests
         [Fact]
         public async Task PublishPost_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
             var unauthorizedUserId = user.Id + 1;
 
             await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
@@ -179,8 +179,8 @@ namespace Habr.Tests
         [Fact]
         public async Task PublishPost_AdminUser_ShouldBypassAccessCheck()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
             var unauthorizedUserId = user.Id + 1;
 
             await _dObject.PostService.PublishPost(post.Id, unauthorizedUserId, RoleType.Admin);
@@ -192,8 +192,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UnpublishPost_Success()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id, true);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, true);
 
             await _dObject.PostService.UnpublishPost(post.Id, user.Id, RoleType.User);
 
@@ -212,8 +212,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UnpublishPost_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
             var unauthorizedUserId = user.Id + 1;
 
             await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
@@ -223,8 +223,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UnpublishPost_AdminUser_ShouldBypassAccessCheck()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id, true);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, true);
             var unauthorizedUserId = user.Id + 1;
 
             await _dObject.PostService.UnpublishPost(post.Id, unauthorizedUserId, RoleType.Admin);
@@ -236,9 +236,9 @@ namespace Habr.Tests
         [Fact]
         public async Task UnpublishPost_PostHasComments_ShouldThrowInvalidOperationException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
-            await CreateComment(user.Id, post.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, true);
+            await _dObject.CreateComment(user.Id, post.Id);
 
             await Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _dObject.PostService.UnpublishPost(post.Id, user.Id, RoleType.User));
@@ -247,8 +247,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UpdatePost_ShouldUpdatePost()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
 
             var newTitle = "Updated Title";
             var newText = "Updated Text";
@@ -263,8 +263,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UpdatePost_PostIsPublished_ShouldThrowInvalidOperationException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id, true);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id, true);
 
             var newTitle = "Updated Title";
             var newText = "Updated Text";
@@ -276,8 +276,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UpdatePost_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
 
             var newTitle = "Updated Title";
             var newText = "Updated Text";
@@ -290,8 +290,8 @@ namespace Habr.Tests
         [Fact]
         public async Task UpdatePost_AdminUser_ShouldBypassAccessCheck()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
 
             var newTitle = "Updated Title";
             var newText = "Updated Text";
@@ -307,8 +307,8 @@ namespace Habr.Tests
         [Fact]
         public async Task DeletePost_ShouldDeletePost()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
 
             await _dObject.PostService.DeletePost(post.Id, user.Id, RoleType.User);
 
@@ -320,7 +320,7 @@ namespace Habr.Tests
         [Fact]
         public async Task DeletePost_PostDoesNotExist_ShouldThrowArgumentException()
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
             var nonExistentPostId = -1;
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -330,8 +330,8 @@ namespace Habr.Tests
         [Fact]
         public async Task DeletePost_UnauthorizedUser_ShouldThrowUnauthorizedAccessException()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
             var unauthorizedUserId = user.Id + 1;
 
             await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
@@ -341,8 +341,8 @@ namespace Habr.Tests
         [Fact]
         public async Task DeletePost_AdminUser_ShouldBypassAccessCheck()
         {
-            var user = await CreateUser();
-            var post = await CreatePost(user.Id);
+            var user = await _dObject.CreateUser();
+            var post = await _dObject.CreatePost(user.Id);
             var unauthorizedUserId = user.Id + 1;
 
             await _dObject.PostService.DeletePost(post.Id, unauthorizedUserId, RoleType.Admin);
@@ -352,28 +352,11 @@ namespace Habr.Tests
             Assert.Null(post);
         }
 
-        private async Task<User> CreateUser(string email = "john.doe@example.com")
-        {
-            await _dObject.UserService.CreateUser(email, "password");
-            return await _dObject.Context.Users.FirstAsync(p => p.Email == email);
-        }
-        private async Task<Post> CreatePost(int userId, bool isPublishedNow = false)
-        {
-            await _dObject.PostService.AddPost("test", "test", userId, isPublishedNow);
-
-            return await _dObject.Context.Posts.FirstAsync();
-        }
-        private async Task<Comment> CreateComment(int userId, int postId)
-        {
-            await _dObject.CommentService.AddComment("text", postId, userId);
-
-            return await _dObject.Context.Comments.FirstAsync();
-        }
         private async Task SeedPostRange(int? userId = null)
         {
             if (userId == null)
             {
-                var user = await CreateUser();
+                var user = await _dObject.CreateUser();
                 userId = user.Id;
             }
 

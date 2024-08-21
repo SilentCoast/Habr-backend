@@ -1,5 +1,4 @@
 ﻿using Habr.DataAccess.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Habr.Tests
 {
@@ -21,7 +20,7 @@ namespace Habr.Tests
         [Fact]
         public async Task RevokeAllUserTokens_ShouldRevokeAllTokens()
         {
-            var user = await CreateUser();
+            var user = await _dObject.CreateUser();
             var expectedTokenVersion = user.TokenVersion + 1;
             var refreshToken = new RefreshToken
             {
@@ -38,12 +37,6 @@ namespace Habr.Tests
 
             Assert.NotNull(refreshToken.RevokedAt);
             Assert.Equal(expectedTokenVersion, user.TokenVersion);
-        }
-
-        private async Task<User> CreateUser(string email = "john.doe@example.com", string password = "password")
-        {
-            await _dObject.UserService.CreateUser(email, password);
-            return await _dObject.Context.Users.FirstAsync();
         }
     }
 }

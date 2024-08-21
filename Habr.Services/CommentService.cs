@@ -2,6 +2,7 @@
 using Habr.DataAccess.Constraints;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
+using Habr.Services.Helpers;
 using Habr.Services.Interfaces;
 using Habr.Services.Resources;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,15 @@ namespace Habr.Services
 
         public async Task AddComment(string text, int postId, int userId, CancellationToken cancellationToken = default)
         {
-            _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
+            CheckTextConstraints(text);
+
+            var post = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
 
-            CheckTextConstraints(text);
+            if (post.IsPublished == false)
+            {
+                throw new InvalidOperationException(ExceptionMessage.CannotCommentOnDraftedPost);
+            }
 
             var comment = new Comment()
             {
@@ -38,13 +44,18 @@ namespace Habr.Services
 
         public async Task ReplyToComment(string text, int parentCommentId, int postId, int userId, CancellationToken cancellationToken = default)
         {
+            CheckTextConstraints(text);
+
             _ = await _context.Posts.SingleOrDefaultAsync(p => p.Id == postId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
 
-            _ = await _context.Comments.SingleOrDefaultAsync(p => p.Id == parentCommentId, cancellationToken)
+            var parentComment = await _context.Comments.SingleOrDefaultAsync(p => p.Id == parentCommentId, cancellationToken)
                 ?? throw new ArgumentException(ExceptionMessage.ParentCommentNotFound);
 
-            CheckTextConstraints(text);
+            if (parentComment.IsDeleted)
+            {
+                throw new InvalidOperationException(ExceptionMessage.CannotReplyToDeletedComment);
+            }
 
             var comment = new Comment()
             {

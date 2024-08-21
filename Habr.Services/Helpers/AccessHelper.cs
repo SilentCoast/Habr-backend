@@ -1,7 +1,7 @@
 ﻿using Habr.DataAccess.Enums;
 using Habr.Services.Resources;
 
-namespace Habr.Services
+namespace Habr.Services.Helpers
 {
     public static class AccessHelper
     {

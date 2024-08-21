@@ -123,6 +123,9 @@
   <data name="AccessDeniedWrongCommentOwner" xml:space="preserve">
     <value>Access denied. User can only modify their own comments</value>
   </data>
+  <data name="CannotCommentOnDraftedPost" xml:space="preserve">
+    <value>Cannot comment on drafted post</value>
+  </data>
   <data name="CannotDraftPostWithComments" xml:space="preserve">
     <value>Cannot draft post containing comments</value>
   </data>
@@ -131,6 +134,12 @@
   </data>
   <data name="CannotEditPublishedPost" xml:space="preserve">
     <value>Cannot edit published post, draft it first</value>
+  </data>
+  <data name="CannotRateUnpublishedPost" xml:space="preserve">
+    <value>Cannot rate unpublished post</value>
+  </data>
+  <data name="CannotReplyToDeletedComment" xml:space="preserve">
+    <value>Cannot reply to deleted comment</value>
   </data>
   <data name="CommentNotFound" xml:space="preserve">
     <value>Comment not found</value>

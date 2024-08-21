@@ -1,5 +1,7 @@
 ﻿using Habr.Services;
 using Habr.Services.Interfaces;
+using FluentValidation;
+using Habr.WebApp.Validation;
 
 namespace Habr.WebApp.Extensions
 {
@@ -9,6 +11,7 @@ namespace Habr.WebApp.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IPostRatingService, PostRatingService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
@@ -16,6 +19,8 @@ namespace Habr.WebApp.Extensions
             services.AddScoped<IJwtService, JwtService>();
 
             services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+
+            services.AddValidatorsFromAssemblyContaining<PaginationParamsValidator>();
         }
     }
 }

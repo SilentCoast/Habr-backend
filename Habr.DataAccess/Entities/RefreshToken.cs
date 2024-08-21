@@ -10,7 +10,6 @@ namespace Habr.DataAccess.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? RevokedAt { get; set; }
         public int UserId { get; set; }
-        [JsonIgnore]
         public User User { get; set; }
     }
 }

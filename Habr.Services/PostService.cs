@@ -5,6 +5,7 @@ using Habr.DataAccess.Constraints;
 using Habr.DataAccess.DTOs;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess.Enums;
+using Habr.Services.Helpers;
 using Habr.Services.Interfaces;
 using Habr.Services.Pagination;
 using Habr.Services.Resources;
@@ -40,7 +41,7 @@ namespace Habr.Services
             return await _context.Posts
                 .Where(p => p.IsPublished)
                 .ProjectTo<PublishedPostDto>(_mapper.ConfigurationProvider)
-                .OrderByDescending(p => p.PublishDate)
+                .OrderByDescending(p => p.PublishedAt)
                 .ToListAsync(cancellationToken);
         }
         public async Task<IEnumerable<PublishedPostV2Dto>> GetPublishedPostsV2(CancellationToken cancellationToken = default)
@@ -59,6 +60,15 @@ namespace Habr.Services
                 .ProjectTo<PublishedPostV2Dto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(p => p.PublishedAt)
                 .ToPaginatedDto(pageNumber, pageSize, cancellationToken);
+        }
+        public async Task<DraftedPostViewDto> GetDraftedPostView(int id, int userId, CancellationToken cancellationToken = default)
+        {
+            var post = await _context.Posts
+                .Where(p => p.Id == id && p.IsPublished == false && p.UserId == userId)
+                .ProjectTo<DraftedPostViewDto>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            return post ?? throw new ArgumentException(ExceptionMessage.PostNotFound);
         }
         public async Task<IEnumerable<DraftedPostDto>> GetDraftedPosts(int userId, CancellationToken cancellationToken = default)
         {
@@ -121,6 +131,7 @@ namespace Habr.Services
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId)
+                .Include(p => p.Comments)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
@@ -129,7 +140,7 @@ namespace Habr.Services
             }
 
             AccessHelper.CheckPostAccess(userId, post.UserId, role);
-            
+
             if (post.Comments.Where(p => p.IsDeleted == false).Any())
             {
                 throw new InvalidOperationException(ExceptionMessage.CannotDraftPostWithComments);
@@ -169,7 +180,6 @@ namespace Habr.Services
             }
 
             post.ModifiedAt = DateTime.UtcNow;
-            //TODO: maybe add modifiedBy
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync(cancellationToken);

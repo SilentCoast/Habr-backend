@@ -1,4 +1,5 @@
-﻿using Habr.Services.Interfaces;
+﻿using Habr.DataAccess.DTOs;
+using Habr.Services.Interfaces;
 using Habr.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -8,6 +9,7 @@ namespace Habr.WebApp.Endpoints
 {
     public static class AuthEndpoints
     {
+        public const string Tag = "Authentication";
         public static void MapAuthEndpoints(this WebApplication app)
         {
             app.MapPost("/api/auth/login", async ([FromBody] UserLoginModel model, IUserService userService,
@@ -19,10 +21,10 @@ namespace Habr.WebApp.Endpoints
                 var json = JsonSerializer.Serialize(tokensDTO, jsonOptions.Value);
                 return Results.Content(json, "application/json");
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<TokensDto>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Authentication")
+            .WithTags(Tag)
             .WithDescription("Logs in a user and returns an Access and Refresh tokens.")
             .WithOpenApi();
 
@@ -34,10 +36,10 @@ namespace Habr.WebApp.Endpoints
 
                 return Results.Created(string.Empty, tokens);
             })
-            .Produces(StatusCodes.Status201Created)
+            .Produces<TokensDto>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
-            .WithTags("Users")
+            .WithTags(Tag)
             .WithDescription("Registers a new user. Returns Refresh and Access tokens")
             .WithOpenApi();
 
@@ -47,11 +49,11 @@ namespace Habr.WebApp.Endpoints
                 var accessToken = await jwtService.RefreshAccessToken(refreshToken, cancellationToken);
                 return Results.Ok(accessToken);
             })
-            .Produces(StatusCodes.Status200OK)
+            .Produces<string>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Authentication")
+            .WithTags(Tag)
             .WithDescription("Refreshes the Access token.")
             .WithOpenApi();
 
@@ -66,7 +68,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status408RequestTimeout)
-            .WithTags("Authentication")
+            .WithTags(Tag)
             .WithDescription("Confirms a user's email address.")
             .WithOpenApi();
 
@@ -80,7 +82,7 @@ namespace Habr.WebApp.Endpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status403Forbidden)
-            .WithTags("Authentication")
+            .WithTags(Tag)
             .WithDescription("Revokes all user Access and Refresh tokens")
             .WithOpenApi();
         }
