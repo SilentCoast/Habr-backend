@@ -2,7 +2,7 @@
 
 This project was developed during my internship at Merk.Team. It is designed to showcase my ability to create a streamlined application following the latest best practices in .NET development.
 
-## 🚀 **Project Overview**
+## 🚀 **Overview**
 
 This application is the backend for a Habr-like platform, providing the core functionality needed for users to create, manage, and interact with posts. It supports user authentication, post creation, commenting, rating and more, all through a well-structured RESTful API. Designed to be secure, efficient, and scalable, this backend lays the foundation for a dynamic and interactive online community.
 
@@ -30,4 +30,5 @@ This application is the backend for a Habr-like platform, providing the core fun
 If you have any questions, suggestions, or opportunities, feel free to reach out to me:
 
 **Email**: silentcoastproduction@gmail.com
+
 I'm open to new opportunities and would love to connect!
