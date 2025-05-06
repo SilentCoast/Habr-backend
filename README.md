@@ -1,6 +1,6 @@
-# .NET Bootcamp 2024
+# .NET Bootcamp
 
-This project was developed during my internship at Merk.Team. It is designed to showcase my ability to create a streamlined application following the latest best practices in .NET development.
+This project was developed during my internship as Backend .Net developer. It is designed to showcase my ability to create a streamlined application following the latest best practices in .NET development.
 
 ## 🚀 **Overview**
 
